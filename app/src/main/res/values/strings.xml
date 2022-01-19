@@ -1,0 +1,286 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">Yoga Network</string>
+    <string name="app_title" translatable="false"><u>Yoga Network</u></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Fragmento en blanco</string>
+    <string name="todo" translatable="false">TODO</string>
+    <string name="t_tulo">Title</string>
+    <string name="descripci_n">Description</string>
+    <string name="publicar">Post</string>
+    <string name="su_nombre">Its name</string>
+    <string name="online">Online</string>
+    <string name="escribir_mensaje">Write message ...</string>
+    <string name="t_tulo_del_grupo">Group title</string>
+    <string name="descripci_n_del_grupo">Group description</string>
+    <string name="creado_por_abc_el_dd_mm_yyyy">Created by ABC, the dd / mm / yyyy</string>
+    <string name="editar_grupo">Edit group</string>
+    <string name="a_adir_participante">Add participant</string>
+    <string name="salir_del_grupo">Leave the group</string>
+    <string name="participantes_n">Participants (N)</string>
+    <string name="iniciar_sesi_n">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="olvidaste_tu_contrase_a_recuperar">Forgot your password? Recover</string>
+    <string name="a_n_no_tienes_una_cuenta_registrarse">Don\'t have an account yet? Register</string>
+    <string name="registrarse">Register</string>
+    <string name="nombre">Name</string>
+    <string name="practica">Practice</string>
+    <string name="_33_min">33 min</string>
+    <string name="descripci_n_del_post">Post description</string>
+    <string name="_1_2k_likes">1.2k Likes</string>
+    <string name="_1_2k_comments">1.2k Comments</string>
+    <string name="like">LIKE</string>
+    <string name="compartir">SHARE</string>
+    <string name="comentarios">Comments</string>
+    <string name="poner_comentario">Post a comment ...</string>
+    <string name="registrar_perfil">Register profile</string>
+    <string name="ya_tienes_una_cuenta_iniciar_sesi_n">Already have an account? Login</string>
+    <string name="notificaciones_de_posts_nuevos">New Post Notifications</string>
+    <string name="nombre1">Name:</string>
+    <string name="tipo_de_yoga">Yoga Type:</string>
+    <string name="tipo_de_pr_ctica">Type of practice:</string>
+    <string name="dieta">Diet:</string>
+    <string name="actualizar_contrase_a">Update password</string>
+    <string name="contras_a_actual">Current password</string>
+    <string name="nueva_contrase_a">New password</string>
+    <string name="actualizar_contrase_a1">Update Password</string>
+    <string name="su_mensaje">Your message</string>
+    <string name="_23_12_21_23">12/23 21:23</string>
+    <string name="entregado">Delivered</string>
+    <string name="delivered">delivered</string>
+    <string name="ltimo_mensaje">Last message</string>
+    <string name="pr_ctica">Practice</string>
+    <string name="esto_es_un_comentario">This is a comment</string>
+    <string name="_14_12_2020_14_00">12/14/2020 14:00</string>
+    <string name="seud_nimo">Pseudonym</string>
+    <string name="mensaje_del_usuario">User message</string>
+    <string name="hora">Time</string>
+    <string name="nombre_del_remitente">Sender\'s name</string>
+    <string name="mensaje_enviado">Message sent</string>
+    <string name="_12_12pm">12:12 PM</string>
+    <string name="notificaci_n">Notification</string>
+    <string name="tipo">Type</string>
+    <string name="estado">State</string>
+    <string name="comentar">COMMENT</string>
+    <string name="cerrar_sesi_n">Sign out</string>
+    <string name="ajustes">Settings</string>
+    <string name="buscar">Search</string>
+    <string name="a_adir_post">Add Post</string>
+    <string name="crear_grupo">Create Group</string>
+    <string name="info_grupo">Group Info</string>
+    <string name="inicio">Home</string>
+    <string name="perfil">Profile</string>
+    <string name="usuarios">Users</string>
+    <string name="chats">Chats</string>
+    <string name="m_s">More</string>
+    <string name="seguro">Are you sure you want to delete this message?</string>
+    <string name="no">No</string>
+    <string name="eliminarcomment">Are you sure you want to delete this comment?</string>
+    <string name="cancelar">Cancel</string>
+    <string name="solotuyos">Just your comments</string>
+    <string name="imagen">image</string>
+    <string name="eliminarnotif">Are you sure you want to delete this notification?</string>
+    <string name="eliminado">Successfully removed</string>
+    <string name="elegir">Choose option</string>
+    <string name="retadmin">Remove Admin</string>
+    <string name="retusuario">Delete User</string>
+    <string name="haceradmin">Make Admin</string>
+    <string name="creadorgrupo">Creator of the group...</string>
+    <string name="ascendadmin">Promote to Admin</string>
+    <string name="anadirparticipante">Add participant</string>
+    <string name="anadirusuario">Add this user to the group</string>
+    <string name="anadir">Add</string>
+    <string name="cancel">CANCEL</string>
+    <string name="ascended">Promoted to Admin</string>
+    <string name="useradded">User added!</string>
+    <string name="desadmin">Admin dropped</string>
+    <string name="liked">Has liked your post</string>
+    <string name="enviadopor">Posted by YogaNetwork</string>
+    <string name="compartirvia">Share via...</string>
+    <string name="sujeto">Subject here</string>
+    <string name="editar">Edit</string>
+    <string name="details">See details</string>
+    <string name="gotoprofile">Go to profile</string>
+    <string name="enviarmsg">Send message</string>
+    <string name="nomensaje">Cannot send the message to this user</string>
+    <string name="bloqueado">Blocked correctly</string>
+    <string name="desbloqueado">User unblocked</string>
+    <string name="fotomsg">Sent a photo</string>
+    <string name="editprofimg">Edit Profile Image</string>
+    <string name="editcover">Edit cover photo</string>
+    <string name="editpseud">Edit pseudonym</string>
+    <string name="editrealname">Edit birth name</string>
+    <string name="editartipo">Edit account type</string>
+    <string name="tipopractica">Edit practice type</string>
+    <string name="cambiarcontraseña">Change password</string>
+    <string name="editardieta">Edit diet</string>
+    <string name="editarperfil">Edit profile</string>
+    <string name="actualizimagen">Updating Profile Image</string>
+    <string name="actualizcover">Updating cover photo</string>
+    <string name="actpseudon">Updating pseudonym</string>
+    <string name="actname">Updating name</string>
+    <string name="acttype">Updating account type</string>
+    <string name="acttype1">Updating practice type</string>
+    <string name="actdiet">Editing diet</string>
+    <string name="actcontra">Changing password</string>
+    <string name="contraactual">Enter your current password ...</string>
+    <string name="superalongitud">The length of the password must be greater than 6 characters...</string>
+    <string name="contraactualiz">Password updated!</string>
+    <string name="actualizar">Update</string>
+    <string name="escribiraqui">Write here</string>
+    <string name="actualizado">Updated</string>
+    <string name="escogerimg">Choose an image from...</string>
+    <string name="activcamera">Please activate the camera and allow access to storage</string>
+    <string name="storageuse">Please allow the use of storage</string>
+    <string name="imgactuaz">Updated Image.</string>
+    <string name="actuazerr">An error occurred while updating the image.</string>
+    <string name="addpost">Add new post</string>
+    <string name="updatepost">Update post</string>
+    <string name="ponertit">Put the post title...</string>
+    <string name="ponerdescr">Put the post description...</string>
+    <string name="actpost">Updated post</string>
+    <string name="actualizando">Updating post...</string>
+    <string name="postactualizado">Updated post</string>
+    <string name="publicando">Posting post...</string>
+    <string name="publicado">Post published</string>
+    <string name="añadio"> added a new post! </string>
+    <string name="cameraaccess">Camera and Storage are required</string>
+    <string name="storageacess">Required storage</string>
+    <string name="escribiendo">Writing...</string>
+    <string name="ultvez"> Last seen: </string>
+    <string name="nosepuedeenviarmsg">Unable to send message</string>
+    <string name="bloqerror"> Could not block: </string>
+    <string name="elegirimg">Choose image from...</string>
+    <string name="teenvio"> sent you a photo...</string>
+    <string name="newmessage">New message!</string>
+    <string name="camerastoragereq">Camera and Storage are required</string>
+    <string name="storagereq">Required storage</string>
+    <string name="users">Users</string>
+    <string name="profile">Profile</string>
+    <string name="grupos">Groups</string>
+    <string name="notificaciones">Notifications</string>
+    <string name="emptymsg">Empty message</string>
+    <string name="escogerimg1">Choose image</string>
+    <string name="wait">Please wait</string>
+    <string name="enviandoimg">Sending image...</string>
+    <string name="creargrupo">Create Group</string>
+    <string name="creandogrupo">Creating group</string>
+    <string name="ponertitulo">Please insert the title</string>
+    <string name="grupocreado">Group created successfully!</string>
+    <string name="editargrupo">Edit group</string>
+    <string name="espere">Wait</string>
+    <string name="titulovacio">Empty title</string>
+    <string name="actualizado1">Updated!</string>
+    <string name="eliminargrp">Delete group</string>
+    <string name="eliminargrpseguro">Are you sure to delete this group permanently?</string>
+    <string name="eliminar1">DELETE</string>
+    <string name="salir">EXIT</string>
+    <string name="seguroeliminargrp">Are you sure you want to get out of this group permanently?</string>
+    <string name="salirgrp">Leave the group</string>
+    <string name="cancelar1">CANCEL</string>
+    <string name="salistedelgrp">You left the group</string>
+    <string name="grpeliminado">Deleted group</string>
+    <string name="creadopor">" Created by "</string>
+    <string name="el"> on "</string>
+    <string name="participantes">Participants (</string>
+    <string name="añadirparticipante">Add participant</string>
+    <string name="iniciarsesion">Login</string>
+    <string name="emailinvalido">Invalid email</string>
+    <string name="iniciandosesion">Logging in...</string>
+    <string name="recuperarcontra">Recover password</string>
+    <string name="enviar">Send</string>
+    <string name="enviandoemail">Sending email...</string>
+    <string name="emailenviado">Email sent</string>
+    <string name="fallo">A failure occurred...</string>
+    <string name="autentfallida">Authentication failed</string>
+    <string name="iniciofallido">Start failed...</string>
+    <string name="detallespst">Details post</string>
+    <string name="enviadopor1">Posted by: YogaNetwork</string>
+    <string name="sujetoaqui">Subject here</string>
+    <string name="compartirvia1">Share via...</string>
+    <string name="eliminar">Delete</string>
+    <string name="eliminando">Deleting...</string>
+    <string name="hadadolike">Liked your post</string>
+    <string name="añadiocomment">Adding comment...</string>
+    <string name="comentvacio">Empty comment!</string>
+    <string name="comentanadido">Comment added</string>
+    <string name="hacomentado">Commented on your post</string>
+    <string name="comentarios1">" Comments "</string>
+    <string name="crearcuenta">Create account</string>
+    <string name="registrando">Registering the user...</string>
+    <string name="emailinvalid">Invalid email</string>
+    <string name="menor">Password less than 6 characters</string>
+    <string name="registrado">" Registered! "</string>
+    <string name="fallida">Authentication failed</string>
+    <string name="bienvenido">welcome</string>
+    <string name="nonotif">From now on you will NOT receive notifications of posts</string>
+    <string name="notif">From now you will receive notifications of posts</string>
+    <string name="errormsg">Unable to send the message to this user</string>
+    <string name="comments">" comments"</string>
+    <string name="camera">Camera</string>
+    <string name="galeria">Gallery</string>
+    <string name="profile1" translatable="false">Profile</string>
+    <string name="inicio1" translatable="false">Start</string>
+    <string name="change_language" translatable="false">Change language</string>
+    <string name="lngchoose" translatable="false">Choose language...</string>
+
+    <string name="profile_updated_text" translatable="false">Your profile has been updated</string>
+
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+
+    <string name="action_settings" translatable="false">Settings</string>
+    <string name="action_logout" translatable="false">Logout</string>
+
+    <string name="title_activity_settings" translatable="false">Settings</string>
+    <string name="title_activity_profile" translatable="false">Profile</string>
+    <string name="title_activity_chat" translatable="false">Chat</string>
+    <string name="title_activity_active_users" translatable="false">Active Users</string>
+    <string name="title_activity_online" translatable="false">Online</string>
+
+    <!-- Strings related to user profile -->
+    <string name="prompt_username" translatable="false">User name</string>
+    <string name="prompt_bio" translatable="false">Bio (optional)</string>
+    <string name="action_update" translatable="false">Update profile</string>
+    <string name="error_invalid_username" translatable="false">This user name is too long</string>
+    <string name="error_invalid_bio" translatable="false">This bio is too long</string>
+    <string name="error_invalid_password" translatable="false">This password is too short</string>
+    <string name="error_different_passwords" translatable="false">The passwords don\'t match</string>
+    <string name="error_invalid_email" translatable="false">This email is not valid</string>
+
+
+    <string name="error_field_required" translatable="false">This field is required</string>
+
+    <!-- Strings related to user login and registration -->
+    <string name="prompt_login_username" translatable="false">User name</string>
+    <string name="prompt_login_pass" translatable="false">Password</string>
+    <string name="prompt_login_pass_bis" translatable="false">Repeat password</string>
+    <string name="prompt_login_email" translatable="false">Email</string>
+
+    <string name="action_login" translatable="false">Login</string>
+    <string name="action_new_account" translatable="false">New account</string>
+
+    <string name="action_register" translatable="false">Register</string>
+    <string name="action_existing_account" translatable="false">Existing account</string>
+
+    <!-- Strings related to permissions -->
+    <string name="profile_image_permission" translatable="false">This permission is needed in order to select a profile image</string>
+    <string name="gps_permission" translatable="false">This permission is needed in order to use the map</string>
+    <string name="typeMessage" translatable="false">Send text</string>
+
+    <string name="title_activity_main2" translatable="false">Main2Activity</string>
+    <string name="tab_login" translatable="false">Login</string>
+    <string name="tab_register" translatable="false">Register</string>
+    <string name="tab_map" translatable="false">Map</string>
+    <string name="tab_conversations" translatable="false">Chat</string>
+    <string name="section_format" translatable="false">Hello World from section: %1$d</string>
+    <string name="title_activity_maps" translatable="false">Map</string>
+
+
+    <array name="users_array">
+        <item>@string/gotoprofile</item>
+        <item>@string/enviarmsg</item>
+    </array>
+
+
+</resources>

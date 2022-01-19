@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_logout"
+        android:title="@string/cerrar_sesi_n"/>
+    <item android:id="@+id/action_settings"
+        android:title="@string/ajustes"/>
+
+    <item android:id="@+id/action_search"
+        android:title="@string/buscar"
+        android:icon="@drawable/ic_menu_search"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
+    <item android:id="@+id/action_add_post"
+        android:title="@string/a_adir_post"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_add_white"
+        />
+    <!--Show this option in ChatsFragment, UsersFragment and hide from others-->
+    <item
+        android:id="@+id/action_create_group"
+        android:title="@string/crear_grupo"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_creategroup_white"
+        />
+
+    <item
+        android:id="@+id/action_add_participant"
+        android:title="@string/a_adir_participante"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_addperson_white"
+        />
+    <item
+        android:id="@+id/action_groupinfo"
+        android:title="@string/info_grupo"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_info_white"
+        />
+</menu>

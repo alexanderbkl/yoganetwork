@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChatActivity"
+    android:background="#F1EDED">
+<androidx.appcompat.widget.Toolbar
+    android:id="@+id/toolbar"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
+    android:background="@color/teal_700"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+
+    <!--Receiver profile picture-->
+    <com.blogspot.atifsoftwares.circularimageview.CircularImageView
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:id="@+id/profileIv"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_default_img_white"
+        app:c_background_color="@color/teal_700"/>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="20dp"
+        android:gravity="center">
+        <!--Receiver name-->
+        <TextView
+            android:id="@+id/nameTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/su_nombre"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            />
+    <!--Receiver status i.e. online or offline
+    will implement later-->
+        <TextView
+            android:id="@+id/userStatusTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/online"
+            android:textStyle="bold"
+           />
+
+
+
+    </LinearLayout>
+    <!--Add icons to indicate blocked/unblocked-->
+    <ImageView
+        android:layout_marginEnd="5dp"
+        android:id="@+id/blockIv"
+        android:layout_gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+</LinearLayout>
+</androidx.appcompat.widget.Toolbar>
+
+
+    <!--RecyclerView-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/chat_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/chatLayout"
+       />
+    <!--Send message, edit text and button in layout-->
+    <LinearLayout
+        android:id="@+id/chatLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!--ImageButton: to send image-->
+
+        <!--EditText: input message-->
+        <!--Button: send message-->
+
+        <ImageButton
+            android:id="@+id/attachBtn"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@null"
+            android:src="@drawable/ic_attach_black"/>
+        <EditText
+            android:id="@+id/messageEt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="@string/escribir_mensaje"
+            android:inputType="textCapSentences|textImeMultiLine|textMultiLine"
+            android:background="@null"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/sendBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_send"
+            android:background="@null"/>
+    </LinearLayout>
+
+</RelativeLayout>
