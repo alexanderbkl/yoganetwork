@@ -139,6 +139,8 @@ public class PostDetailActivity extends AppCompatActivity {
 
         loadComments();
 
+
+
         //send comment button click
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -320,6 +322,9 @@ public class PostDetailActivity extends AppCompatActivity {
             popupMenu.getMenu().add(Menu.NONE, 0, 0, R.string.eliminar);
             popupMenu.getMenu().add(Menu.NONE, 1, 0, R.string.editar);
 
+        }
+        else {
+            moreBtn.setVisibility(View.GONE);
         }
 
 
@@ -677,6 +682,8 @@ public class PostDetailActivity extends AppCompatActivity {
         menu.findItem(R.id.action_add_post).setVisible(false);
         menu.findItem(R.id.action_search).setVisible(false);
         menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_create_group).setVisible(false);
+        menu.findItem(R.id.action_add_participant).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 

@@ -98,10 +98,27 @@ public class DashboardActivity extends AppCompatActivity implements
 
         //home fragment transaction (default, on start)
         actionBar.setTitle(R.string.inicio); //change actionbar title
-        HomeFragment fragment1 = new HomeFragment();
-        FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
-        ft1.replace(R.id.content, fragment1, "");
-        ft1.commit();
+        Intent intent= getIntent();
+        Bundle b = intent.getExtras();
+
+        if(b!=null)
+        {
+            int fragment = (int) b.get("fragment");
+            if (fragment == 2) {
+                ProfileFragment fragment2 = new ProfileFragment();
+                FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+                ft2.replace(R.id.content, fragment2, "");
+                ft2.commit();
+
+            }
+        } else {
+            HomeFragment fragment1 = new HomeFragment();
+            FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+            ft1.replace(R.id.content, fragment1, "");
+            ft1.commit();
+
+        }
+
 
         checkUserStatus();
 

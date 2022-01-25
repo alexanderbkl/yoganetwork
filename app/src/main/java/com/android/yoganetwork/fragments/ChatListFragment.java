@@ -153,6 +153,7 @@ public class ChatListFragment extends Fragment {
                 }
                 adapterChatlist.setLastMessageMap(userId, theLastMessage);
                 adapterChatlist.notifyDataSetChanged();
+
             }
 
             @Override

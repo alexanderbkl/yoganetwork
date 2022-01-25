@@ -27,6 +27,8 @@ import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -164,6 +166,8 @@ public class ProfileFragment extends Fragment {
 
         //init progress dialog
         pd = new ProgressDialog(getActivity());
+
+
 
 
         /*We have to get info of currently signed in user.

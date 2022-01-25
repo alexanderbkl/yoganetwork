@@ -2,14 +2,15 @@ package com.android.yoganetwork;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -87,8 +88,14 @@ public class PostRegistrationActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Users");
         storageReference = FirebaseStorage.getInstance().getReference();
-
         pd = new ProgressDialog(PostRegistrationActivity.this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
+        //actionbar and its properties
+        getSupportActionBar().setTitle("INFORMACIÓN DEL PERFIL");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Query query = databaseReference.orderByChild("uid").equalTo(user.getUid());
         query.addValueEventListener(new ValueEventListener() {
@@ -117,7 +124,6 @@ public class PostRegistrationActivity extends AppCompatActivity {
                     }
                     catch (Exception e) {
                         //if there is any exception while getting image then set default
-                        Picasso.get().load(R.drawable.ic_default_img_white).into(avatarIv);
                     }
                     try {
                         //if image is received then set
@@ -159,7 +165,9 @@ public class PostRegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 uploadProfileData();
-                startActivity(new Intent(PostRegistrationActivity.this, DashboardActivity.class));
+                Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
+                intent.putExtra("fragment",2);
+                startActivity(intent);
                 PostRegistrationActivity.this.finish();
             }
         });
@@ -388,13 +396,13 @@ public class PostRegistrationActivity extends AppCompatActivity {
                     }
                 });
     }
-
     @Override
-    public void onBackPressed() {
-        Log.d("CDA", "onBackPressed Called");
-        Intent setIntent = new Intent(Intent.ACTION_MAIN);
-        setIntent.addCategory(Intent.CATEGORY_HOME);
-        setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(setIntent);
+    public boolean onSupportNavigateUp() {
+        Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
+        intent.putExtra("fragment",2);
+        startActivity(intent);
+        PostRegistrationActivity.this.finish();
+        return true;
     }
+
 }

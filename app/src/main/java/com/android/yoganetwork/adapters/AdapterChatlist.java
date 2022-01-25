@@ -83,7 +83,9 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
 
     public void setLastMessageMap(String userId, String lastMessage) {
         lastMessageMap.put(userId, lastMessage);
+
     }
+
 
     @Override
     public int getItemCount() {

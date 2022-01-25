@@ -269,6 +269,8 @@ public class AddPostActivity extends AppCompatActivity {
                         //added in database
                         pd.dismiss();
                         Toast.makeText(AddPostActivity.this, getString(R.string.actpost), Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(AddPostActivity.this, DashboardActivity.class));
+                        finish();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -324,6 +326,8 @@ public class AddPostActivity extends AppCompatActivity {
                                             //added in database
                                             pd.dismiss();
                                             Toast.makeText(AddPostActivity.this, ""+R.string.postactualizado, Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(AddPostActivity.this, DashboardActivity.class));
+                                            finish();
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
@@ -399,6 +403,8 @@ public class AddPostActivity extends AppCompatActivity {
                                                             //added in database
                                                             pd.dismiss();
                                                             Toast.makeText(AddPostActivity.this, getString(R.string.postactualizado), Toast.LENGTH_SHORT).show();
+                                                            startActivity(new Intent(AddPostActivity.this, DashboardActivity.class));
+                                                            finish();
                                                         }
                                                     })
                                                     .addOnFailureListener(new OnFailureListener() {
@@ -538,6 +544,8 @@ public class AddPostActivity extends AppCompatActivity {
                                                         "PostNotification",
                                                         "POST"
                                                 );
+                                                startActivity(new Intent(AddPostActivity.this, DashboardActivity.class));
+                                                finish();
 
                                             }
                                         })
@@ -604,6 +612,8 @@ public class AddPostActivity extends AppCompatActivity {
                                     "PostNotification",
                                     "POST"
                             );
+                            startActivity(new Intent(AddPostActivity.this, DashboardActivity.class));
+                            finish();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
