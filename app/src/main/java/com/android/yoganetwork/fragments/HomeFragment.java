@@ -65,13 +65,17 @@ public class HomeFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         //recyclerview and its properties
         recyclerView = view.findViewById(R.id.postsRecyclerView);
+
+
+
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         //show newest post first, for this load from last
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         //set layout to recyclerview
         recyclerView.setLayoutManager(layoutManager);
-
+        recyclerView.setNestedScrollingEnabled(false);
         //init post list
         postList = new ArrayList<>();
 
@@ -86,6 +90,7 @@ public class HomeFragment extends Fragment {
         //path of all posts
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         //get all data from this ref
+
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -95,6 +100,7 @@ public class HomeFragment extends Fragment {
                     postList.add(modelPost);
                     //adapter
                     adapterPosts = new AdapterPosts(getActivity(), postList);
+                    adapterPosts.setHasStableIds(true);
                     //set adapter to recyclerview
                     recyclerView.setAdapter(adapterPosts);
                 }

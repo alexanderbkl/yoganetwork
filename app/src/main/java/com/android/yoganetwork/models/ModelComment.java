@@ -1,12 +1,13 @@
 package com.android.yoganetwork.models;
 
 public class ModelComment {
-    String cId, comment, timestamp, uid, uEmail, uDp, uPseudonym, uPractic;
+    String cId, comment, timestamp, uid, uEmail, uDp, uPseudonym, uPractic, edited, cLikes;
 
     public ModelComment() {
 
     }
-    public ModelComment(String cId, String uPractic, String comment, String timestamp, String uid, String uEmail, String uDp, String uPseudonym) {
+
+    public ModelComment(String cId, String uPractic, String comment, String timestamp, String uid, String uEmail, String uDp, String uPseudonym, String edited, String cLikes) {
         this.cId = cId;
         this.comment = comment;
         this.timestamp = timestamp;
@@ -15,6 +16,8 @@ public class ModelComment {
         this.uPractic = uPractic;
         this.uDp = uDp;
         this.uPseudonym = uPseudonym;
+        this.edited = edited;
+        this.cLikes = cLikes;
     }
 
     public String getcId() {
@@ -79,5 +82,21 @@ public class ModelComment {
 
     public void setuPractic(String uPractic) {
         this.uPractic = uPractic;
+    }
+
+    public String getEdited() {
+        return edited;
+    }
+
+    public void setEdited(String edited) {
+        this.edited = edited;
+    }
+
+    public String getcLikes() {
+        return cLikes;
+    }
+
+    public void setcLikes(String cLikes) {
+        this.cLikes = cLikes;
     }
 }

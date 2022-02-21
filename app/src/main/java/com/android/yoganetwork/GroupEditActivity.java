@@ -39,6 +39,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -258,21 +260,10 @@ public class GroupEditActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //handle clicks
-                        if (which == 0) {
-                            //camera clicked
-                            if (!checkCameraPermissions()) {
-                                requestCameraPermissions();
-                            } else {
-                                pickFromCamera();
-                            }
-                        } else {
-                            //gallery clicked
-                            if (!checkStoragePermissions()) {
-                                requestStoragePermissions();
-                            } else {
-                                pickFromGallery();
-                            }
-                        }
+
+                        CropImage.activity()
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .start(GroupEditActivity.this);
                     }
                 }).show();
     }
@@ -294,27 +285,7 @@ public class GroupEditActivity extends AppCompatActivity {
         startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
     }
 
-    private boolean checkStoragePermissions() {
-        boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-        return result;
-    }
 
-    private void requestStoragePermissions() {
-        ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
-    }
-
-    private boolean checkCameraPermissions() {
-        boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-
-    private void requestCameraPermissions() {
-        ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
-    }
 
     private void checkUser() {
         FirebaseUser user = firebaseAuth.getCurrentUser();
@@ -369,19 +340,20 @@ public class GroupEditActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         //handle image pick result
-        if (resultCode == RESULT_OK){
-            if (requestCode == IMAGE_PICK_GALLERY_CODE){
-                //was picked from gallery
-                image_uri = data.getData();
-                //set image to imageview
-                groupIconIv.setImageURI(image_uri);
-            }
-            else if (requestCode == IMAGE_PICK_CAMERA_CODE) {
-                //was picked from camera
-                //set to imageview
-                groupIconIv.setImageURI(image_uri);
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                groupIconIv.setImageURI(resultUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                System.out.println(error);
             }
         }
+
+
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 }

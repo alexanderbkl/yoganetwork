@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import com.android.yoganetwork.GroupCreateActivity;
 import com.android.yoganetwork.MainActivity;
 import com.android.yoganetwork.R;
+import com.android.yoganetwork.adapters.AdapterAddToGroup;
 import com.android.yoganetwork.adapters.AdapterGroupChatList;
 import com.android.yoganetwork.models.ModelGroupChatList;
 import com.google.firebase.auth.FirebaseAuth;

@@ -4,12 +4,18 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout-v21/activity_post_registration.xml" value="0.18229166666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_add_to_group.xml" value="0.25" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_comment_liked_by.xml" value="0.20989583333333334" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_dashboard.xml" value="0.11684782608695653" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_map.xml" value="0.18" />
-        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_post_detail.xml" value="0.18229166666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_post_detail.xml" value="0.3196480938416422" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_post_liked_by.xml" value="0.2109375" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_post_registration.xml" value="0.18229166666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_chat_list.xml" value="0.20572916666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_group_chats.xml" value="0.20572916666666666" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_home.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_profile.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_comments.xml" value="0.5" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_posts.xml" value="0.25" />
         <entry key="..\:/Users/Amit/Downloads/YogaNetwork/app/src/main/res/drawable-anydpi/ic_default_img_white.xml" value="0.13796296296296295" />
         <entry key="..\:/Users/Amit/Downloads/YogaNetwork/app/src/main/res/drawable/add image.xml" value="0.1" />

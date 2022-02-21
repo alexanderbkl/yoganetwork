@@ -1,6 +1,7 @@
 package com.android.yoganetwork.adapters;
 
 import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -29,7 +30,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ablanco.zoomy.ZoomListener;
@@ -44,6 +47,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -97,7 +101,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolder myHolder, int i) {
+    public void onBindViewHolder(@NonNull MyHolder myHolder, @SuppressLint("RecyclerView") int i) {
         //get data
         final String uid = postList.get(i).getUid();
         String uPseudonym = postList.get(i).getuPseudonym();
@@ -180,9 +184,12 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
                 //start PostDetailActivity
                 Intent intent = new Intent(context, PostDetailActivity.class);
                 intent.putExtra("postId", pId); //will get detail of post using this id, its id of the post clicked
+                intent.putExtra("uid", uid);
                 context.startActivity(intent);
             }
         });
+
+
         myHolder.likeBtn.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                  public void onClick(View v) {
@@ -196,26 +203,29 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
                      likesRef.addValueEventListener(new ValueEventListener() {
                          @Override
                          public void onDataChange(@NonNull DataSnapshot snapshot) {
-                               if (mProcessLike) {
-                                if (snapshot.child(postIde).hasChild(myUid)) {
-                              //already liked, so remove like
-                              postsRef.child(postIde).child("pLikes").setValue(""+(pLikes-1));
-                              likesRef.child(postIde).child(myUid).removeValue();
-                              mProcessLike = false;
-     }
-                                   else {
-                                 //not liked, like it
-                                 postsRef.child(postIde).child("pLikes").setValue(""+(pLikes+1));
-                                 likesRef.child(postIde).child(myUid).setValue("Liked"); //set any value
-                                 mProcessLike = false;
+                             if (mProcessLike) {
+                                 if (snapshot.child(postIde).hasChild(myUid)) {
+                                     //already liked, so remove like
+                                     postsRef.child(postIde).child("pLikes").setValue(""+(pLikes-1));
+                                     likesRef.child(postIde).child(myUid).removeValue();
+                                     mProcessLike = false;
+                                 }
+                                 else {
+                                     //not liked, like it
+                                     postsRef.child(postIde).child("pLikes").setValue(""+(pLikes+1));
+                                     likesRef.child(postIde).child(myUid).setValue("Liked"); //set any value
+                                     mProcessLike = false;
 
-                                 addToHisNotifications(""+uid, ""+pId, context.getString(R.string.liked));
-                        } } }
+                                     addToHisNotifications(""+uid, ""+pId, context.getString(R.string.liked));
+                                 } }
+                         }
 
                          @Override
                          public void onCancelled(@NonNull DatabaseError error) {
+
                          }
-    });
+                     });
+
 
                                                 }});
         myHolder.shareBtn.setOnClickListener(new View.OnClickListener() {
@@ -343,6 +353,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
     //add a key named "pLikes" to each post and set its value to "0" manually in firebase
 
     private void setLikes(MyHolder holder, String postKey) {
+
         likesRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -511,6 +522,8 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
             //init views
             uPictureIv = itemView.findViewById(R.id.uPictureIv);
             pImageIv = itemView.findViewById(R.id.pImageIv);
+
+
 
             ic_arrow_left = itemView.findViewById(R.id.ic_arrow_left);
             ic_arrow_right = itemView.findViewById(R.id.ic_arrow_right);

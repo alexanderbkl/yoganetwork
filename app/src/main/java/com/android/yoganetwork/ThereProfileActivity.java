@@ -271,7 +271,6 @@ public class ThereProfileActivity extends AppCompatActivity {
         menu.findItem(R.id.action_add_post).setVisible(false); //hide add post from this activity
         menu.findItem(R.id.action_create_group).setVisible(false); //hide create group from this activity
         menu.findItem(R.id.action_groupinfo).setVisible(false);
-        menu.findItem(R.id.action_add_participant).setVisible(false);
         MenuItem item = menu.findItem(R.id.action_search);
         //v7 searchview ot search user specific posts
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
@@ -313,8 +312,12 @@ public class ThereProfileActivity extends AppCompatActivity {
             checkUserStatus();
 
         }
-        if (id == R.id.action_add_post) {
-            startActivity(new Intent(ThereProfileActivity.this, AddPostActivity.class));
+        if (id == R.id.action_add_participant) {
+
+            Intent i = new Intent(ThereProfileActivity.this, AddToGroupActivity.class);
+            i.putExtra("hisUid",uid);
+            startActivity(i);
+
 
         }
         return super.onOptionsItemSelected(item);

@@ -525,7 +525,7 @@ public class ProfileFragment extends Fragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_Dialog_Alert);
         //set layout of dialog
-        LinearLayout linearLayout = new LinearLayout(getActivity());
+        LinearLayout linearLayout = new LinearLayout(getActivity() );
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         linearLayout.setPadding(10,10,10,10);
         //add edit text

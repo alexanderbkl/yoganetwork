@@ -184,26 +184,55 @@
         android:id="@+id/cAvatarIv"
         android:src="@drawable/ic_default_img"/>
     <EditText
+        android:id="@+id/commentEdit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_toStartOf="@id/sendBtn"
+        android:layout_toEndOf="@+id/cAvatarIv"
+        android:background="@color/colorWhite"
+        android:hint="Editar comentario"
+        android:inputType="textCapSentences|textMultiLine|textImeMultiLine"
+        android:padding="10dp" />
+    <EditText
         android:id="@+id/commentEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
+        android:layout_toStartOf="@id/sendBtn"
         android:layout_toEndOf="@+id/cAvatarIv"
         android:background="@color/colorWhite"
-        android:padding="10dp"
         android:hint="@string/poner_comentario"
         android:inputType="textCapSentences|textMultiLine|textImeMultiLine"
-        android:layout_toStartOf="@id/sendBtn"
-        android:layout_centerVertical="true"
-        android:layout_margin="1dp"/>
+        android:padding="10dp" />
+
     <ImageButton
         android:id="@+id/sendBtn"
-        android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_send"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:layout_marginEnd="5dp"
-        android:background="@color/colorWhite" />
+        android:background="@color/colorWhite"
+        android:src="@drawable/ic_send" />
+
+    <ImageButton
+        android:id="@+id/editBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="5dp"
+        android:background="@color/colorWhite"
+        android:src="@drawable/ic_send" />
 
 </RelativeLayout>
 

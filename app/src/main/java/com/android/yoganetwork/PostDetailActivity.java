@@ -4,12 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Notification;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -72,7 +76,7 @@ public class PostDetailActivity extends AppCompatActivity {
     //to get detail of user and post
     String hisUid, myUid, myPractic, myPseudonym, myDp,
     postId, pLikes, hisDp, hisPractic, hisPseudonym, pImage;
-    String pseudonyn, practik;
+    String pseudonyn, uid;
 
     boolean mProcessComment = false;
     boolean mProcessLike = false;
@@ -92,8 +96,8 @@ public class PostDetailActivity extends AppCompatActivity {
     AdapterComments adapterComments;
 
     //add comments views
-    EditText commentEt;
-    ImageButton sendBtn;
+    EditText commentEt, commentEdit;
+    ImageButton sendBtn, editBtn;
     ImageView cAvatarIv;
 
     @Override
@@ -109,6 +113,7 @@ public class PostDetailActivity extends AppCompatActivity {
         //get id of post using intent
         Intent intent = getIntent();
         postId = intent.getStringExtra("postId");
+        uid = intent.getStringExtra("uid");
         //init views
         uPictureIv = findViewById(R.id.uPictureIv);
         pImageIv = findViewById(R.id.pImageIv);
@@ -126,9 +131,13 @@ public class PostDetailActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerView);
 
         commentEt = findViewById(R.id.commentEt);
+        commentEdit = findViewById(R.id.commentEdit);
         sendBtn = findViewById(R.id.sendBtn);
+        editBtn = findViewById(R.id.editBtn);
         cAvatarIv = findViewById(R.id.cAvatarIv);
 
+        commentEdit.setVisibility(View.GONE);
+        editBtn.setVisibility(View.GONE);
         loadPostInfo();
 
         checkUserStatus();
@@ -140,6 +149,16 @@ public class PostDetailActivity extends AppCompatActivity {
         loadComments();
 
 
+        profileLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //click to go to ThereProfileActivity with uid, this uid is of clicked user
+                //which will be used to show user specifi data/posts
+                Intent intent = new Intent(PostDetailActivity.this, ThereProfileActivity.class);
+                intent.putExtra("uid", uid);
+                startActivity(intent);
+            }
+        });
 
         //send comment button click
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -196,7 +215,46 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
 
+
+        // Register to receive messages.
+        // We are registering an observer (mMessageReceiver) to receive Intents
+        // with actions named "custom-message".
+        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                new IntentFilter("custom-message"));
     }
+
+    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get extra data included in the Intent
+            String value = intent.getStringExtra("value");
+            String cid = intent.getStringExtra("cid");
+            commentEdit.setText(value);
+            commentEt.setVisibility(View.GONE);
+            sendBtn.setVisibility(View.GONE);
+            commentEdit.setVisibility(View.VISIBLE);
+            editBtn.setVisibility(View.VISIBLE);
+
+            editBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //input text from edittext
+                    String updatedComment = commentEdit.getText().toString().trim();
+                    if (!TextUtils.isEmpty(updatedComment)){
+                        HashMap<String, Object> result = new HashMap<>();
+                        result.put("comment", updatedComment);
+                        result.put("edited", "edited");
+                        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts").child(postId);
+                        ref.child("Comments").child(cid).updateChildren(result);
+                        sendBtn.setVisibility(View.VISIBLE);
+                        commentEt.setVisibility(View.VISIBLE);
+                        commentEdit.setVisibility(View.GONE);
+                        editBtn.setVisibility(View.GONE);
+                    }
+                }
+            });
+        }
+    };
 
     private void addToHisNotifications(String hisUid, String pId, String notification) {
         String timestamp = ""+System.currentTimeMillis();
@@ -514,6 +572,8 @@ public class PostDetailActivity extends AppCompatActivity {
         hashMap.put("uPseudonym", myPseudonym);
         hashMap.put("uDp", myDp);
         hashMap.put("uPractic", myPractic);
+        hashMap.put("cLikes", "0");
+
 
         //put this data in db
         ref.child(timeStamp).setValue(hashMap)

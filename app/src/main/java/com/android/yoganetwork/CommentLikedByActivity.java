@@ -20,9 +20,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostLikedByActivity extends AppCompatActivity {
+public class CommentLikedByActivity extends AppCompatActivity {
 
-    String postId;
+    String cid;
 
     private RecyclerView recyclerView;
     private List<ModelUsers> usersList;
@@ -32,7 +32,7 @@ public class PostLikedByActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_post_liked_by);
+        setContentView(R.layout.activity_comment_liked_by);
         //actionbar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Likes");
@@ -47,22 +47,22 @@ public class PostLikedByActivity extends AppCompatActivity {
 
         //get the post id
         Intent intent = getIntent();
-        postId = intent.getStringExtra("postId");
+        cid = intent.getStringExtra("cid");
 
         usersList = new ArrayList<>();
 
-        //get the list of UIDs of users who liked the post
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Likes");
-        ref.child(postId).addValueEventListener(new ValueEventListener() {
+        //get the list of UIDs of users who liked t he post
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Likes").child("CommentLikes");
+        ref.child(cid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-            usersList.clear();
-            for (DataSnapshot ds: snapshot.getChildren()) {
-                String hisUid = ""+ ds.getRef().getKey();
+                usersList.clear();
+                for (DataSnapshot ds: snapshot.getChildren()) {
+                    String hisUid = ""+ ds.getRef().getKey();
 
-                //get user info from each id
-                getUsers(hisUid);
-            }
+                    //get user info from each id
+                    getUsers(hisUid);
+                }
             }
 
             @Override
@@ -79,13 +79,13 @@ public class PostLikedByActivity extends AppCompatActivity {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for (DataSnapshot ds: snapshot.getChildren()){
-                        ModelUsers modelUsers = ds.getValue(ModelUsers.class);
-                        usersList.add(modelUsers);
-                    }
-                    //setup adapters
-                        adapterUsers = new AdapterUsers(PostLikedByActivity.this, usersList);
-                    //set adapter to recyclerview
+                        for (DataSnapshot ds: snapshot.getChildren()){
+                            ModelUsers modelUsers = ds.getValue(ModelUsers.class);
+                            usersList.add(modelUsers);
+                        }
+                        //setup adapters
+                        adapterUsers = new AdapterUsers(CommentLikedByActivity.this, usersList);
+                        //set adapter to recyclerview
                         recyclerView.setAdapter(adapterUsers);
                     }
 
