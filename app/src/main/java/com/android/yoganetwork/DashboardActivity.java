@@ -100,7 +100,7 @@ public class DashboardActivity extends AppCompatActivity implements
         actionBar.setTitle(R.string.inicio); //change actionbar title
         Intent intent= getIntent();
         Bundle b = intent.getExtras();
-
+/*
         if(b!=null)
         {
             int fragment = (int) b.get("fragment");
@@ -111,13 +111,13 @@ public class DashboardActivity extends AppCompatActivity implements
                 ft2.commit();
 
             }
-        } else {
+        } else {*/
             HomeFragment fragment1 = new HomeFragment();
             FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
             ft1.replace(R.id.content, fragment1, "");
             ft1.commit();
 
-        }
+       /* }*/
 
 
         checkUserStatus();

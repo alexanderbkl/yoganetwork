@@ -2,65 +2,41 @@ package com.android.yoganetwork.fragments;
 
 import android.app.ProgressDialog;
 import android.content.ClipData;
-import android.content.ComponentName;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-import android.Manifest;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
-import androidx.appcompat.app.AppCompatActivity;
 
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest.permission;
-
-import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.Manifest.permission;
 
 
-import com.ablanco.zoomy.Zoomy;
 import com.android.yoganetwork.AddPostActivity;
 import com.android.yoganetwork.GroupCreateActivity;
 import com.android.yoganetwork.MainActivity;
-import com.android.yoganetwork.PostDetailActivity;
 import com.android.yoganetwork.PostRegistrationActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.SettingsActivity;
@@ -86,8 +62,6 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -262,7 +236,7 @@ public class ProfileFragment extends Fragment {
                     //add to list
                     postList.add(myPosts);
                     //adapter
-                    adapterPosts = new AdapterPosts(getActivity(), postList);
+                    adapterPosts = new AdapterPosts(getActivity(), postList, postsRecyclerView);
                     //set this adapter to recyclerview
                     postsRecyclerView.setAdapter(adapterPosts);
                 }
@@ -271,7 +245,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-                Toast.makeText(getActivity(), ""+error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -304,7 +277,7 @@ public class ProfileFragment extends Fragment {
                         postList.add(myPosts);
                     }
                     //adapter
-                    adapterPosts = new AdapterPosts(getActivity(), postList);
+                    adapterPosts = new AdapterPosts(getActivity(), postList, postsRecyclerView);
                     //set this adapter to recyclerview
                     postsRecyclerView.setAdapter(adapterPosts);
                 }

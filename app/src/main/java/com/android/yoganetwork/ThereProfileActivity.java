@@ -188,7 +188,7 @@ public class ThereProfileActivity extends AppCompatActivity {
                     //add to list
                     postList.add(myPosts);
                     //adapter
-                    adapterPosts = new AdapterPosts(ThereProfileActivity.this, postList);
+                    adapterPosts = new AdapterPosts(ThereProfileActivity.this, postList, postsRecyclerView);
                     //set this adapter to recyclerview
                     postsRecyclerView.setAdapter(adapterPosts);
                 }
@@ -229,7 +229,7 @@ public class ThereProfileActivity extends AppCompatActivity {
                         postList.add(myPosts);
                     }
                     //adapter
-                    adapterPosts = new AdapterPosts(ThereProfileActivity.this, postList);
+                    adapterPosts = new AdapterPosts(ThereProfileActivity.this, postList, postsRecyclerView);
                     //set this adapter to recyclerview
                     postsRecyclerView.setAdapter(adapterPosts);
                 }

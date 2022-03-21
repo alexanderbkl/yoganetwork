@@ -3,12 +3,10 @@ package com.android.yoganetwork.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,7 +20,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ablanco.zoomy.Zoomy;
 import com.android.yoganetwork.AddPostActivity;
 import com.android.yoganetwork.MainActivity;
 import com.android.yoganetwork.R;
@@ -36,7 +33,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.theartofdev.edmodo.cropper.CropImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +66,7 @@ public class HomeFragment extends Fragment {
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        //show newest post first, for this load from last
+        //show  newest post first, for this load from last
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         //set layout to recyclerview
@@ -99,7 +95,7 @@ public class HomeFragment extends Fragment {
                     ModelPost modelPost = ds.getValue(ModelPost.class);
                     postList.add(modelPost);
                     //adapter
-                    adapterPosts = new AdapterPosts(getActivity(), postList);
+                    adapterPosts = new AdapterPosts(getActivity(), postList, recyclerView);
                     adapterPosts.setHasStableIds(true);
                     //set adapter to recyclerview
                     recyclerView.setAdapter(adapterPosts);
@@ -130,7 +126,7 @@ public class HomeFragment extends Fragment {
 
                     }
                     //adapter
-                    adapterPosts = new AdapterPosts(getActivity(), postList);
+                    adapterPosts = new AdapterPosts(getActivity(), postList, recyclerView);
                     //set adapter to recyclerview
                     recyclerView.setAdapter(adapterPosts);
                 }

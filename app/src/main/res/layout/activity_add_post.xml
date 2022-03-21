@@ -23,17 +23,34 @@
             android:layout_height="wrap_content"/>
 
         <!--ImageView: Input post image-->
+
         <ImageView
             android:id="@+id/pImageIv"
-            android:background="@color/teal_700"
+            android:adjustViewBounds="true"
+            android:background="#CBF1F1"
             android:layout_width="match_parent"
             android:minHeight="200dp"
             android:layout_height="wrap_content"/>
+        <VideoView
+            android:layout_gravity="center"
+            android:id="@+id/videoView"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:translationY="-30dp"
+            android:layout_width="30dp"
+            android:layout_marginStart="5dp"
+            android:paddingBottom="10dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_add_image_black"
+            />
         <!--EditText: Input post description-->
         <EditText
             android:id="@+id/pDescriptionEt"
             android:background="@drawable/editextstyle"
             android:padding="10dp"
+            android:translationY="-30dp"
             android:hint="@string/descripci_n"
             android:inputType="textCapSentences|textMultiLine"
             android:minHeight="120dp"

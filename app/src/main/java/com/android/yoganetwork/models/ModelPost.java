@@ -2,23 +2,9 @@ package com.android.yoganetwork.models;
 
 public class ModelPost {
     //use same name as we given while uploading post
-    String pId, pTitle, pDescr, pLikes, pComments, pImage, pTime, uid, uPseudonym, uPractic, uDp;
+    String pId, pTitle, pDescr, pLikes, pComments, pImage, pTime, uid, uPseudonym, uPractic, uDp, pVideo;
 
     public ModelPost() {
-    }
-
-    public ModelPost(String pId, String pTitle, String pDescr, String pLikes, String pComments, String pImage, String pTime, String uid, String uPseudonym, String uPractic, String uDp) {
-        this.pId = pId;
-        this.pTitle = pTitle;
-        this.pDescr = pDescr;
-        this.pLikes = pLikes;
-        this.pComments = pComments;
-        this.pImage = pImage;
-        this.pTime = pTime;
-        this.uid = uid;
-        this.uPseudonym = uPseudonym;
-        this.uPractic = uPractic;
-        this.uDp = uDp;
     }
 
     public String getpId() {
@@ -107,5 +93,13 @@ public class ModelPost {
 
     public void setuDp(String uDp) {
         this.uDp = uDp;
+    }
+
+    public String getpVideo() {
+        return pVideo;
+    }
+
+    public void setpVideo(String pVideo) {
+        this.pVideo = pVideo;
     }
 }
