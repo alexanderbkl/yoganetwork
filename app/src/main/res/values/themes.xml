@@ -2,6 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.YogaNetwork" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Primary brand color. -->
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
         <item name="colorPrimary">@color/teal_700</item>
         <item name="colorPrimaryDark">#03A9F4</item>
         <item name="colorAccent">@color/teal_200</item>
@@ -14,8 +16,24 @@
         <item name="colorPrimary">@color/teal_700</item>
         <item name="colorPrimaryDark">#03A9F4</item>
         <item name="colorAccent">@color/teal_200</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.YogaNetwork.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="Theme.YogaNetwork.PopupOverlay"  parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="Theme.YogaNetwork.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="Theme.YogaNetwork.PopupOverlay"  parent="ThemeOverlay.AppCompat.Light">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+    </style>
 </resources>

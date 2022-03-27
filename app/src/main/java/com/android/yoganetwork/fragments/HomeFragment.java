@@ -1,6 +1,7 @@
 package com.android.yoganetwork.fragments;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -9,13 +10,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuItemCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class HomeFragment extends Fragment {
@@ -45,6 +52,7 @@ public class HomeFragment extends Fragment {
     RecyclerView recyclerView;
     List<ModelPost> postList;
     AdapterPosts adapterPosts;
+
     ImageView pImageIv;
     public HomeFragment() {
         // Required empty public constructor
@@ -52,6 +60,7 @@ public class HomeFragment extends Fragment {
 
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,8 +70,6 @@ public class HomeFragment extends Fragment {
         firebaseAuth = FirebaseAuth.getInstance();
         //recyclerview and its properties
         recyclerView = view.findViewById(R.id.postsRecyclerView);
-
-
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -77,7 +84,7 @@ public class HomeFragment extends Fragment {
 
         loadPosts();
 
-   return view;
+        return view;
     }
 
 
@@ -141,6 +148,7 @@ public class HomeFragment extends Fragment {
 
     }
     private void checkUserStatus() {
+
         //get current user
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
@@ -162,19 +170,17 @@ public class HomeFragment extends Fragment {
     }
 
     /*inflate options menu*/
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+     @Override
+   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflating menu
         inflater.inflate(R.menu.menu_main, menu);
         //hide some options
         menu.findItem(R.id.action_create_group).setVisible(false);
         menu.findItem(R.id.action_add_participant).setVisible(false);
         menu.findItem(R.id.action_groupinfo).setVisible(false);
-
         //searchview to search posts by post title/description
         MenuItem item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-
         //search listener
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -194,9 +200,11 @@ public class HomeFragment extends Fragment {
                 //called as and when user press any letter
                 if (!TextUtils.isEmpty(newText)) {
                     searchPosts(newText);
+
                 }
                 else {
                     loadPosts();
+
                 }
                 return false;
             }
@@ -207,7 +215,8 @@ public class HomeFragment extends Fragment {
     /*handle menu item clicks*/
 
 
-    @Override
+
+  /*  @Override
     //hmm
     public boolean onOptionsItemSelected(MenuItem item) {
         //get item id's
@@ -227,5 +236,5 @@ public class HomeFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }

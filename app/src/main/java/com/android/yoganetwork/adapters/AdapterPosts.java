@@ -1,5 +1,7 @@
 package com.android.yoganetwork.adapters;
 
+import static android.text.TextUtils.isEmpty;
+
 import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -8,12 +10,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaPlayer;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Build;
 import android.text.format.DateFormat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,7 +27,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +43,7 @@ import com.android.yoganetwork.PostDetailActivity;
 import com.android.yoganetwork.PostLikedByActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.ThereProfileActivity;
+import com.android.yoganetwork.VideoPlayerActivity;
 import com.android.yoganetwork.models.ModelPost;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -63,7 +62,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 
-import java.io.Console;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
@@ -81,7 +79,6 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
     String myUid;
     boolean mProcessLike=false;
     RecyclerView recyclerView;
-    MediaController mediaController;
 
 
     public AdapterPosts(Context context, List<ModelPost> postList, RecyclerView recyclerView) {
@@ -170,21 +167,48 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
         final String pId = postList.get(i).getpId();
         String pTitle = postList.get(i).getpTitle();
         String pDescription = postList.get(i).getpDescr();
-        if (postList.get(i).getpImage() != null) {
-            String pImage = postList.get(i).getpImage();
+        String pImage = postList.get(i).getpImage();
+        String pVideo = postList.get(i).getpVideo();
+        if (pImage != null) {
             Picasso.get().load(pImage).fit().centerCrop().into(myHolder.pImageIv);
-            myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, pImage));
-        } else {
-            String pImage = "noImage";
-            myHolder.pImageIv.setVisibility(View.GONE);
-            myHolder.zoomInBtn.setVisibility(View.GONE);
+            myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, pImage, null));
+            if (pImage.equals("noImage")) {
+                myHolder.pImageIv.setVisibility(View.GONE);
+                myHolder.zoomInBtn.setVisibility(View.GONE);
+            }
         }
         ModelPost modelPost = postList.get(i);
         String pTimeStamp = postList.get(i).getpTime();
         if (postList.get(i).getpVideo() != null) {
+            myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, null, pVideo));
+            myHolder.pImageIv.setVisibility(View.VISIBLE);
+            String videoUrl = modelPost.getpVideo();
 
+            // holder.pImageIv.setVisibility(View.GONE);
+            // holder.videoView.setVisibility(View.VISIBLE);
 
-            setVideoToVideoView(myHolder, modelPost);
+            //  Uri videoUri = Uri.parse(videoUrl);
+            //    holder.videoView.setVideoURI(videoUri);
+            //   holder.videoView.requestFocus();
+
+            try {
+                long thumb = myHolder.getLayoutPosition()* 1000L;
+                RequestOptions options = new RequestOptions().frame(thumb);
+
+                Glide.with(context).load(videoUrl).apply(options).fitCenter().centerCrop().into(myHolder.pImageIv);
+                myHolder.playBtn.setVisibility(View.VISIBLE);
+
+                myHolder.playBtn.setOnClickListener(view -> {
+                    Intent intent = new Intent(context, VideoPlayerActivity.class);
+                    intent.putExtra("videoUrl", videoUrl);
+                    context.startActivity(intent);
+                });
+
+            }
+            catch(NullPointerException e) {
+                Log.e("null thumbnail", String.valueOf(e));
+            }
+
         }
         String pLikes = postList.get(i).getpLikes(); //contains total number of likes for a post
         String pComments = postList.get(i).getpComments(); //contains total number of comments for a post
@@ -217,7 +241,6 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
         //            Zoomy.Builder builder = new Zoomy.Builder((Activity) context).target(v);
         //            builder.register();
        //         } else {
-        //        System.out.println("SUKA");
        //     }}
      //    });
 
@@ -284,6 +307,8 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
 
 
                                                 }});
+
+
         myHolder.shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -313,58 +338,49 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
                 });
 
         //click like count to start PostLikedByActivity, and pass the post id
-        myHolder.pLikesTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, PostLikedByActivity.class);
-                intent.putExtra("postId", pId);
-                context.startActivity(intent);
-            }
+        myHolder.pLikesTv.setOnClickListener(v -> {
+            Intent intent = new Intent(context, PostLikedByActivity.class);
+            intent.putExtra("postId", pId);
+            context.startActivity(intent);
         });
-        if (mediaController != null) {
-            mediaController.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-                    Toast.makeText(context, "4", Toast.LENGTH_SHORT).show();
-                    System.out.println("suka4");
-                    mediaController.hide();
-                }
-            });
-        }
+
 
 
 
     }
 
-    private void setVideoToVideoView(MyHolder holder, ModelPost postVideo) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        float dpHeight = displayMetrics.heightPixels*3 / displayMetrics.density;
+   /* private void setVideoToVideoView(MyHolder holder, ModelPost postVideo) {
+      //  DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+     //   float dpHeight = displayMetrics.heightPixels*3 / displayMetrics.density;
 
-        ViewGroup.LayoutParams layoutParams = holder.videoView.getLayoutParams();
-        layoutParams.height = (int) dpHeight/2;
-        holder.videoView.setLayoutParams(layoutParams);
+    //    ViewGroup.LayoutParams layoutParams = holder.videoView.getLayoutParams();
+     //   layoutParams.height = (int) dpHeight/2;
+     //   holder.videoView.setLayoutParams(layoutParams);
 
-        String videoUrl = postVideo.getpVideo();
+          videoUrl = postVideo.getpVideo();
 
 
-        holder.pImageIv.setVisibility(View.GONE);
-        holder.videoView.setVisibility(View.VISIBLE);
+       // holder.pImageIv.setVisibility(View.GONE);
+       // holder.videoView.setVisibility(View.VISIBLE);
 
-        Uri videoUri = Uri.parse(videoUrl);
-        holder.videoView.setVideoURI(videoUri);
-        holder.videoView.requestFocus();
+      //  Uri videoUri = Uri.parse(videoUrl);
+    //    holder.videoView.setVideoURI(videoUri);
+     //   holder.videoView.requestFocus();
 
         try {
             long thumb = holder.getLayoutPosition()* 1000L;
             RequestOptions options = new RequestOptions().frame(thumb);
-            Glide.with(context).load(videoUrl).apply(options).into(mThumb);
+
+            Glide.with(context).load(videoUrl).apply(options).fitCenter().centerCrop().into(holder.pImageIv);
+            holder.playBtn.setVisibility(View.VISIBLE);
+
         }
         catch(NullPointerException e) {
             Log.e("null thumbnail", String.valueOf(e));
         }
 
 
-        holder.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+       *//* holder.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mediaPlayer) {
                 mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
@@ -379,9 +395,9 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
                 holder.videoView.start();
 
             }
-        });
+        });*//*
 
-    }
+    }*/
 
 
     private void addToHisNotifications(String hisUid, String pId, String notification) {
@@ -493,7 +509,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
     }
 
 
-    private void showMoreOptions(ImageButton moreBtn, String uid, String myUid, String pId, String pImage) {
+    private void showMoreOptions(ImageButton moreBtn, String uid, String myUid, String pId, String pImage, String pVideo) {
         //creating popup menu currently having option Delete, we will add more options later
         PopupMenu popupMenu = new PopupMenu(context, moreBtn, Gravity.END);
 
@@ -511,7 +527,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
             int id = item.getItemId();
             if (id==0) {
                 //delete is clicked
-                beginDelete(pId, pImage);
+                beginDelete(pId, pImage, pVideo);
             }
             else   if (id==1) {
                 //edit is clicked
@@ -534,27 +550,40 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
         popupMenu.show();
     }
 
-    private void beginDelete(String pId, String pImage) {
+    private void beginDelete(String pId, String pImage, String pVideo) {
         //post can be with or without image
-        
-        if (pImage.equals("noImage")) {
+        if (!isEmpty(pImage)) {
+            if (pImage.equals("noImage")) {
 
-            deleteWithoutImage(pId);
-        }
-        else {
+                deleteWithoutImage(pId);
+            }else {
+                //post is with image
+                deleteWithImageOrVideo(pId, pImage, pVideo);
+            }
+        } else {
             //post is with image
-            deleteWithImage(pId, pImage);
+            deleteWithImageOrVideo(pId, pImage, pVideo);
         }
+
+
     }
 
-    private void deleteWithImage(String pId, String pImage) {
+    private void deleteWithImageOrVideo(String pId, String pImage, String pVideo) {
         //progress bar
+        StorageReference picRef = null;
         ProgressDialog pd = new ProgressDialog(context);
         pd.setMessage(context.getString(R.string.eliminando));
         /*Steps
         * 1)Delete image using url
         * 2)Delete from database using post id*/
-        StorageReference picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
+        if (!isEmpty(pImage)) {
+            picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
+        } else if (!isEmpty(pVideo)) {
+            picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pVideo);
+        } else {
+            Toast.makeText(context, "Error uppon deleting video or image", Toast.LENGTH_SHORT).show();
+        }
+        assert picRef != null;
         picRef.delete()
                 .addOnSuccessListener(aVoid -> {
                     //image deleted, now delete database
@@ -582,6 +611,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
                             pd.dismiss();
                             Toast.makeText(context, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                         });
+
         }
 
     private void deleteWithoutImage(String pId) {
@@ -621,7 +651,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
         ImageView uPictureIv, pImageIv, imageView2, ic_arrow_left, ic_arrow_right;
         TextView uPseudonymTv, uPracticTv, pTimeTv, pTitleTv, pDescriptionTv, pLikesTv, pCommentsTv;
         ImageButton moreBtn, zoomInBtn, zoomOutBtn;
-        Button likeBtn, commentBtn, shareBtn;
+        Button likeBtn, commentBtn, shareBtn,playBtn;
         LinearLayout profileLayout;
         VideoView videoView;
 
@@ -634,7 +664,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
             uPictureIv = itemView.findViewById(R.id.uPictureIv);
             pImageIv = itemView.findViewById(R.id.pImageIv);
             videoView = itemView.findViewById(R.id.videoView);
-
+            playBtn = itemView.findViewById(R.id.playBtn);
 
 
             ic_arrow_left = itemView.findViewById(R.id.ic_arrow_left);
@@ -668,11 +698,11 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
                     if (pImage != null) {
 
 
-                        pImageIv.setVisibility(View.GONE);
                         imageView2.setVisibility(View.VISIBLE);
                         Picasso.get().load(pImage).into(imageView2, new Callback() {
                             @Override
                             public void onSuccess() {
+                                pImageIv.setVisibility(View.GONE);
                                 ivsizetofs();
                             }
 
@@ -687,9 +717,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
                         zoomInBtn.setVisibility(View.GONE);
                         zoomOutBtn.setVisibility(View.VISIBLE);
                     }
-                    else {
-                        System.out.println("Nada");
-                    }
+
                 }
             });
             zoomOutBtn.setOnClickListener(new View.OnClickListener() {
@@ -705,9 +733,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
                         zoomInBtn.setVisibility(View.VISIBLE);
                         zoomOutBtn.setVisibility(View.GONE);
                     }
-                    else {
-                        System.out.println("Nada");
-                    }
+
                 }
             });
         }

@@ -1,6 +1,7 @@
 package com.android.yoganetwork;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
@@ -20,6 +21,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 
 import com.android.yoganetwork.constants.Constant;
 import com.android.yoganetwork.fragments.ChatListFragment;
@@ -50,6 +52,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import static com.android.yoganetwork.constants.Constant.LOCATION_SERVICES;
 
+import java.util.Objects;
+
 public class DashboardActivity extends AppCompatActivity implements
         MapFragment.OnFragmentInteractionListener {
 
@@ -60,7 +64,6 @@ public class DashboardActivity extends AppCompatActivity implements
 
     //firebase authentication
     FirebaseAuth firebaseAuth;
-    ActionBar actionBar;
     Toolbar toolbar;
 
     String mUID;
@@ -68,36 +71,37 @@ public class DashboardActivity extends AppCompatActivity implements
     private    BottomNavigationView navigationView;
 
     private LocationCallback mLocationCallback;
-    private String[] permission = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+    private final String[] permission = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
-    private int REQUEST_CHECK_SETTINGS = 1;
+    private final int REQUEST_CHECK_SETTINGS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
+
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_dashboard);
-
         //Actionbar and its title
-       actionBar  = getSupportActionBar();
-        assert actionBar != null;
-        actionBar.setTitle(R.string.profile);
-
         toolbar = findViewById(R.id.toolbar_main);
-
+     //   toolbar.inflateMenu(R.menu.menu_main);
         //init
         firebaseAuth = FirebaseAuth.getInstance();
     //bottom navigation
         navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(selectedListener);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.inicio);
 
+     //   toolbar.setVisibility(View.GONE);
 
-        toolbar.setVisibility(View.GONE);
-        getSupportActionBar().show();
 
 
         //home fragment transaction (default, on start)
-        actionBar.setTitle(R.string.inicio); //change actionbar title
+        toolbar.setTitle(R.string.inicio); //change actionbar title
         Intent intent= getIntent();
         Bundle b = intent.getExtras();
 /*
@@ -139,18 +143,17 @@ public class DashboardActivity extends AppCompatActivity implements
         ref.child(mUID).setValue(mToken);
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener selectedListener =
+    private final BottomNavigationView.OnNavigationItemSelectedListener selectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     //handle item clicks
                   switch (item.getItemId()){
                       case R.id.nav_home:
-                          toolbar.setVisibility(View.GONE);
-                          getSupportActionBar().show();
+                  //        toolbar.setVisibility(View.GONE);
 
                           //home fragment transaction
-                          actionBar.setTitle("Inicio"); //change actionbar title
+                          toolbar.setTitle("Inicio"); //change actionbar title
                           HomeFragment fragment1 = new HomeFragment();
                           FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
                           ft1.replace(R.id.content, fragment1, "");
@@ -159,10 +162,9 @@ public class DashboardActivity extends AppCompatActivity implements
                           return true;
                       case R.id.nav_profile:
                           //profile fragment transaction
-                          toolbar.setVisibility(View.GONE);
-                          getSupportActionBar().show();
+                   //       toolbar.setVisibility(View.GONE);
 
-                          actionBar.setTitle(R.string.profile); //change actionbar title
+                          toolbar.setTitle(R.string.profile); //change actionbar title
                           ProfileFragment fragment2 = new ProfileFragment();
                           FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
                           ft2.replace(R.id.content, fragment2, "");
@@ -172,10 +174,8 @@ public class DashboardActivity extends AppCompatActivity implements
 
                           case R.id.nav_users:
                           //users fragment transaction
-                              toolbar.setVisibility(View.GONE);
-                              getSupportActionBar().show();
 
-                              actionBar.setTitle(R.string.users); //change actionbar title
+                              toolbar.setTitle(R.string.users); //change actionbar title
                               UsersFragment fragment3 = new UsersFragment();
                               FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
                               ft3.replace(R.id.content, fragment3, "");
@@ -183,10 +183,9 @@ public class DashboardActivity extends AppCompatActivity implements
                           return true;
                       case R.id.nav_chat:
                           //users fragment transaction
-                          toolbar.setVisibility(View.GONE);
-                          getSupportActionBar().show();
+                      //    toolbar.setVisibility(View.GONE);
 
-                          actionBar.setTitle("Chat"); //change actionbar title
+                          toolbar.setTitle("Chat"); //change actionbar title
                           ChatListFragment fragment4 = new ChatListFragment();
                           FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
                           ft4.replace(R.id.content, fragment4, "");
@@ -218,10 +217,9 @@ public class DashboardActivity extends AppCompatActivity implements
                     //notification clicked
 
                     //notifications fragment transaction
-                    toolbar.setVisibility(View.GONE);
-                    getSupportActionBar().show();
+         //           toolbar.setVisibility(View.GONE);
 
-                    actionBar.setTitle(R.string.notificaciones); //change actionbar title
+                    toolbar.setTitle(R.string.notificaciones); //change actionbar title
                     NotificationsFragment fragment5 = new NotificationsFragment();
                     FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
                     ft5.replace(R.id.content, fragment5, "");
@@ -231,25 +229,23 @@ public class DashboardActivity extends AppCompatActivity implements
                     //group chats clicked
 
                     //group chats fragment transaction
-                    toolbar.setVisibility(View.GONE);
+               //     toolbar.setVisibility(View.GONE);
 
-                    actionBar.setTitle(R.string.grupos); //change actionbar title
+                    toolbar.setTitle(R.string.grupos); //change actionbar title
                     GroupChatsFragment fragment6 = new GroupChatsFragment();
                     FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
                     ft6.replace(R.id.content, fragment6, "");
-                    getSupportActionBar().show();
                     ft6.commit();
                 }  else if (id == 2) {
                     //group chats clicked
 
                     //group chats fragment transaction
-                    actionBar.setTitle("Maps"); //change actionbar title
+                    toolbar.setTitle("Maps"); //change actionbar title
                     MapFragment fragment7 = new MapFragment();
                     FragmentTransaction ft7 = getSupportFragmentManager().beginTransaction();
                     ft7.replace(R.id.content, fragment7, "");
                     ft7.commit();
-                    getSupportActionBar().hide();
-                    toolbar.setVisibility(View.VISIBLE);
+            //        toolbar.setVisibility(View.VISIBLE);
                 }
                 return false;
             }

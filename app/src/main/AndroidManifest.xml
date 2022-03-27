@@ -12,29 +12,35 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
     <application
+        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
         android:requestLegacyExternalStorage="true"
-
-        android:theme="@style/Theme.YogaNetwork"
-        android:allowBackup="true">
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true">
         <activity
-            android:name=".AddToGroupActivity"     android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor"
-
+            android:name=".VideoPlayerActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:configChanges="orientation|screenSize|screenLayout"
             android:exported="false" />
         <activity
-            android:name=".CommentLikedByActivity"     android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor"
-
-            android:exported="false" />
+            android:name=".AddToGroupActivity"
+            android:exported="false"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".CommentLikedByActivity"
+            android:exported="false"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="nosensor" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -49,65 +55,62 @@
 
         <activity
             android:name=".PostRegistrationActivity"
-            android:screenOrientation="nosensor"
             android:hardwareAccelerated="true"
-
-            android:theme="@style/AppTheme.NoActionBar"
-            />
-        <activity android:name=".GroupChatImageActivity"
             android:screenOrientation="nosensor"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".GroupChatImageActivity"
             android:hardwareAccelerated="true"
-            />
-        <activity android:name=".GroupEditActivity"
-            android:screenOrientation="nosensor"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".GroupEditActivity"
             android:hardwareAccelerated="true"
-            />
-        <activity android:name=".GroupInfoActivity"
-            android:screenOrientation="nosensor"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".GroupInfoActivity"
             android:hardwareAccelerated="true"
-            />
-        <activity android:name=".GroupParticipantAddActivity"
-            android:screenOrientation="nosensor"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".GroupParticipantAddActivity"
             android:hardwareAccelerated="true"
-            />
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".GroupChatActivity"
-            android:screenOrientation="nosensor"
             android:hardwareAccelerated="true"
-
+            android:screenOrientation="nosensor"
             android:theme="@style/AppThemeNo" />
         <activity
-            android:screenOrientation="nosensor"
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:screenOrientation="nosensor"
             android:theme="@style/Base.Theme.AppCompat" /> <!-- optional (needed if default theme has no action bar) -->
-        <activity android:name=".GroupCreateActivity"
+        <activity
+            android:name=".GroupCreateActivity"
+            android:hardwareAccelerated="true" />
+        <activity
+            android:name=".PostLikedByActivity"
             android:hardwareAccelerated="true"
-            />
-        <activity android:name=".PostLikedByActivity"
-            android:screenOrientation="nosensor"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".SettingsActivity"
             android:hardwareAccelerated="true"
-            />
-        <activity android:name=".SettingsActivity"
-            android:screenOrientation="nosensor"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".PostDetailActivity"
             android:hardwareAccelerated="true"
-            />
-        <activity android:name=".PostDetailActivity"
-            android:screenOrientation="nosensor"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".ThereProfileActivity"
             android:hardwareAccelerated="true"
-            />
-        <activity android:name=".ThereProfileActivity"
-            android:screenOrientation="nosensor"
-            android:hardwareAccelerated="true"
-            />
+            android:screenOrientation="nosensor" />
         <!--
 Intent filters inform the system what intents an application component is willing to accept
         To receive text/image type of intents we will add intent filter to activity, that will handle that data
         -->
         <activity
             android:name=".AddPostActivity"
-            android:screenOrientation="nosensor"
+            android:exported="false"
             android:hardwareAccelerated="true"
-            android:exported="false">
+            android:screenOrientation="nosensor">
             <intent-filter>
 
                 <!-- For image -->
@@ -129,26 +132,28 @@ Intent filters inform the system what intents an application component is willin
         </activity>
         <activity
             android:name=".ChatActivity"
+            android:hardwareAccelerated="true"
             android:screenOrientation="nosensor"
-            android:hardwareAccelerated="true"
             android:theme="@style/AppThemeNo" />
-        <activity android:name=".LoginActivity"
-            android:hardwareAccelerated="true"
-            />
+        <activity
+            android:name=".LoginActivity"
+            android:hardwareAccelerated="true" />
         <activity
             android:name=".DashboardActivity"
-            android:hardwareAccelerated="true"
-             android:exported="true">
+            android:exported="true"
+            android:hardwareAccelerated="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity"      android:hardwareAccelerated="true"
-            />
-        <activity android:name=".MainActivity"      android:hardwareAccelerated="true"
-            />
+        <activity
+            android:name=".RegisterActivity"
+            android:hardwareAccelerated="true" />
+        <activity
+            android:name=".MainActivity"
+            android:hardwareAccelerated="true" />
 
         <service
             android:name=".MyFirebaseMessagingService"

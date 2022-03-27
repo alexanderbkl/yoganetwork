@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +39,8 @@ import android.widget.Toast;
 
 import com.android.yoganetwork.adapters.AdapterComments;
 import com.android.yoganetwork.models.ModelComment;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -75,7 +78,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
     //to get detail of user and post
     String hisUid, myUid, myPractic, myPseudonym, myDp,
-    postId, pLikes, hisDp, hisPractic, hisPseudonym, pImage;
+    postId, pLikes, hisDp, hisPractic, hisPseudonym, pImage, pVideo;
     String pseudonyn, uid;
 
     boolean mProcessComment = false;
@@ -666,6 +669,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     pImage = ""+ds.child("pImage").getValue();
                     hisDp = ""+ds.child("uDp").getValue();
                     hisUid = ""+ds.child("uid").getValue();
+                    pVideo = ""+ds.child("pVideo").getValue();
                     hisPractic = ""+ds.child("uPractic").getValue();
                     hisPseudonym = ""+ds.child("uPseudonym").getValue();
                     String commentCount = ""+ds.child("pComments").getValue();
@@ -688,6 +692,18 @@ public class PostDetailActivity extends AppCompatActivity {
                         //hide imageview
                         pImageIv.setVisibility(View.GONE);
 
+                    } else if (pVideo != null) {
+                        try {
+                            long thumb = 1000L;
+                            RequestOptions options = new RequestOptions().frame(thumb);
+
+                            Glide.with(getApplicationContext()).load(pVideo).apply(options).fitCenter().centerCrop().into(pImageIv);
+
+
+                        }
+                        catch(NullPointerException e) {
+                            Log.e("null thumbnail", String.valueOf(e));
+                        }
                     }
                     else {
                         //show imageview
