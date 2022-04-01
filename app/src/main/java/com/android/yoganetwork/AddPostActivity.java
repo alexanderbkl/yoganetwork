@@ -133,7 +133,8 @@ public class AddPostActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //check until required data get
-                for (DataSnapshot ds: snapshot.getChildren()) {
+                for (DataSnapshot ds: snapshot.
+                        getChildren()) {
                     //get data
                     String name = ""+ ds.child("pseudonym").getValue();
                     String practica = ""+ ds.child("practic").getValue();

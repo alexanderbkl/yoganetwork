@@ -1,5 +1,6 @@
 package com.android.yoganetwork.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -61,7 +62,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolder myHolder, int i) {
+    public void onBindViewHolder(@NonNull MyHolder myHolder, @SuppressLint("RecyclerView") int i) {
         //get data
         String hisUid = userList.get(i).getUid();
         String userImage = userList.get(i).getImage();

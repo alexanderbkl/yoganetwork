@@ -6,9 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".PostDetailActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:id="@+id/actionBar"
+        android:background="@android:color/transparent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:background="#656565"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbar"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
     <androidx.core.widget.NestedScrollView
         android:layout_above="@+id/commentsLayout"
         android:layout_width="match_parent"
+        android:layout_below="@+id/actionBar"
         android:layout_height="match_parent">
 
         <LinearLayout

@@ -99,7 +99,9 @@ public class HomeFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
                 for (DataSnapshot ds: snapshot.getChildren()) {
+
                     ModelPost modelPost = ds.getValue(ModelPost.class);
+
                     postList.add(modelPost);
                     //adapter
                     adapterPosts = new AdapterPosts(getActivity(), postList, recyclerView);

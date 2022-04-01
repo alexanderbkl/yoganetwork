@@ -3,6 +3,7 @@ package com.android.yoganetwork;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.FileProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -108,10 +109,14 @@ public class PostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_detail);
         //actionbar and its properties
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.detallespst);
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar()
+                .setTitle(R.string.detallespst);
+        getSupportActionBar()
+                .setDisplayShowHomeEnabled(true);
+        getSupportActionBar()
+                .setDisplayHomeAsUpEnabled(true);
 
         //get id of post using intent
         Intent intent = getIntent();
