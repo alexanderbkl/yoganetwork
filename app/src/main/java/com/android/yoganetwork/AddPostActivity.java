@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -66,6 +67,8 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 
 
@@ -78,7 +81,6 @@ public class AddPostActivity extends AppCompatActivity {
     //storage
     StorageReference storageReference;
 
-     ActionBar actionBar;
 
 
 
@@ -89,12 +91,13 @@ public class AddPostActivity extends AppCompatActivity {
     Button uploadBtn;
     //likes
     String pLikes = "0";
+    String pDislikes ="0";
     String pComments = "0";
     //user info
     String pseudonym, practic, uid, dp;
     boolean isVideo = false;
     boolean isAudio = false;
-
+    Toolbar toolbar;
     //info of post to be edited
     String editTitle, editDescription, editImage;
 
@@ -117,17 +120,16 @@ public class AddPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
 
-        actionBar = getSupportActionBar();
-        actionBar.setTitle(getString(R.string.addpost));
-        //enable back button in actionbar
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
         //init firebase
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
+        toolbar = findViewById(R.id.toolbar_main);
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Users");
         storageReference = FirebaseStorage.getInstance().getReference();
+        setSupportActionBar(toolbar);
+
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Add Post");
         Query querye = databaseReference.orderByChild("uid").equalTo(user.getUid());
         querye.addValueEventListener(new ValueEventListener() {
             @Override
@@ -207,17 +209,17 @@ public class AddPostActivity extends AppCompatActivity {
         //validate if we came here to update post i.e. came from AdapterPost
         if (isUpdateKey.equals("editPost")) {
             //update
-            actionBar.setTitle(getString(R.string.updatepost));
+            getSupportActionBar().setTitle(getString(R.string.updatepost));
             uploadBtn.setText(getString(R.string.actualizar));
             loadPostData(editPostId);
         }
         else {
             //add
-            actionBar.setTitle("Añadir nuevo post");
+            getSupportActionBar().setTitle("Añadir nuevo post");
             uploadBtn.setText(getString(R.string.publicar));
         }
 
-        actionBar.setSubtitle(practic);
+        getSupportActionBar().setSubtitle(practic);
 
 
         //get image from camera/gallery on click
@@ -623,6 +625,10 @@ public class AddPostActivity extends AppCompatActivity {
     private void uploadData(String title, String description) {
 
         //for post-image name, post-id, post-publish-time
+
+
+
+
         final String timeStamp = String.valueOf(System.currentTimeMillis());
 
         String filePathAndName = "Posts/" + "post_" + timeStamp;
@@ -658,6 +664,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pId", timeStamp);
                                 hashMap.put("pTitle", title);
                                 hashMap.put("pLikes", pLikes);
+                                hashMap.put("pDislikes", pDislikes);
                                 hashMap.put("pComments", pComments);
                                 hashMap.put("pDescr", description);
                                 hashMap.put("pImage", downloadUri);
@@ -731,6 +738,7 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("uPseudonym", pseudonym);
             hashMap.put("uPractic", practic);
             hashMap.put("pLikes", pLikes);
+            hashMap.put("pDislikes", pDislikes);
             hashMap.put("pComments", pComments);
             hashMap.put("uDp", dp);
             hashMap.put("pId", timeStamp);
@@ -1093,6 +1101,7 @@ public class AddPostActivity extends AppCompatActivity {
                             hashMap.put("pId", timestamp);
                             hashMap.put("pTitle", title);
                             hashMap.put("pLikes", pLikes);
+                            hashMap.put("pDislikes", pDislikes);
                             hashMap.put("pComments", pComments);
                             hashMap.put("pDescr", description);
                             hashMap.put("pVideo", downloadUri);

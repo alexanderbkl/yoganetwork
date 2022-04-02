@@ -47,24 +47,21 @@ import com.android.yoganetwork.VideoPlayerActivity;
 import com.android.yoganetwork.models.ModelPost;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.common.base.CharMatcher;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import org.jetbrains.annotations.NotNull;
 
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
 
@@ -77,6 +74,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
     boolean mProcessLike=false;
     RecyclerView recyclerView;
     int countLikes, countComments;
+    ModelPost modelPost;
 
 
     public AdapterPosts(Context context, List<ModelPost> postList, RecyclerView recyclerView) {
@@ -178,7 +176,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
                 myHolder.zoomInBtn.setVisibility(View.GONE);
             }
         }
-        ModelPost modelPost = postList.get(i);
+         modelPost = postList.get(i);
         String pTimeStamp = postList.get(i).getpTime();
         if (postList.get(i).getpVideo() != null) {
             myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, null, pVideo));
@@ -246,6 +244,8 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
        //     }}
      //    });
 
+        //set itemview cache size
+        recyclerView.setItemViewCacheSize(20);
         //set user dp
         try {
             Picasso.get().load(uDp).placeholder(R.drawable.ic_default_img).into(myHolder.uPictureIv);
@@ -375,21 +375,51 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
         final String pId = postList.get(i).getpId();
         final String uid = postList.get(i).getUid();
 
+        likesRef.child(pId).child(myUid).getKey();
+
 
         //add post id and uid in likes node
         DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
-
-        likesRef.child(pId).child(myUid).setValue("Liked")
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
+        likesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                snapshot.child(pId).child(myUid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            setLikes(myHolder, pId);
-                            //add post id in likes node
-                            addToHisNotifications(""+uid, ""+pId, context.getString(R.string.liked));
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+
+                        if (snapshot.exists()) {
+
+                            //already liked, so remove like
+                            postsRef.child(pId).child("pLikes").setValue(""+(Integer.parseInt(postList.get(i).getpLikes())-1));
+                            likesRef.child(pId).child(myUid).removeValue();
+                        }
+                        else {
+                            //not liked, like it
+                            postsRef.child(pId).child("pLikes").setValue(""+(Integer.parseInt(postList.get(i).getpLikes())+1));
+                            likesRef.child(pId).child(myUid).setValue("Liked").addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    addToHisNotifications(""+uid, ""+pId, context.getString(R.string.liked), i);
+                                }
+                            });
                         }
                     }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                    }
                 });
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+
+/*
+        */
     }
 
    /* private void setVideoToVideoView(MyHolder holder, ModelPost postVideo) {
@@ -443,7 +473,7 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
     }*/
 
 
-    private void addToHisNotifications(String hisUid, String pId, String notification) {
+    private void addToHisNotifications(String hisUid, String pId, String notification, int i) {
         String timestamp = ""+System.currentTimeMillis();
 
         HashMap<Object, String> hashMap = new HashMap<>();

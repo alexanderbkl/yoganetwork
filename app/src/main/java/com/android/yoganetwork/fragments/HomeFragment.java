@@ -10,18 +10,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.view.MenuItemCompat;
-import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -40,9 +36,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 public class HomeFragment extends Fragment {
@@ -73,7 +67,7 @@ public class HomeFragment extends Fragment {
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        //show  newest post first, for this load from last
+         //show  newest post first, for this load from last
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         //set layout to recyclerview
@@ -93,8 +87,9 @@ public class HomeFragment extends Fragment {
         //path of all posts
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         //get all data from this ref
+        final long currentDate = System.currentTimeMillis();
 
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
@@ -102,13 +97,34 @@ public class HomeFragment extends Fragment {
 
                     ModelPost modelPost = ds.getValue(ModelPost.class);
 
+                    //get the post
+                    //get the date of the post
+                    assert modelPost != null;
+                    long postDate = Long.parseLong(modelPost.getpId());
+                    long likes = Long.parseLong(modelPost.getpLikes());
+                    //calculate the hot score
+
+                    long hotScore = hot(postDate,likes, currentDate);
+
+                    //add the hot score to the post
+                    modelPost.setHotScore(hotScore);
+                    //add the post to the list
                     postList.add(modelPost);
+
+                    //sort the list by hot score
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        postList.sort((o1, o2) -> (int) (o2.getHotScore() - o1.getHotScore()));
+                    }
+
                     //adapter
                     adapterPosts = new AdapterPosts(getActivity(), postList, recyclerView);
                     adapterPosts.setHasStableIds(true);
                     //set adapter to recyclerview
                     recyclerView.setAdapter(adapterPosts);
                 }
+
+
             }
 
             @Override
@@ -116,8 +132,23 @@ public class HomeFragment extends Fragment {
                 //in case of error
             }
         });
+
     }
 
+    private long hot(long postDate, long likes, long currentDate) {
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTimeZone(TimeZone.getTimeZone("GMT"));
+        int year = cal2.get(Calendar.YEAR);
+        int yearNumber = (Math.abs(year) % 10)*10000;
+
+        return ((currentDate - postDate) / 86400000) * 1000 - score(likes) - yearNumber * 10000;
+    }
+
+
+    //return score sorted by likes and dislikes
+    private long score(long likes) {
+        return likes * 1000;
+    }
     private void searchPosts(String searchQuery) {
         //path of all posts
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
@@ -172,8 +203,8 @@ public class HomeFragment extends Fragment {
     }
 
     /*inflate options menu*/
-     @Override
-   public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //inflating menu
         inflater.inflate(R.menu.menu_main, menu);
         //hide some options
@@ -218,7 +249,7 @@ public class HomeFragment extends Fragment {
 
 
 
-  /*  @Override
+    @Override
     //hmm
     public boolean onOptionsItemSelected(MenuItem item) {
         //get item id's
@@ -229,7 +260,7 @@ public class HomeFragment extends Fragment {
 
         }
         else if (id == R.id.action_add_post) {
-        startActivity(new Intent(getActivity(), AddPostActivity.class));
+            startActivity(new Intent(getActivity(), AddPostActivity.class));
 
         }
         else if (id == R.id.action_settings) {
@@ -238,5 +269,5 @@ public class HomeFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
-    }*/
+    }
 }

@@ -3,11 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_add_post.xml" value="0.18854166666666666" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_dashboard.xml" value="0.18958333333333333" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_there_profile.xml" value="0.18854166666666666" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_posts.xml" value="0.67" />
       </map>
     </option>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="jbr-11" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="jbr-11" project-jdk-type="JavaSDK" />
 </project>
