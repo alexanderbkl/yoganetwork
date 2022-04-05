@@ -1,12 +1,13 @@
 package com.android.yoganetwork;
 
+import android.annotation.SuppressLint;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
@@ -20,13 +21,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
 
 import com.android.yoganetwork.constants.Constant;
 import com.android.yoganetwork.fragments.ChatListFragment;
 import com.android.yoganetwork.fragments.GroupChatsFragment;
-import com.android.yoganetwork.fragments.HomeFragment;
+import com.android.yoganetwork.fragments.PostsFragment;
 import com.android.yoganetwork.fragments.MapFragment;
 import com.android.yoganetwork.fragments.NotificationsFragment;
 import com.android.yoganetwork.fragments.ProfileFragment;
@@ -50,9 +49,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static com.android.yoganetwork.constants.Constant.LOCATION_SERVICES;
-
 import java.util.Objects;
+
+import static com.android.yoganetwork.constants.Constant.LOCATION_SERVICES;
 
 public class DashboardActivity extends AppCompatActivity implements
         MapFragment.OnFragmentInteractionListener {
@@ -66,7 +65,7 @@ public class DashboardActivity extends AppCompatActivity implements
     FirebaseAuth firebaseAuth;
     Toolbar toolbar;
 
-    String mUID;
+    String mUID, fragPos, prevFrag;
 
     private    BottomNavigationView navigationView;
 
@@ -75,11 +74,30 @@ public class DashboardActivity extends AppCompatActivity implements
     private LocationRequest mLocationRequest;
     private FusedLocationProviderClient fusedLocationProviderClient;
     private final int REQUEST_CHECK_SETTINGS = 1;
+    private PostsFragment fragment1;
+    private ProfileFragment fragment2;
+    private UsersFragment fragment3;
+    private ChatListFragment fragment4;
+    private NotificationsFragment fragment5;
+    private GroupChatsFragment fragment6;
+    private MapFragment fragment7;
+
+    public DashboardActivity() {
+    }
+
+    public DashboardActivity(PostsFragment fragment1, ProfileFragment fragment2, UsersFragment fragment3, ChatListFragment fragment4, NotificationsFragment fragment5, GroupChatsFragment fragment6, MapFragment fragment7) {
+        this.fragment1 = fragment1;
+        this.fragment2 = fragment2;
+        this.fragment3 = fragment3;
+        this.fragment4 = fragment4;
+        this.fragment5 = fragment5;
+        this.fragment6 = fragment6;
+        this.fragment7 = fragment7;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
 
 
         super.onCreate(savedInstanceState);
@@ -87,41 +105,14 @@ public class DashboardActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_dashboard);
         //Actionbar and its title
         toolbar = findViewById(R.id.toolbar_main);
-     //   toolbar.inflateMenu(R.menu.menu_main);
+        //   toolbar.inflateMenu(R.menu.menu_main);
         //init
         firebaseAuth = FirebaseAuth.getInstance();
-    //bottom navigation
+        //bottom navigation
         navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(selectedListener);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.inicio);
-
-     //   toolbar.setVisibility(View.GONE);
-
-
-
-        //home fragment transaction (default, on start)
-        toolbar.setTitle(R.string.inicio); //change actionbar title
-        Intent intent= getIntent();
-        Bundle b = intent.getExtras();
-/*
-        if(b!=null)
-        {
-            int fragment = (int) b.get("fragment");
-            if (fragment == 2) {
-                ProfileFragment fragment2 = new ProfileFragment();
-                FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
-                ft2.replace(R.id.content, fragment2, "");
-                ft2.commit();
-
-            }
-        } else {*/
-            HomeFragment fragment1 = new HomeFragment();
-            FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
-            ft1.replace(R.id.content, fragment1, "");
-            ft1.commit();
-
-       /* }*/
 
 
         checkUserStatus();
@@ -129,7 +120,19 @@ public class DashboardActivity extends AppCompatActivity implements
         initLocation();
 
 
+
+
+
+
+        if (fragPos == null) {
+            fragPos = "0";
+            addFragments();
+
+
+        }
     }
+
+
 
     @Override
     protected void onResume() {
@@ -143,53 +146,96 @@ public class DashboardActivity extends AppCompatActivity implements
         ref.child(mUID).setValue(mToken);
     }
 
+    //if PostsFragment was loaded at least once, maintain it at the background so that the dada is not lost
     private final BottomNavigationView.OnNavigationItemSelectedListener selectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @SuppressLint("NonConstantResourceId")
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     //handle item clicks
                   switch (item.getItemId()){
                       case R.id.nav_home:
-                  //        toolbar.setVisibility(View.GONE);
+                            //save fragment position
+                          if (!fragPos.equals("0")) {
+                              //home fragment transaction
+                              toolbar.setTitle("Inicio"); //change actionbar title
+                              FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+                              if (Integer.parseInt(fragPos) > 0) {
+                                  ft1.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+                              } else {
+                                  ft1.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+                              }
+                              ft1.show(fragment1).hide(fragment2).hide(fragment3).hide(fragment4).hide(fragment5).hide(fragment6).hide(fragment7).commit();
+                              prevFrag = fragPos;
+                              fragPos = "0";
+                          } else {
+                              fragPos = "0";
+                              //home fragment transaction
+                              addFragments();
+                          }
 
-                          //home fragment transaction
-                          toolbar.setTitle("Inicio"); //change actionbar title
-                          HomeFragment fragment1 = new HomeFragment();
-                          FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
-                          ft1.replace(R.id.content, fragment1, "");
-                          ft1.commit();
 
                           return true;
                       case R.id.nav_profile:
-                          //profile fragment transaction
-                   //       toolbar.setVisibility(View.GONE);
-
-                          toolbar.setTitle(R.string.profile); //change actionbar title
-                          ProfileFragment fragment2 = new ProfileFragment();
-                          FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
-                          ft2.replace(R.id.content, fragment2, "");
-                          ft2.commit();
-
+                          if (!fragPos.equals("1")) {
+                              //profile fragment transaction
+                              //save fragment position
+                              toolbar.setTitle(R.string.profile); //change actionbar title
+                              FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+                              if (Integer.parseInt(fragPos) > 1) {
+                                  ft2.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+                              } else {
+                                  ft2.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+                              }
+                              ft2.hide(fragment1).show(fragment2).hide(fragment3).hide(fragment4).hide(fragment5).hide(fragment6).hide(fragment7).commit();
+                              prevFrag = fragPos;
+                              fragPos = "1";
+                          } else {
+                              fragPos = "1";
+                              //profile fragment transaction
+                              addFragments();
+                          }
                           return true;
 
                           case R.id.nav_users:
-                          //users fragment transaction
+                              if (!fragPos.equals("2")) {
+                                  //users fragment transaction
+                                  toolbar.setTitle(R.string.users); //change actionbar title
+                                  FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
+                                  if (Integer.parseInt(fragPos) > 2) {
+                                      ft3.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+                                  } else {
+                                      ft3.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+                                  }
+                                  ft3.hide(fragment1).hide(fragment2).show(fragment3).hide(fragment4).hide(fragment5).hide(fragment6).hide(fragment7).commit();
+                                  prevFrag = fragPos;
+                                  fragPos = "2";
+                              } else {
+                                  fragPos = "2";
+                                  //users fragment transaction
+                                  addFragments();
 
-                              toolbar.setTitle(R.string.users); //change actionbar title
-                              UsersFragment fragment3 = new UsersFragment();
-                              FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
-                              ft3.replace(R.id.content, fragment3, "");
-                              ft3.commit();
+                              }
                           return true;
                       case R.id.nav_chat:
+                          if (!fragPos.equals("3")) {
                           //users fragment transaction
-                      //    toolbar.setVisibility(View.GONE);
 
                           toolbar.setTitle("Chat"); //change actionbar title
-                          ChatListFragment fragment4 = new ChatListFragment();
                           FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
-                          ft4.replace(R.id.content, fragment4, "");
-                          ft4.commit();
+                              if (Integer.parseInt(fragPos) > 3) {
+                                  ft4.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+                              } else {
+                                  ft4.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+                              }
+                              ft4.hide(fragment1).hide(fragment2).hide(fragment3).show(fragment4).hide(fragment5).hide(fragment6).hide(fragment7).commit();
+                          prevFrag = fragPos;
+                          fragPos = "3";
+                          } else {
+                              fragPos = "3";
+                              //users fragment transaction
+                              addFragments();
+                          }
                           return true;
 
                       case R.id.nav_more:
@@ -199,6 +245,7 @@ public class DashboardActivity extends AppCompatActivity implements
                     return false;
                 }
             };
+
 
     private void showMoreOptions() {
         //popup menu to show more options
@@ -214,37 +261,61 @@ public class DashboardActivity extends AppCompatActivity implements
             public boolean onMenuItemClick(MenuItem item) {
                 int id = item.getItemId();
                 if (id == 0) {
-                    //notification clicked
+                    if (!fragPos.equals("4")) {
+                        prevFrag = fragPos;
+                        //notification clicked
 
                     //notifications fragment transaction
          //           toolbar.setVisibility(View.GONE);
+                    fragPos = "4";
 
                     toolbar.setTitle(R.string.notificaciones); //change actionbar title
-                    NotificationsFragment fragment5 = new NotificationsFragment();
                     FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
-                    ft5.replace(R.id.content, fragment5, "");
-                    ft5.commit();
+                        ft5.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+                        ft5.hide(fragment1).hide(fragment2).hide(fragment3).hide(fragment4).show(fragment5).hide(fragment6).hide(fragment7).commit();
+                    } else {
+                        fragPos = "4";
+                        //notifications fragment transaction
+                        addFragments();
+                    }
+
+
+
+
+
+
                 }
                 else if (id == 1) {
-                    //group chats clicked
+                    if (!fragPos.equals("5")) {
+                        prevFrag = fragPos;
+                        //group chats clicked
+                        //group chats fragment transaction
+                        fragPos = "5";
 
-                    //group chats fragment transaction
-               //     toolbar.setVisibility(View.GONE);
-
-                    toolbar.setTitle(R.string.grupos); //change actionbar title
-                    GroupChatsFragment fragment6 = new GroupChatsFragment();
-                    FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
-                    ft6.replace(R.id.content, fragment6, "");
-                    ft6.commit();
+                        toolbar.setTitle(R.string.grupos); //change actionbar title
+                        FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+                        ft6.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+                        ft6.hide(fragment1).hide(fragment2).hide(fragment3).hide(fragment4).hide(fragment5).show(fragment6).hide(fragment7).commit();
+                    } else {
+                        fragPos = "5";
+                        //group chats fragment transaction
+                        addFragments();
+                    }
                 }  else if (id == 2) {
-                    //group chats clicked
-
+                    if (!fragPos.equals("6")) {
+                        prevFrag = fragPos;
+                        //group chats clicked
+                    fragPos = "6";
                     //group chats fragment transaction
                     toolbar.setTitle("Maps"); //change actionbar title
-                    MapFragment fragment7 = new MapFragment();
                     FragmentTransaction ft7 = getSupportFragmentManager().beginTransaction();
-                    ft7.replace(R.id.content, fragment7, "");
-                    ft7.commit();
+                        ft7.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+                        ft7.hide(fragment1).hide(fragment2).hide(fragment3).hide(fragment4).hide(fragment5).hide(fragment6).show(fragment7).commit();
+                    } else {
+                        fragPos = "6";
+                        //group chats fragment transaction
+                        addFragments();
+                    }
             //        toolbar.setVisibility(View.VISIBLE);
                 }
                 return false;
@@ -280,8 +351,79 @@ public class DashboardActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+
+            if (getFragmentManager().getBackStackEntryCount() > 0 ){
+                getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            } else if ((prevFrag != null)) {
+                switch (prevFrag) {
+                    case "0":
+                        fragPos = "0";
+                        //home fragment transaction
+                        toolbar.setTitle("Inicio"); //change actionbar title
+                        navigationView.setSelectedItemId(R.id.nav_home);
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ft.show(fragment1).hide(fragment2).hide(fragment3).hide(fragment4).hide(fragment5).hide(fragment6).hide(fragment7).commit();
+
+                        break;
+
+
+
+
+                    case "1":
+                        fragPos = "1";
+                        //profile fragment transaction
+                        toolbar.setTitle("Perfil"); //change actionbar title
+                        navigationView.setSelectedItemId(R.id.nav_profile);
+                        FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+                        ft2.hide(fragment1).show(fragment2).hide(fragment3).hide(fragment4).hide(fragment5).hide(fragment6).hide(fragment7).commit();
+                        break;
+                    case "2":
+                        fragPos = "2";
+                        //users fragment transaction
+                        toolbar.setTitle("Usuarios"); //change actionbar title
+                        navigationView.setSelectedItemId(R.id.nav_users);
+                        FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
+                        ft3.hide(fragment1).hide(fragment2).show(fragment3).hide(fragment4).hide(fragment5).hide(fragment6).hide(fragment7).commit();
+                        break;
+                    case "3":
+                        fragPos = "3";
+                        //chats fragment transaction
+                        toolbar.setTitle("Chats"); //change actionbar title
+                        navigationView.setSelectedItemId(R.id.nav_chat);
+                        FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
+                        ft4.hide(fragment1).hide(fragment2).hide(fragment3).show(fragment4).hide(fragment5).hide(fragment6).hide(fragment7).commit();
+                        break;
+                    case "4":
+                        fragPos = "4";
+                        //notifications fragment transaction
+                        toolbar.setTitle("Notificaciones"); //change actionbar title
+                        navigationView.setSelectedItemId(R.id.nav_more);
+                        FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+                        ft5.hide(fragment1).hide(fragment2).hide(fragment3).hide(fragment4).show(fragment5).hide(fragment6).hide(fragment7).commit();
+                        break;
+                    case "5":
+                        fragPos = "5";
+                        //groups fragment transaction
+                        toolbar.setTitle("Grupos"); //change actionbar title
+                        navigationView.setSelectedItemId(R.id.nav_more);
+                        FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+                        ft6.hide(fragment1).hide(fragment2).hide(fragment3).hide(fragment4).hide(fragment5).show(fragment6).hide(fragment7).commit();
+                        break;
+                    case "6":
+                        fragPos = "6";
+                        //maps fragment transaction
+                        toolbar.setTitle("Mapa"); //change actionbar title
+                        navigationView.setSelectedItemId(R.id.nav_more);
+                        FragmentTransaction ft7 = getSupportFragmentManager().beginTransaction();
+                        ft7.hide(fragment1).hide(fragment2).hide(fragment3).hide(fragment4).hide(fragment5).hide(fragment6).show(fragment7).commit();
+                        break;
+                }
+
+        }
+
+            else {
+                super.onBackPressed();
+            }
     }
 
     @Override
@@ -333,6 +475,8 @@ public class DashboardActivity extends AppCompatActivity implements
 
     }
 
+
+
     private void initLocationSettings() {
         //Builder for the location settings provider
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
@@ -371,6 +515,236 @@ public class DashboardActivity extends AppCompatActivity implements
     }
 
 
+    private void addFragments() {
+        declareFragments();
+        if (Objects.equals(fragPos, "0")) {
+            //home fragment transaction
+            toolbar.setTitle("Inicio"); //change actionbar title
+            FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+            ft1
+                    .replace(R.id.content, fragment1, "");
+            ft1.addToBackStack(null).commit();
+
+            FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+            ft2.add(R.id.content, fragment2, "")
+                    .hide(fragment2).commit();
+
+            FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
+            ft3.add(R.id.content, fragment3, "")
+                    .hide(fragment3).commit();
+
+            FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
+            ft4.add(R.id.content, fragment4, "")
+                    .hide(fragment4).commit();
+
+            FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+            ft5.add(R.id.content, fragment5, "")
+                    .hide(fragment5).commit();
+
+            FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+            ft6.add(R.id.content, fragment6, "")
+                    .hide(fragment6).commit();
+
+            FragmentTransaction ft7 = getSupportFragmentManager().beginTransaction();
+            ft7.add(R.id.content, fragment7, "")
+                    .hide(fragment7).commit();
+
+        } else if (Objects.equals(fragPos, "1")) {
+            //profile fragment transaction
+            toolbar.setTitle("Perfil"); //change actionbar title
+            FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+            ft1.replace(R.id.content, fragment2, "");
+            ft1.addToBackStack(null).commit();
+
+            FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+            ft2.add(R.id.content, fragment1, "")
+                    .hide(fragment1).commit();
+
+            FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
+            ft3.add(R.id.content, fragment3, "")
+                    .hide(fragment3).commit();
+
+            FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
+            ft4.add(R.id.content, fragment4, "")
+                    .hide(fragment4).commit();
+
+            FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+            ft5.add(R.id.content, fragment5, "")
+                    .hide(fragment5).commit();
+
+            FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+            ft6.add(R.id.content, fragment6, "")
+                    .hide(fragment6).commit();
+
+            FragmentTransaction ft7 = getSupportFragmentManager().beginTransaction();
+            ft7.add(R.id.content, fragment7, "")
+                    .hide(fragment7).commit();
+
+        } else if (Objects.equals(fragPos, "2")) {
+            //users fragment transaction
+            toolbar.setTitle("Usuarios"); //change actionbar title
+            FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+            ft1.replace(R.id.content, fragment3, "");
+            ft1.addToBackStack(null).commit();
+
+            FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+            ft2.add(R.id.content, fragment1, "")
+                    .hide(fragment1).commit();
+
+            FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
+            ft3.add(R.id.content, fragment2, "")
+                    .hide(fragment2).commit();
+
+            FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
+            ft4.add(R.id.content, fragment4, "")
+                    .hide(fragment4).commit();
+
+            FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+            ft5.add(R.id.content, fragment5, "")
+                    .hide(fragment5).commit();
+
+            FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+            ft6.add(R.id.content, fragment6, "")
+                    .hide(fragment6).commit();
+
+            FragmentTransaction ft7 = getSupportFragmentManager().beginTransaction();
+            ft7.add(R.id.content, fragment7, "")
+                    .hide(fragment7).commit();
+
+        } else if (Objects.equals(fragPos, "3")) {
+            //chats fragment transaction
+            toolbar.setTitle("Chats"); //change actionbar title
+            FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+            ft1.replace(R.id.content, fragment4, "");
+            ft1.addToBackStack(null).commit();
+
+            FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+            ft2.add(R.id.content, fragment1, "")
+                    .hide(fragment1).commit();
+
+            FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
+            ft3.add(R.id.content, fragment2, "")
+                    .hide(fragment2).commit();
+
+            FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
+            ft4.add(R.id.content, fragment3, "")
+                    .hide(fragment3).commit();
+
+            FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+            ft5.add(R.id.content, fragment5, "")
+                    .hide(fragment5).commit();
+
+            FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+            ft6.add(R.id.content, fragment6, "")
+                    .hide(fragment6).commit();
+
+            FragmentTransaction ft7 = getSupportFragmentManager().beginTransaction();
+            ft7.add(R.id.content, fragment7, "")
+                    .hide(fragment7).commit();
+        } else if (Objects.equals(fragPos, "4")) {
+            //notification fragment transaction
+            toolbar.setTitle("Notificaciones"); //change actionbar title
+            FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+            ft5.replace(R.id.content, fragment5, "");
+            ft5.addToBackStack(null).commit();
+
+            //chats fragment transaction
+            FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
+            ft4.add(R.id.content, fragment4, "");
+                    ft4.hide(fragment4).commit();
+
+            FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
+            ft3.add(R.id.content, fragment3, "")
+                    .hide(fragment3).commit();
+
+            FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+            ft1.add(R.id.content, fragment1, "")
+                    .hide(fragment1).commit();
+
+            FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+            ft2.add(R.id.content, fragment2, "")
+                    .hide(fragment2).commit();
+
+            FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+            ft6.add(R.id.content, fragment6, "")
+                    .hide(fragment6).commit();
+
+            FragmentTransaction ft7 = getSupportFragmentManager().beginTransaction();
+            ft7.add(R.id.content, fragment7, "")
+                    .hide(fragment7).commit();
+        } else if (Objects.equals(fragPos, "5")) {
+            //groups fragment transaction
+            toolbar.setTitle("Grupos"); //change actionbar title
+            FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+            ft6.replace(R.id.content, fragment6, "");
+            ft6.addToBackStack(null).commit();
+
+            //chats fragment transaction
+            FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
+            ft4.add(R.id.content, fragment4, "");
+                    ft4.hide(fragment4).commit();
+
+            FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+            ft1.add(R.id.content, fragment1, "")
+                    .hide(fragment1).commit();
+
+            FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+            ft2.add(R.id.content, fragment2, "")
+                    .hide(fragment2).commit();
+
+            FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+            ft5.add(R.id.content, fragment5, "")
+                    .hide(fragment5).commit();
+
+            FragmentTransaction ft7 = getSupportFragmentManager().beginTransaction();
+            ft7.add(R.id.content, fragment7, "")
+                    .hide(fragment7).commit();
+
+            FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
+            ft3.add(R.id.content, fragment3, "")
+                    .hide(fragment3).commit();
+
+        } else if (Objects.equals(fragPos, "6")) {
+            //maps fragment transaction
+            toolbar.setTitle("Mapa"); //change actionbar title
+            FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+            ft1.replace(R.id.content, fragment7, "");
+            ft1.addToBackStack(null).commit();
+
+            //chats fragment transaction
+            FragmentTransaction ft4 = getSupportFragmentManager().beginTransaction();
+            ft4.add(R.id.content, fragment4, "");
+                    ft4.hide(fragment4).commit();
+
+            FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+            ft2.add(R.id.content, fragment1, "")
+                    .hide(fragment1).commit();
+
+            FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
+            ft3.add(R.id.content, fragment2, "")
+                    .hide(fragment2).commit();
+
+            FragmentTransaction ft5 = getSupportFragmentManager().beginTransaction();
+            ft5.add(R.id.content, fragment5, "")
+                    .hide(fragment5).commit();
+
+            FragmentTransaction ft6 = getSupportFragmentManager().beginTransaction();
+            ft6.add(R.id.content, fragment6, "")
+                    .hide(fragment6).commit();
+
+        }
+
+    }
+
+    private void declareFragments() {
+        fragment1 = new PostsFragment();
+        fragment2 = new ProfileFragment();
+        fragment3 = new UsersFragment();
+        fragment4 = new ChatListFragment();
+        fragment5 = new NotificationsFragment();
+        fragment6 = new GroupChatsFragment();
+        fragment7 = new MapFragment();
+    }
 
 
 
@@ -380,5 +754,6 @@ public class DashboardActivity extends AppCompatActivity implements
         mLocationRequest.setSmallestDisplacement(10);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);//test 4g power balance
     }
+
 
 }

@@ -637,7 +637,7 @@ public class AddPostActivity extends AppCompatActivity {
             Bitmap bitmap = ((BitmapDrawable)imageIv.getDrawable()).getBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             //image compress
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, baos);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
             byte[] data = baos.toByteArray();
 
 

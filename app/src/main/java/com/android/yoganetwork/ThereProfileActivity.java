@@ -1,9 +1,14 @@
 package com.android.yoganetwork;
 
+import android.graphics.*;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.provider.MediaStore;
+import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,7 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.yoganetwork.adapters.AdapterPosts;
+import com.android.yoganetwork.adapters.AdapterPost;
 import com.android.yoganetwork.models.ModelPost;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,8 +36,15 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.io.*;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 public class ThereProfileActivity extends AppCompatActivity {
 
@@ -44,20 +56,26 @@ public class ThereProfileActivity extends AppCompatActivity {
 
     RecyclerView postsRecyclerView;
 
+    ImageHelper imageHelper;
     List<ModelPost> postList;
     FloatingActionButton fab;
-    AdapterPosts adapterPosts;
+    AdapterPost adapterPosts;
     String uid;
+    AsyncTask<?, ?, ?> runningTask;
+    Toolbar toolbar;
     String myUid;
+    public String cover;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_there_profile);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Perfil");
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        imageHelper = new ImageHelper();
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Perfil");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //init views
         avatarIv = findViewById(R.id.avatarIv);
@@ -67,7 +85,7 @@ public class ThereProfileActivity extends AppCompatActivity {
         typeTv = findViewById(R.id.typeTv);
         practicTv = findViewById(R.id.practicTv);
         dietTv = findViewById(R.id.dietTv);
-        postsRecyclerView = findViewById(R.id.recyclerview_posts);
+        postsRecyclerView = findViewById(R.id.recycler_view);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -81,14 +99,14 @@ public class ThereProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //check until required data get
-                for (DataSnapshot ds: snapshot.getChildren()) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
                     //get data
-                    String name = ""+ ds.child("pseudonym").getValue()+"/"+ ds.child("realname").getValue();
-                    String type = ""+ ds.child("type").getValue();
-                    String practic = ""+ ds.child("practic").getValue();
-                    String diet = ""+ ds.child("diet").getValue();
-                    String image = ""+ ds.child("image").getValue();
-                    String cover = ""+ ds.child("cover").getValue();
+                    String name = "" + ds.child("pseudonym").getValue() + "/" + ds.child("realname").getValue();
+                    String type = "" + ds.child("type").getValue();
+                    String practic = "" + ds.child("practic").getValue();
+                    String diet = "" + ds.child("diet").getValue();
+                    String image = "" + ds.child("image").getValue();
+                    cover = "" + ds.child("cover").getValue();
 
                     //set data
                     nameTv.setText(name);
@@ -98,21 +116,22 @@ public class ThereProfileActivity extends AppCompatActivity {
                     try {
                         //if image is received then set
                         Picasso.get().load(image).into(avatarIv);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         //if there is any exception while getting image then set default
                         Picasso.get().load(R.drawable.ic_default_img_white).into(avatarIv);
                     }
-                    try {
-                        //if image is received then set
-                        Picasso.get().load(cover).into(coverIv);
-                    }
-                    catch (Exception e) {
-                        //if there is any exception while getting image then set default
-                    }
-
                 }
+
+
+
+
+                if (runningTask != null)
+                    runningTask.cancel(true);
+                runningTask = new LongOperation();
+                runningTask.execute();
+
             }
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -145,7 +164,7 @@ public class ThereProfileActivity extends AppCompatActivity {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot ds: snapshot.getChildren()) {
+                        for (DataSnapshot ds : snapshot.getChildren()) {
                             if (ds.exists()) {
                                 Toast.makeText(ThereProfileActivity.this, R.string.errormsg, Toast.LENGTH_SHORT).show();
                                 //blocked, dont proceed further
@@ -182,13 +201,13 @@ public class ThereProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
-                for (DataSnapshot ds: snapshot.getChildren()) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
                     ModelPost myPosts = ds.getValue(ModelPost.class);
 
                     //add to list
                     postList.add(myPosts);
                     //adapter
-                    adapterPosts = new AdapterPosts(ThereProfileActivity.this, postList, postsRecyclerView);
+                    adapterPosts = new AdapterPost(ThereProfileActivity.this, postList, postsRecyclerView);
                     //set this adapter to recyclerview
                     postsRecyclerView.setAdapter(adapterPosts);
                 }
@@ -197,12 +216,13 @@ public class ThereProfileActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-                Toast.makeText(ThereProfileActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ThereProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
 
     }
+
     private void searchHistPosts(final String searchQuery) {
         //linear layout for recyclervie
         LinearLayoutManager layoutManager = new LinearLayoutManager(ThereProfileActivity.this);
@@ -220,16 +240,16 @@ public class ThereProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
-                for (DataSnapshot ds: snapshot.getChildren()) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
                     ModelPost myPosts = ds.getValue(ModelPost.class);
 
-                    if(myPosts.getpTitle().toLowerCase().contains(searchQuery.toLowerCase()) ||
+                    if (myPosts.getpTitle().toLowerCase().contains(searchQuery.toLowerCase()) ||
                             myPosts.getpDescr().toLowerCase().contains(searchQuery.toLowerCase())) {
                         //add to list
                         postList.add(myPosts);
                     }
                     //adapter
-                    adapterPosts = new AdapterPosts(ThereProfileActivity.this, postList, postsRecyclerView);
+                    adapterPosts = new AdapterPost(ThereProfileActivity.this, postList, postsRecyclerView);
                     //set this adapter to recyclerview
                     postsRecyclerView.setAdapter(adapterPosts);
                 }
@@ -238,7 +258,7 @@ public class ThereProfileActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
-                Toast.makeText(ThereProfileActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ThereProfileActivity.this, "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -251,8 +271,7 @@ public class ThereProfileActivity extends AppCompatActivity {
             //user is signed in stay here
             //set email of logged in user
             //mProfileTv.setText(user.getEmail());
-        }
-        else {
+        } else {
             //user not signed in, go to mainactivity
             startActivity(new Intent(this, MainActivity.class));
             finish();
@@ -281,8 +300,7 @@ public class ThereProfileActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(s)) {
                     //search
                     searchHistPosts(s);
-                }
-                else {
+                } else {
                     loadHistPosts();
                 }
                 return false;
@@ -293,8 +311,7 @@ public class ThereProfileActivity extends AppCompatActivity {
                 if (!TextUtils.isEmpty(s)) {
                     //search
                     searchHistPosts(s);
-                }
-                else {
+                } else {
                     loadHistPosts();
                 }
                 return false;
@@ -315,11 +332,51 @@ public class ThereProfileActivity extends AppCompatActivity {
         if (id == R.id.action_add_participant) {
 
             Intent i = new Intent(ThereProfileActivity.this, AddToGroupActivity.class);
-            i.putExtra("hisUid",uid);
+            i.putExtra("hisUid", uid);
             startActivity(i);
 
 
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+
+    private final class LongOperation extends AsyncTask<Object, Void, String> {
+
+
+
+
+        @Override
+        protected String doInBackground(Object... objects) {
+            try {
+                URL url = new URL(ThereProfileActivity.this.cover);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(input);
+                Bitmap bitmap = imageHelper.getRoundedCornerBitmap(myBitmap, 50);
+                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+                String path = MediaStore.Images.Media.insertImage(ThereProfileActivity.this.getContentResolver(), bitmap, "YogaNet: cover profile image", null);
+                Uri coverUri = Uri.parse(path);
+                Log.d(TAG, "get json: " + input);
+                connection.disconnect();
+                return coverUri.toString();
+
+            } catch (IOException e) {
+                Toast.makeText(ThereProfileActivity.this, "3"+e, Toast.LENGTH_SHORT).show();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Picasso.get().load(result).into(coverIv);
+            }
+
+    }
+
+
 }

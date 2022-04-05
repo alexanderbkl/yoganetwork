@@ -3,10 +3,26 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/drawable/layout_border.xml" value="0.20572916666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/drawable/layout_border_cover.xml" value="0.315625" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/drawable/layout_profile_data_border.xml" value="0.38177083333333334" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout-v21/activity_post_registration.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout-v23/activity_group_info.xml" value="0.21197916666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout-v23/activity_there_profile.xml" value="0.28229166666666666" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_add_post.xml" value="0.18854166666666666" />
-        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_dashboard.xml" value="0.18958333333333333" />
-        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_there_profile.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_dashboard.xml" value="0.18" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_chat.xml" value="0.14270833333333333" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_chat_image.xml" value="0.14270833333333333" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_info.xml" value="0.14270833333333333" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_post_registration.xml" value="0.25" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_settings.xml" value="0.17864583333333334" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_there_profile.xml" value="0.33" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_posts.xml" value="0.21197916666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_profile.xml" value="0.3802083333333333" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/info_group_activity.xml" value="0.28125" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_posts.xml" value="0.67" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/menu/menu_nav.xml" value="0.38125" />
       </map>
     </option>
   </component>

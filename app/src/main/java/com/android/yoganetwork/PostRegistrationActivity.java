@@ -1,5 +1,7 @@
 package com.android.yoganetwork;
 
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -45,6 +47,8 @@ import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.HashMap;
 
@@ -55,8 +59,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
    //views
     EditText pseudonymEt, nameEt, typeEt, practicEt, dietEt;
     AppCompatButton updateBtn;
-    ImageView coverIv, addCoverBtn;
-    CircleImageView avatarIv;
+    ImageView coverIv, addCoverBtn, avatarIv;
     //firebase
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
@@ -166,7 +169,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
             public void onClick(View view) {
                 uploadProfileData();
                 Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
-                intent.putExtra("fragment",2);
+                intent.putExtra("fragmentPos","1");
                 startActivity(intent);
                 PostRegistrationActivity.this.finish();
             }
@@ -197,7 +200,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
     private void startCoverCropActivity() {
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(10,5)
+                .setAspectRatio(41,15)
                 .start(this);
     }
 
@@ -268,7 +271,11 @@ public class PostRegistrationActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
-                uploadProfileCoverPhoto(resultUri);
+                try {
+                    uploadProfileCoverPhoto(resultUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 System.out.println(error);
@@ -277,7 +284,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void uploadProfileCoverPhoto(final Uri uri) {
+    private void uploadProfileCoverPhoto(final Uri uri) throws IOException {
         //show progress
         pd.show();
         /*Instead of creating separate function for profile picture and cover photo this will work in the same function*/
@@ -285,8 +292,23 @@ public class PostRegistrationActivity extends AppCompatActivity {
         //path and name of image to be stored in firebase storage
         String filePathAndName = storagePath+ ""+ profileOrCoverPhoto +"_"+ user.getUid()+".jpeg";
 
+        //get bitmap of uri
+        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Uri profileOrCoverUri = uri;
+        if (profileOrCoverPhoto.equals("image")) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 10, baos);
+             String imagePath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Profile image", "YogaNet profile image");
+            profileOrCoverUri = Uri.parse(imagePath);
+        } else if (profileOrCoverPhoto.equals("cover")) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 10, baos);
+            String imagePath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Profile image", "YogaNet cover image");
+            profileOrCoverUri = Uri.parse(imagePath);
+        }
+
+
         StorageReference storageReference2nd = storageReference.child(filePathAndName);
-        storageReference2nd.putFile(uri)
+        storageReference2nd.putFile(profileOrCoverUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

@@ -1,61 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FFFFFF"
-    tools:context=".PostRegistrationActivity">
-
-
-    <LinearLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        >
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/my_toolbar"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:background="#FFFFFF"
+        tools:context=".PostRegistrationActivity">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#CFF"
-            android:text="INFORMACIÓN DEL PERFIL"
-            android:elevation="4dp"
-            android:textColor="#599"
-            android:textAlignment="center"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <androidx.appcompat.widget.Toolbar
+                android:id="@+id/my_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="#636363"
+                android:text="INFORMACIÓN DEL PERFIL"
+                android:textColor="#E0E8E8"
+                android:textAlignment="center"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        />
 
 
-        <RelativeLayout
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+
+    <RelativeLayout
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:ignore="MissingConstraints">
-            <!--Cover Photo-->
+        <!--Cover Photo-->
 
 
-            <ImageView
+        <ImageView
                 android:id="@+id/coverIv"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
-                android:background="#AAFFFF"
+                android:background="#FFEFE7"
                 android:contentDescription="@string/todo"
-                android:scaleType="fitXY" />
+                android:scaleType="fitXY"/>
 
-            <ImageView
+        <ImageView
                 android:id="@+id/addCoverBtn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/ic_add" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
+        <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/avatarIv"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
                 android:layout_alignTop="@+id/coverIv"
                 android:layout_alignBottom="@+id/coverIv"
                 android:layout_alignParentStart="true"
@@ -63,191 +71,196 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="131dp"
                 android:layout_marginTop="19dp"
+                android:background="@drawable/layout_profile_data_border"
                 android:layout_marginEnd="130dp"
+                android:padding="5dp"
                 android:layout_marginBottom="11dp"
                 android:src="@drawable/ic_add_image_black"
-                app:civ_border_color="#599"
-                app:civ_border_width="2dp" />
-        </RelativeLayout>
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="600dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp">
+                app:civ_border_color="#D4E3E3"
+                app:civ_border_width="2dp"/>
 
-            <LinearLayout
+
+        <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="vertical">
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layout_first_name"
+                android:layout_below="@+id/coverIv"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="16dp">
+
+            <LinearLayout
                     android:layout_width="match_parent"
-                    app:layout_constraintWidth_percent="0.7"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="10dp"
-                    android:textColorHint="#808080"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_image"
-                    >
+                    android:layout_margin="10dp"
+                    android:orientation="vertical">
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/layout_first_name"
+                        android:layout_width="match_parent"
+                        app:layout_constraintWidth_percent="0.7"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginTop="10dp"
+                        android:textColorHint="#808080"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_image"
+                >
 
                     <EditText
-                        android:drawableStart="@drawable/ic_bubble"
-                        android:id="@+id/pseudonymEt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Nombre espiritual"
-                        android:textAlignment="textStart"
-                        android:padding="10dp"
-                        android:drawablePadding="10dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#808080"
-                        android:background="#00000000"
-                        android:textSize="15sp"
-                        />
+                            android:drawableStart="@drawable/ic_bubble"
+                            android:id="@+id/pseudonymEt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Nombre espiritual"
+                            android:textAlignment="textStart"
+                            android:padding="10dp"
+                            android:drawablePadding="10dp"
+                            android:textColor="#000000"
+                            android:textColorHint="#808080"
+                            android:background="#00000000"
+                            android:textSize="15sp"
+                    />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layout_last_name"
-                    android:layout_width="match_parent"
-                    app:layout_constraintWidth_percent="0.7"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="14dp"
-                    android:textColorHint="#808080"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_first_name"
-                    >
+                        android:id="@+id/layout_last_name"
+                        android:layout_width="match_parent"
+                        app:layout_constraintWidth_percent="0.7"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginTop="14dp"
+                        android:textColorHint="#808080"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_first_name"
+                >
 
                     <EditText
-                        android:id="@+id/nameEt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Nombre"
-                        android:drawableStart="@drawable/ic_brush"
-                        android:textAlignment="textStart"
-                        android:padding="10dp"
-                        android:drawablePadding="10dp"
-                        android:textColor="#000000"
-                        android:textColorHint="#808080"
-                        android:background="#00000000"
-                        android:textSize="15sp"
-                        />
+                            android:id="@+id/nameEt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Nombre"
+                            android:drawableStart="@drawable/ic_brush"
+                            android:textAlignment="textStart"
+                            android:padding="10dp"
+                            android:drawablePadding="10dp"
+                            android:textColor="#000000"
+                            android:textColorHint="#808080"
+                            android:background="#00000000"
+                            android:textSize="15sp"
+                    />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layout_email"
-                    android:layout_width="match_parent"
-                    app:layout_constraintWidth_percent="0.7"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="14dp"
-                    android:textColorHint="#808080"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_last_name"
-                    >
+                        android:id="@+id/layout_email"
+                        android:layout_width="match_parent"
+                        app:layout_constraintWidth_percent="0.7"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginTop="14dp"
+                        android:textColorHint="#808080"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_last_name"
+                >
 
                     <EditText
-                        android:id="@+id/typeEt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Camino espiritual"
-                        android:textAlignment="textStart"
-                        android:padding="10dp"
-                        android:drawablePadding="10dp"
-                        android:drawableStart="@drawable/ic_eco"
-                        android:textColor="#000000"
-                        android:textColorHint="#808080"
-                        android:background="#00000000"
-                        android:textSize="15sp"
-                        android:inputType="textEmailAddress"
-                        />
+                            android:id="@+id/typeEt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Camino espiritual"
+                            android:textAlignment="textStart"
+                            android:padding="10dp"
+                            android:drawablePadding="10dp"
+                            android:drawableStart="@drawable/ic_eco"
+                            android:textColor="#000000"
+                            android:textColorHint="#808080"
+                            android:background="#00000000"
+                            android:textSize="15sp"
+                            android:inputType="textEmailAddress"
+                    />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layout_contact_no"
-                    android:layout_width="match_parent"
-                    app:layout_constraintWidth_percent="0.7"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="14dp"
-                    android:textColorHint="#808080"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_email"
-                    >
+                        android:id="@+id/layout_contact_no"
+                        android:layout_width="match_parent"
+                        app:layout_constraintWidth_percent="0.7"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginTop="14dp"
+                        android:textColorHint="#808080"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_email"
+                >
 
                     <EditText
-                        android:id="@+id/practicEt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Tipo de práctica"
-                        android:textAlignment="textStart"
-                        android:padding="10dp"
-                        android:drawablePadding="10dp"
-                        android:drawableStart="@drawable/icon_lotus"
-                        android:textColor="#000000"
-                        android:textColorHint="#808080"
-                        android:background="#00000000"
-                        android:textSize="15sp"
-                        />
+                            android:id="@+id/practicEt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Tipo de práctica"
+                            android:textAlignment="textStart"
+                            android:padding="10dp"
+                            android:drawablePadding="10dp"
+                            android:drawableStart="@drawable/icon_lotus"
+                            android:textColor="#000000"
+                            android:textColorHint="#808080"
+                            android:background="#00000000"
+                            android:textSize="15sp"
+                    />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/layout_des"
-                    android:layout_width="match_parent"
-                    app:layout_constraintWidth_percent="0.7"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginTop="14dp"
-                    android:textColorHint="#808080"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_contact_no"
-                    >
+                        android:id="@+id/layout_des"
+                        android:layout_width="match_parent"
+                        app:layout_constraintWidth_percent="0.7"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginTop="14dp"
+                        android:textColorHint="#808080"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_contact_no"
+                >
 
                     <EditText
-                        android:id="@+id/dietEt"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Alimentación"
-                        android:textAlignment="textStart"
-                        android:padding="10dp"
-                        android:drawablePadding="10dp"
-                        android:drawableStart="@drawable/ic_feeding"
-                        android:textColor="#000000"
-                        android:textColorHint="#808080"
-                        android:background="#00000000"
-                        android:textSize="15sp"
-                        android:inputType="text"
-                        />
+                            android:id="@+id/dietEt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Alimentación"
+                            android:textAlignment="textStart"
+                            android:padding="10dp"
+                            android:drawablePadding="10dp"
+                            android:drawableStart="@drawable/ic_feeding"
+                            android:textColor="#000000"
+                            android:textColorHint="#808080"
+                            android:background="#00000000"
+                            android:textSize="15sp"
+                            android:inputType="text"
+                    />
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/updateBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    app:layout_constraintTop_toBottomOf="@+id/layout_des"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:text="Actualizar perfil"
-                    android:textColor="#FFFFFF"
-                    android:textSize="15sp"
-                    android:background="@color/design_default_color_primary"
-                    android:textAllCaps="false"
-                    android:layout_marginTop="30dp"
-                    app:layout_constraintWidth_percent="0.7"
-                    android:elevation="2dp"
-                    />
+                        android:id="@+id/updateBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_des"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:text="Actualizar perfil"
+                        android:textColor="#FFFFFF"
+                        android:textSize="15sp"
+                        android:background="@color/design_default_color_primary"
+                        android:textAllCaps="false"
+                        android:layout_marginTop="30dp"
+                        app:layout_constraintWidth_percent="0.7"
+                        android:elevation="2dp"
+                />
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+    </RelativeLayout>
 
-    </LinearLayout>
 
-</androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

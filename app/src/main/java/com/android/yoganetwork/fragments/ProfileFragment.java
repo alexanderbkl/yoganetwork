@@ -40,7 +40,7 @@ import com.android.yoganetwork.MainActivity;
 import com.android.yoganetwork.PostRegistrationActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.SettingsActivity;
-import com.android.yoganetwork.adapters.AdapterPosts;
+import com.android.yoganetwork.adapters.AdapterPost;
 import com.android.yoganetwork.models.ModelPost;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -73,6 +73,9 @@ public class ProfileFragment extends Fragment {
 
     //firebase
     FirebaseAuth firebaseAuth;
+    RecyclerView recycler_view;
+    List<ModelPost> postList;
+    AdapterPost adapterPosts;
     FirebaseUser user;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -86,7 +89,6 @@ public class ProfileFragment extends Fragment {
     TextView nameTv, typeTv, practicTv, dietTv;
     FloatingActionButton fab;
     ClipData.Item action_groupinfo;
-    RecyclerView postsRecyclerView;
     //progress dialog
     ProgressDialog pd;
     //permissions constants
@@ -96,8 +98,6 @@ public class ProfileFragment extends Fragment {
     String cameraPermissions[];
     String storagePermissions[];
 
-    List<ModelPost> postList;
-    AdapterPosts adapterPosts;
     String uid;
     //uri of picked image
     Uri image_uri;
@@ -117,11 +117,25 @@ public class ProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_profile, container, false);
         //init firebase
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
+        checkUserStatus();
+        // Inflate the layout for this fragment
+        View view =  inflater.inflate(R.layout.fragment_profile, container, false);
+        recycler_view = view.findViewById(R.id.recycler_view);
+        //linear layout for recyclervie
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        //show newest post first, for this load from last
+        layoutManager.setStackFromEnd(true);
+        layoutManager.setReverseLayout(true);
+        //set this layout to recyclerview
+        recycler_view.setLayoutManager(layoutManager);
+        recycler_view.setHasFixedSize(true);
+        postList = new ArrayList<>();
+        loadMyPosts();
+
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Users");
         storageReference = FirebaseStorage.getInstance().getReference();
@@ -136,7 +150,6 @@ public class ProfileFragment extends Fragment {
         practicTv = view.findViewById(R.id.practicTv);
         dietTv = view.findViewById(R.id.dietTv);
         fab = view.findViewById(R.id.fab);
-        postsRecyclerView = view.findViewById(R.id.recyclerview_posts);
 
         //init progress dialog
         pd = new ProgressDialog(getActivity());
@@ -150,13 +163,14 @@ public class ProfileFragment extends Fragment {
          * named uid has value equal to currently signed in uid
          * It will search all nodes, where the key matches it will get its detail*/
         Query query = databaseReference.orderByChild("uid").equalTo(user.getUid());
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //check until required data get
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     //get data
-                    String name = ""+ ds.child("pseudonym").getValue()+" ("+ ds.child("realname").getValue()+")";
+                    String pseudonym = ""+ ds.child("pseudonym").getValue();
+                    String realname = ""+ds.child("realname").getValue();
                     String type = ""+ ds.child("type").getValue();
                     String practic = ""+ ds.child("practic").getValue();
                     String diet = ""+ ds.child("diet").getValue();
@@ -164,7 +178,7 @@ public class ProfileFragment extends Fragment {
                     String cover = ""+ ds.child("cover").getValue();
 
                     //set data
-                    nameTv.setText(name);
+                    nameTv.setText(pseudonym);
                     typeTv.setText(type);
                     practicTv.setText(practic);
                     dietTv.setText(diet);
@@ -202,9 +216,7 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        postList = new ArrayList<>();
-        checkUserStatus();
-        loadMyPosts();
+
 
 
         return view;
@@ -214,19 +226,13 @@ public class ProfileFragment extends Fragment {
 
 
     private void loadMyPosts() {
-        //linear layout for recyclervie
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        //show newest post first, for this load from last
-        layoutManager.setStackFromEnd(true);
-        layoutManager.setReverseLayout(true);
-        //set this layout to recyclerview
-        postsRecyclerView.setLayoutManager(layoutManager);
+
         //init posts list
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         //query to load posts
         Query query = ref.orderByChild("uid").equalTo(uid);
         //get all data from this ref
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
@@ -235,10 +241,14 @@ public class ProfileFragment extends Fragment {
 
                     //add to list
                     postList.add(myPosts);
+
                     //adapter
-                    adapterPosts = new AdapterPosts(getActivity(), postList, postsRecyclerView);
+                    adapterPosts = new AdapterPost(getActivity(), postList, recycler_view);
+                    adapterPosts.setHasStableIds(true);
+
+                    adapterPosts.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.ALLOW);
                     //set this adapter to recyclerview
-                    postsRecyclerView.setAdapter(adapterPosts);
+                    recycler_view.setAdapter(adapterPosts);
                 }
             }
 
@@ -258,7 +268,7 @@ public class ProfileFragment extends Fragment {
         layoutManager.setStackFromEnd(true);
         layoutManager.setReverseLayout(true);
         //set this layout to recyclerview
-        postsRecyclerView.setLayoutManager(layoutManager);
+        recycler_view.setLayoutManager(layoutManager);
         //init posts list
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         //query to load posts
@@ -277,9 +287,9 @@ public class ProfileFragment extends Fragment {
                         postList.add(myPosts);
                     }
                     //adapter
-                    adapterPosts = new AdapterPosts(getActivity(), postList, postsRecyclerView);
+                    adapterPosts = new AdapterPost(getActivity(), postList, recycler_view);
                     //set this adapter to recyclerview
-                    postsRecyclerView.setAdapter(adapterPosts);
+                    recycler_view.setAdapter(adapterPosts);
                 }
             }
 

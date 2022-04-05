@@ -24,7 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.yoganetwork.fragments.HomeFragment;
+import com.android.yoganetwork.fragments.PostsFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,8 +36,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
@@ -205,7 +203,7 @@ public class GroupCreateActivity extends AppCompatActivity {
                                         //participant added
                                         progressDialog.dismiss();
                                         Toast.makeText(GroupCreateActivity.this, R.string.grupocreado, Toast.LENGTH_LONG).show();
-                                        HomeFragment fragment1 = new HomeFragment();
+                                        PostsFragment fragment1 = new PostsFragment();
                                         FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
                                         ft1.replace(R.id.content, fragment1, "");
                                         ft1.commit();                                    }

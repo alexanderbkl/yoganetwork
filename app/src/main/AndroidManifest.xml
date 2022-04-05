@@ -32,10 +32,10 @@
             android:configChanges="orientation|screenSize|screenLayout"
             android:exported="false" />
         <activity
-            android:name=".AddToGroupActivity"
-            android:exported="false"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".AddToGroupActivity"
+                android:exported="false"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor" />
         <activity
             android:name=".CommentLikedByActivity"
             android:exported="false"
@@ -141,6 +141,7 @@ Intent filters inform the system what intents an application component is willin
         <activity
             android:name=".DashboardActivity"
             android:exported="true"
+            android:screenOrientation="nosensor"
             android:hardwareAccelerated="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

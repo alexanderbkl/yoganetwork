@@ -1,9 +1,9 @@
 package com.android.yoganetwork;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 
 import com.android.yoganetwork.adapters.AdapterParticipantAdd;
 import com.android.yoganetwork.models.ModelUsers;
@@ -30,6 +31,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 public class GroupInfoActivity extends AppCompatActivity {
 
@@ -38,7 +40,7 @@ public class GroupInfoActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
 
-    private ActionBar actionBar;
+    private Toolbar toolbar;
 
     //ui views
     private ImageView groupIconIv;
@@ -51,11 +53,12 @@ public class GroupInfoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_info);
+        setContentView(R.layout.info_group_activity);
 
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         groupIconIv = findViewById(R.id.groupIconIv);
         descriptionTv = findViewById(R.id.descriptionTv);
@@ -204,7 +207,7 @@ public class GroupInfoActivity extends AppCompatActivity {
                    loadCreatorInfo(dateTime, createdBy);
 
                    //set group info
-                   actionBar.setTitle(groupTitle);
+                   toolbar.setTitle(groupTitle);
                    descriptionTv.setText(groupDescription);
 
                   try {
@@ -249,7 +252,7 @@ public class GroupInfoActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                    for (DataSnapshot ds: snapshot.getChildren()){
                        myGroupRole = ""+ds.child("role").getValue();
-                       actionBar.setSubtitle(""+myGroupRole);
+                       toolbar.setSubtitle(""+myGroupRole);
 
                        if (myGroupRole.equals("participant")){
                        editGroupTv.setVisibility(View.GONE);

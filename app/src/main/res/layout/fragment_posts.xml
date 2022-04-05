@@ -3,16 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.HomeFragment">
+    tools:context=".fragments.PostsFragment">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollView"
+        android:id="@+id/nestedScroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <!-- TODO: Update blank fragment layout -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/postsRecyclerView"
+            android:id="@+id/recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

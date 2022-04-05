@@ -36,10 +36,10 @@
     <string name="registrar_perfil">Register profile</string>
     <string name="ya_tienes_una_cuenta_iniciar_sesi_n">Already have an account? Login</string>
     <string name="notificaciones_de_posts_nuevos">New Post Notifications</string>
-    <string name="nombre1">Name:</string>
+    <string name="nombre1">Name</string>
     <string name="tipo_de_yoga">Yoga Type:</string>
-    <string name="tipo_de_pr_ctica">Type of practice:</string>
-    <string name="dieta">Diet:</string>
+    <string name="tipo_de_pr_ctica">Type of practice</string>
+    <string name="dieta">Diet</string>
     <string name="actualizar_contrase_a">Update password</string>
     <string name="contras_a_actual">Current password</string>
     <string name="nueva_contrase_a">New password</string>
@@ -275,6 +275,7 @@
     <string name="tab_conversations" translatable="false">Chat</string>
     <string name="section_format" translatable="false">Hello World from section: %1$d</string>
     <string name="title_activity_maps" translatable="false">Map</string>
+    <string name="send_message">send message</string>
 
 
     <array name="users_array">

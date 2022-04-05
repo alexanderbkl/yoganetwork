@@ -49,7 +49,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.common.base.CharMatcher;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
 import com.google.firebase.storage.FirebaseStorage;
@@ -63,7 +62,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.*;
 
-public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
+public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
 
     private final DatabaseReference likesRef; //for likes database node
@@ -72,15 +71,15 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
     List<ModelPost> postList;
     String myUid;
     boolean mProcessLike=false;
-    RecyclerView recyclerView;
+    RecyclerView recycler_view;
     int countLikes, countComments;
     ModelPost modelPost;
 
 
-    public AdapterPosts(Context context, List<ModelPost> postList, RecyclerView recyclerView) {
+    public AdapterPost(Context context, List<ModelPost> postList, RecyclerView recycler_view) {
         this.context = context;
         this.postList = postList;
-        this.recyclerView = recyclerView;
+        this.recycler_view = recycler_view;
         myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
         postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
@@ -245,7 +244,9 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
      //    });
 
         //set itemview cache size
-        recyclerView.setItemViewCacheSize(20);
+        recycler_view.setItemViewCacheSize(20);
+
+
         //set user dp
         try {
             Picasso.get().load(uDp).placeholder(R.drawable.ic_default_img).into(myHolder.uPictureIv);
@@ -720,6 +721,8 @@ public class AdapterPosts extends RecyclerView.Adapter<AdapterPosts.MyHolder> {
     public int getItemCount() {
         return postList.size();
     }
+
+
 
     //view holder class
     class MyHolder extends RecyclerView.ViewHolder {

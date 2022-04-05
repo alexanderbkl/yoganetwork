@@ -26,7 +26,7 @@ import com.android.yoganetwork.AddPostActivity;
 import com.android.yoganetwork.MainActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.SettingsActivity;
-import com.android.yoganetwork.adapters.AdapterPosts;
+import com.android.yoganetwork.adapters.AdapterPost;
 import com.android.yoganetwork.models.ModelPost;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,16 +39,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.*;
 
 
-public class HomeFragment extends Fragment {
+public class PostsFragment extends Fragment {
 
     //firebase authentication
     FirebaseAuth firebaseAuth;
-    RecyclerView recyclerView;
+    RecyclerView recycler_view;
     List<ModelPost> postList;
-    AdapterPosts adapterPosts;
+    AdapterPost adapterPosts;
 
     ImageView pImageIv;
-    public HomeFragment() {
+    public PostsFragment() {
         // Required empty public constructor
     }
 
@@ -58,28 +58,32 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        //init
-        firebaseAuth = FirebaseAuth.getInstance();
-        //recyclerview and its properties
-        recyclerView = view.findViewById(R.id.postsRecyclerView);
+        View view = inflater.inflate(R.layout.fragment_posts, container, false);
+
+            // Inflate the layout for this fragment
+            //init
+            firebaseAuth = FirebaseAuth.getInstance();
+            //recycler_view and its properties
+        recycler_view = view.findViewById(R.id.recycler_view);
 
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-         //show  newest post first, for this load from last
-        layoutManager.setStackFromEnd(true);
-        layoutManager.setReverseLayout(true);
-        //set layout to recyclerview
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setNestedScrollingEnabled(false);
-        //init post list
-        postList = new ArrayList<>();
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            //show  newest post first, for this load from last
+            layoutManager.setStackFromEnd(true);
+            layoutManager.setReverseLayout(true);
+            //set layout to recycler_view
+        recycler_view.setLayoutManager(layoutManager);
+        recycler_view.setNestedScrollingEnabled(false);
+            //init post list
+            postList = new ArrayList<>();
 
-        loadPosts();
+            loadPosts();
+
 
         return view;
+
     }
+
 
 
 
@@ -118,10 +122,15 @@ public class HomeFragment extends Fragment {
                     }
 
                     //adapter
-                    adapterPosts = new AdapterPosts(getActivity(), postList, recyclerView);
+                    adapterPosts = new AdapterPost(getActivity(), postList, recycler_view);
+
+
+
                     adapterPosts.setHasStableIds(true);
-                    //set adapter to recyclerview
-                    recyclerView.setAdapter(adapterPosts);
+                    adapterPosts.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.ALLOW);
+                    //set adapter to recycler_view
+                    recycler_view.setHasFixedSize(true);
+                    recycler_view.setAdapter(adapterPosts);
                 }
 
 
@@ -166,16 +175,16 @@ public class HomeFragment extends Fragment {
 
                     }
                     //adapter
-                    adapterPosts = new AdapterPosts(getActivity(), postList, recyclerView);
+                    adapterPosts = new AdapterPost(getActivity(), postList, recycler_view);
                     //set adapter to recyclerview
-                    recyclerView.setAdapter(adapterPosts);
+                    recycler_view.setAdapter(adapterPosts);
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 //in case of error
-                Toast.makeText(getActivity(), ""+error.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), ""+error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -199,8 +208,12 @@ public class HomeFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true); //to show menu option in fragment
         super.onCreate(savedInstanceState);
-
     }
+
+
+
+
+
 
     /*inflate options menu*/
     @Override
@@ -270,4 +283,10 @@ public class HomeFragment extends Fragment {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }
+
+//why setStateRestorationPolicy doesn't work in this code?
+
+//it doesn't work because the fragment is not attached to the activity

@@ -346,7 +346,9 @@ public class MapFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         if (geoFire != null) geoFire.removeLocation(userId);
-        mMapView.onDestroy();
+        if (mMapView != null) mMapView.onDestroy();
+
+
     }
 
     @Override
@@ -398,6 +400,8 @@ public class MapFragment extends Fragment {
         totalUser++;
         updateSubtitle();
     }
+
+
 
     public interface OnFragmentInteractionListener {
         void addLocationCallback(LocationCallback locationCallback);
