@@ -331,7 +331,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
             bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
             n+=2;
             System.out.println("Hola"+BitmapCompat.getAllocationByteCount(bitmap2));
-        } while (BitmapCompat.getAllocationByteCount(bitmap2) > 30000);
+        } while (BitmapCompat.getAllocationByteCount(bitmap2) > 100000);
         bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         data = baos.toByteArray();
 
