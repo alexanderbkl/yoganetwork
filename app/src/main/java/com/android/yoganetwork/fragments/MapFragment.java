@@ -14,15 +14,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.Toolbar;
+import androidx.collection.ArraySet;
 import androidx.fragment.app.Fragment;
 
-import com.android.yoganetwork.ChatActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.ThereProfileActivity;
+import com.android.yoganetwork.utils.MapUtils;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
@@ -40,26 +42,20 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.*;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.android.yoganetwork.constants.Constant;
-import com.android.yoganetwork.models.Conversation;
 import com.android.yoganetwork.models.UserProfile;
 import com.android.yoganetwork.utils.DatabaseUtils;
+
 import static com.android.yoganetwork.constants.Constant.LOCATION_SERVICES;
-import static java.lang.Float.parseFloat;
 
 
 public class MapFragment extends Fragment {
-    public static final double RADIUS = 1500000;
+    public static final double RADIUS = 12000;
     private final int imageSize = 120;
 
     private Map<String, Marker> stringMarkerMap;
@@ -75,12 +71,13 @@ public class MapFragment extends Fragment {
         @Override
         public void onLocationResult(LocationResult locationResult) {
             super.onLocationResult(locationResult);
+            String geohash = "9q9hvumnuw";
             for (Location location : locationResult.getLocations()) {
                 Log.d(LOCATION_SERVICES, "onLocationResult() called with: locationResult = [" + locationResult + "]" + location.getProvider() + " " + location.getAccuracy());
 
                 GeoLocation myLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
                 geoFire.setLocation(userId, myLocation);
-
+                //go tu userLocations database reference, user uid and remove the geohash value
                 updateQuery(myLocation);
 
                 drawCenteredCircle(new LatLng(location.getLatitude(), location.getLongitude()), userId);
@@ -94,35 +91,48 @@ public class MapFragment extends Fragment {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onKeyEntered(String key, GeoLocation location) {
-            Log.d(Constant.NEARBY_CHAT, String.format("Key %s entered the search area at [%f,nicetry]", key, location.latitude, location.longitude));
-            if (key != userId) {
-                Log.d(Constant.NEARBY_CHAT, String.format("Key %s entered the search area at [%f,nicetry]", key, location.latitude, location.longitude));
-                double tempran = ThreadLocalRandom.current().nextDouble(-1, 1);
-                double rand = tempran * 35000;
-                int random = Double.valueOf(rand).intValue();
-                double templat = location.latitude * 100;
-                double templong = location.longitude * 100;
+            Log.d("YogaNet", String.format("Key %s entered the search area at [%f,nicetry]", key, location.latitude, location.longitude));
+            if (!Objects.equals(key, userId)) {
+                Log.d("YogaNet", String.format("Key %s entered the search area at [%f,nicetry]", key, location.latitude, location.longitude));
 
-                double lat = Math.round(templat * 100000d) / 100000d;
-                double lon = Math.round(templong * 100000d) / 100000d;
-
-                String stringlat = String.valueOf(lat);
-                stringlat = stringlat.substring(stringlat.indexOf(".") + 1);
-                int numberlat = Integer.parseInt(stringlat) + random;
-                String stringlong = String.valueOf((int) lon);
-                stringlong = stringlong.substring(stringlong.indexOf(".") + 1);
-                int numberlong = Integer.parseInt(stringlong) + random;
-                double finallat = (Math.floor(lat) + numberlat * 0.00001) / 100;
-                double finallong = (Math.floor(lon) + numberlong * 0.00001) / 100;
-                LatLng latLng = new LatLng(finallat, finallong);
+                double templat = location.latitude;
+                double templong = location.longitude;
+                //create a new lat long doubles with a random location within a 1km radius
+                double randomLat = ThreadLocalRandom.current().nextDouble(-0.0015, 0.0015);
+                double randomLong = ThreadLocalRandom.current().nextDouble(-0.0015, 0.0015);
+                double newLat = templat + randomLat;
+                double newLong = templong + randomLong;
+                LatLng newLocation = new LatLng(newLat, newLong);
+                //create a new marker with the new location
                 UserProfile tempUserProfile = new UserProfile();
                 tempUserProfile.setId(key);
-                marker = addMarker(latLng, tempUserProfile);
+                marker = addMarker(newLocation, tempUserProfile);
+                DatabaseUtils.loadProfileImage(key, bitmap -> {
+                    //resize here
+                    if (bitmap != null) {
+                        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, imageSize, imageSize, false);
+                        if (resizedBitmap != null) {
+                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(resizedBitmap));
+                        }
+                    }
+                }, null);
+
+
             } else {
                 LatLng latLng = new LatLng(location.latitude, location.longitude);
                 UserProfile tempUserProfile = new UserProfile();
                 tempUserProfile.setId(key);
                 marker = addMarker(latLng, tempUserProfile);
+                DatabaseUtils.loadProfileImage(key, bitmap -> {
+                    //resize here
+                    if (bitmap != null) {
+                        Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, imageSize, imageSize, false);
+                        if (resizedBitmap != null) {
+                            marker.setIcon(BitmapDescriptorFactory.fromBitmap(resizedBitmap));
+                        }
+                    }
+                }, null);
+
             }
 
             //retrieve the user from the database with an async task
@@ -140,20 +150,13 @@ public class MapFragment extends Fragment {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.d(Constant.NEARBY_CHAT, "onCancelled() called with: databaseError = [" + databaseError + "]");
-                    Log.w(Constant.NEARBY_CHAT, "onCancelled: ", databaseError.toException());
+                    Log.d("YogaNet", "onCancelled() called with: databaseError = [" + databaseError + "]");
+                    Log.w("YogaNet", "onCancelled: ", databaseError.toException());
                 }
             });
 
-            DatabaseUtils.loadProfileImage(key, bitmap -> {
-                //resize here
-                if (bitmap != null) {
-                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(bitmap, imageSize, imageSize, false);
-                    if (resizedBitmap != null) {
-                        marker.setIcon(BitmapDescriptorFactory.fromBitmap(resizedBitmap));
-                    }
-                }
-            }, null);
+
+
 
 
             //update number of people connected
@@ -163,7 +166,7 @@ public class MapFragment extends Fragment {
 
         @Override
         public void onKeyExited(String key) {
-            Log.d(Constant.NEARBY_CHAT, String.format("Key %s is no longer in the search area", key));
+            Log.d(Constant.YOGANET, String.format("Key %s is no longer in the search area", key));
             Marker marker = stringMarkerMap.remove(key);
             marker.remove();
             //update number of people connected
@@ -174,7 +177,7 @@ public class MapFragment extends Fragment {
         @Override
         public void onKeyMoved(String key, GeoLocation location) {
             if (key == userId) {
-            Log.d(Constant.NEARBY_CHAT, String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+            Log.d(Constant.YOGANET, String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
             Marker marker = stringMarkerMap.get(key);
             LatLng position = new LatLng(location.latitude, location.longitude);
             updateMarkerPosition(marker, position);
@@ -185,12 +188,12 @@ public class MapFragment extends Fragment {
   
         @Override
         public void onGeoQueryReady() {
-            Log.d(Constant.NEARBY_CHAT, "onGeoQueryReady: All initial data has been loaded and events have been fired!");
+            Log.d(Constant.YOGANET, "onGeoQueryReady: All initial data has been loaded and events have been fired!");
         }
 
         @Override
         public void onGeoQueryError(DatabaseError error) {
-            Log.w(Constant.NEARBY_CHAT, "onGeoQueryError: There was an error with this query: ", error.toException());
+            Log.w(Constant.YOGANET, "onGeoQueryError: There was an error with this query: ", error.toException());
         }
     };
     private final GoogleMap.OnMarkerClickListener markerClickListener = marker -> {
@@ -244,7 +247,7 @@ public class MapFragment extends Fragment {
 
     private void updateCameraPosition(LatLng position) {
         // For zooming automatically to the location of the marker
-        Log.d(Constant.NEARBY_CHAT, "updateCameraPosition() called with: position = [" + position + "]");
+        Log.d("YogaNet", "updateCameraPosition() called with: position = [" + position + "]");
         CameraPosition cameraPosition = new CameraPosition.Builder().target(position).zoom(googleMap.getMaxZoomLevel() - 6).build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.animateCamera(cameraUpdate);
@@ -345,8 +348,12 @@ public class MapFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (geoFire != null) geoFire.removeLocation(userId);
-        if (mMapView != null) mMapView.onDestroy();
+        if (geoFire != null && userId != null) {
+            geoFire.removeLocation(userId);
+        }
+        if (mMapView != null) {
+            mMapView.onDestroy();
+        }
 
 
     }
@@ -390,7 +397,7 @@ public class MapFragment extends Fragment {
     }
 
     private void updateSubtitle() {
-        Log.d(Constant.NEARBY_CHAT, "updateSubtitle: ");
+        Log.d(Constant.YOGANET, "updateSubtitle: ");
 
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_main);
         toolbar.setSubtitle(totalUser + " online user(s)");
@@ -408,4 +415,7 @@ public class MapFragment extends Fragment {
 
         void removeLocationCallback(LocationCallback locationCallback);
     }
+
+
+    
 }

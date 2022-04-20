@@ -318,7 +318,11 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
     public int getItemCount() {
         return commentList.size();
     }
-
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
+    }
     class MyHolder extends RecyclerView.ViewHolder {
         //declare view from row_comments.xml
 

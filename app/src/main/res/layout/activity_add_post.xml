@@ -50,21 +50,39 @@
                 android:inputType="textAutoCorrect"/>
 
         <!--ImageView: Input post image-->
-
-        <ImageView
+<RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+>
+    <ImageView
             android:id="@+id/pImageIv"
             android:adjustViewBounds="true"
             android:background="#CFC8B4"
             android:layout_width="match_parent"
             android:minHeight="200dp"
-            android:layout_height="wrap_content"/>
-        <VideoView
-            android:layout_gravity="center"
-            android:id="@+id/videoView"
-            android:visibility="gone"
+            android:layout_height="wrap_content" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    <com.google.android.exoplayer2.ui.PlayerView
+            app:show_timeout="0"
             android:layout_width="match_parent"
-            android:layout_height="350dp"/>
-        <ImageView
+            android:layout_height="wrap_content"
+            android:id="@+id/player"
+            app:use_controller="true"
+            android:layout_margin="5dp"
+            android:visibility="gone"
+            app:player_layout_id="@layout/exo_player_view"
+            app:controller_layout_id="@layout/audio_controller"/>
+    <Button
+            android:layout_width="65dp"
+            android:background="@drawable/ic_play"
+            android:layout_height="55dp"
+            android:visibility="gone"
+            android:id="@+id/playBtn"
+            android:layout_centerInParent="true"
+    />
+</RelativeLayout>
+   <ImageView
             android:translationY="-30dp"
             android:layout_width="30dp"
             android:layout_marginStart="5dp"

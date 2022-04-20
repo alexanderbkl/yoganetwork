@@ -1,5 +1,6 @@
 package com.android.yoganetwork.adapters;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.text.TextUtils.isEmpty;
 
 import android.animation.Animator;
@@ -8,29 +9,21 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Outline;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
-import android.view.ViewTreeObserver;
+import android.view.*;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.BounceInterpolator;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
+import android.widget.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -38,19 +31,24 @@ import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ablanco.zoomy.Zoomy;
-import com.android.yoganetwork.AddPostActivity;
-import com.android.yoganetwork.PostDetailActivity;
-import com.android.yoganetwork.PostLikedByActivity;
-import com.android.yoganetwork.R;
-import com.android.yoganetwork.ThereProfileActivity;
-import com.android.yoganetwork.VideoPlayerActivity;
+import com.android.yoganetwork.*;
 import com.android.yoganetwork.models.ModelPost;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.*;
+import com.google.firebase.database.DataSnapshot;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Callback;
@@ -60,9 +58,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
-public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
+public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> implements MediaPlayer.OnPreparedListener {
 
 
     private final DatabaseReference likesRef; //for likes database node
@@ -72,6 +72,12 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     String myUid;
     boolean mProcessLike=false;
     RecyclerView recycler_view;
+    MediaPlayer mediaPlayer;
+
+    SimpleExoPlayer simpleExoPlayer;
+    MediaItem mediaItem;
+
+
     int countLikes, countComments;
     ModelPost modelPost;
 
@@ -90,69 +96,16 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
     @Override
     public MyHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         //inflate layout row_post.xml
-        View view = LayoutInflater.from(context).inflate(R.layout.row_posts, viewGroup, false);
+        View view = LayoutInflater.from(context).inflate(com.android.yoganetwork.R.layout.row_posts, viewGroup, false);
         return new MyHolder(view);
+
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onBindViewHolder(@NonNull MyHolder myHolder, @SuppressLint("RecyclerView") int i) {
         //get data
-
-
-/*
-
-        this.recyclerView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View view, int i, int i1, int i2, int i3) {
-
-                try {
-                    Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
-                    System.out.println("suka1");
-                    mediaController.hide();
-
-
-                } catch (NullPointerException e) {
-                    Log.e("mediaController", String.valueOf(e));
-
-                }
-
-            }
-        });
-
-
-        this.recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                try {
-                    mediaController.hide();
-                    Toast.makeText(context, "2", Toast.LENGTH_SHORT).show();
-                    System.out.println("suka2");
-
-                } catch (NullPointerException e) {
-                    Log.e("mediaController", String.valueOf(e));
-
-                }
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                try {
-                    mediaController.hide();
-                    Toast.makeText(context, "3", Toast.LENGTH_SHORT).show();
-                    System.out.println("suka3");
-
-                } catch (NullPointerException e) {
-                    Log.e("mediaController", String.valueOf(e));
-
-                }
-            }
-        });*/
-
-
-
 
 
         final String uid = postList.get(i).getUid();
@@ -164,7 +117,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         String pDescription = postList.get(i).getpDescr();
         countLikes = Integer.parseInt(postList.get(i).getpLikes());
         countComments = Integer.parseInt(postList.get(i).getpComments());
-
         String pImage = postList.get(i).getpImage();
         String pVideo = postList.get(i).getpVideo();
         if (pImage != null) {
@@ -174,12 +126,44 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                 myHolder.pImageIv.setVisibility(View.GONE);
                 myHolder.zoomInBtn.setVisibility(View.GONE);
             }
+        } else if (postList.get(i).getpAudio() != null) {
+            myHolder.playerView.setControllerHideOnTouch(false);
+
+            myHolder.playerView.setVisibility(View.VISIBLE);
+            myHolder.pImageIv.setVisibility(View.GONE);
+            myHolder.playBtn.setVisibility(View.GONE);
+            myHolder.zoomInBtn.setVisibility(View.GONE);
+            simpleExoPlayer = new SimpleExoPlayer.Builder(context)
+                    .setSeekBackIncrementMs(5000)
+                    .setSeekForwardIncrementMs(5000)
+                    .build();
+            myHolder.playerView.setPlayer(simpleExoPlayer);
+            myHolder.playerView.setKeepScreenOn(true);
+            myHolder.playerView.setOutlineProvider(new ViewOutlineProvider() {
+                @Override
+                public void getOutline(View view, Outline outline) {
+                    outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), 40);
+                }
+            });
+
+            myHolder.playerView.setClipToOutline(true);
+            Uri audioSource = Uri.parse(postList.get(i).getpAudio());
+            mediaItem = MediaItem.fromUri(audioSource);
+            simpleExoPlayer.setMediaItem(mediaItem);
+            simpleExoPlayer.prepare();
+            simpleExoPlayer.setPlayWhenReady(false);
+
+
+
         }
+
+
          modelPost = postList.get(i);
         String pTimeStamp = postList.get(i).getpTime();
         if (postList.get(i).getpVideo() != null) {
             myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, null, pVideo));
             myHolder.pImageIv.setVisibility(View.VISIBLE);
+            myHolder.zoomInBtn.setVisibility(View.GONE);
             String videoUrl = modelPost.getpVideo();
 
             // holder.pImageIv.setVisibility(View.GONE);
@@ -232,17 +216,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         //set likes for each post
 
 
-      //  myHolder.pImageIv.setOnClickListener(new View.OnClickListener() {
-     //       @Override
-          //  public void onClick(View v) {
-
-         //       if (v != null) {
-        //            Zoomy.Builder builder = new Zoomy.Builder((Activity) context).target(v);
-        //            builder.register();
-       //         } else {
-       //     }}
-     //    });
-
         //set itemview cache size
         recycler_view.setItemViewCacheSize(20);
 
@@ -282,6 +255,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                                                 }});
 
 
+        DatabaseReference ref = postsRef.child(pId).child("hotScore");
+        ref.setValue(modelPost.getHotScore());
+
+
         myHolder.shareBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -304,10 +281,20 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
         myHolder.profileLayout.setOnClickListener(v -> {
                     //click to go to ThereProfileActivity with uid, this uid is of clicked user
-                    //which will be used to show user specifi data/posts
-                    Intent intent = new Intent(context, ThereProfileActivity.class);
-                    intent.putExtra("uid", uid);
-                    context.startActivity(intent);
+                    //which will be used to show user specified data/posts
+                    //chick if there uid is not equal to current user id
+                    //check if current activity is not ThereProfileActivity
+
+                    if (!(context instanceof  ThereProfileActivity)) {
+                        if (!Objects.equals(uid, myUid)) {
+                            Intent intent = new Intent(context, ThereProfileActivity.class);
+                            intent.putExtra("uid", uid);
+                            context.startActivity(intent);
+                        }
+                    }
+
+
+
                 });
 
         //click like count to start PostLikedByActivity, and pass the post id
@@ -324,50 +311,17 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
 
     }
 
+    @SuppressLint("DefaultLocale")
+    private String convertFormat(int duration) {
+        return String.format("%02d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(duration),
+                TimeUnit.MILLISECONDS.toSeconds(duration) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(duration)));
+    }
+
 
 
     private void likePost(MyHolder myHolder, int i) {
-        //example that for some reason reloads all the recycler views:
-        /*
-
-         */
-        /*Get total number of likes for the post, whose like button clicked
-         * if currently signed in user has not liked before
-         * increase value by 1, otherwise decrease value by 1*//*
-
-    int pLikes = Integer.parseInt(postList.get(i).getpLikes());
-    mProcessLike = true;
-    //get id of the post liked
-    String postIde = postList.get(i).getpId();
-
-
-                     likesRef.addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            if (mProcessLike) {
-                if (snapshot.child(postIde).hasChild(myUid)) {
-                    //already liked, so remove like
-                    postsRef.child(postIde).child("pLikes").setValue(""+(pLikes-1));
-                    likesRef.child(postIde).child(myUid).removeValue();
-                    mProcessLike = false;
-                }
-                else {
-                    //not liked, like it
-                    postsRef.child(postIde).child("pLikes").setValue(""+(pLikes+1));
-                    likesRef.child(postIde).child(myUid).setValue("Liked"); //set any value
-                    mProcessLike = false;
-
-                    addToHisNotifications(""+uid, ""+pId, context.getString(R.string.liked));
-                } }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    });
-*/
-
 
 
 
@@ -375,9 +329,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         //get the post id
         final String pId = postList.get(i).getpId();
         final String uid = postList.get(i).getUid();
+        final long currentDate = System.currentTimeMillis();
 
         likesRef.child(pId).child(myUid).getKey();
-
 
         //add post id and uid in likes node
         DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
@@ -388,21 +342,41 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     @Override
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
 
-                        if (snapshot.exists()) {
 
+                        int pLikes;
+                        if (snapshot.exists()) {
+                            pLikes = Integer.parseInt(postList.get(i).getpLikes())-1;
                             //already liked, so remove like
-                            postsRef.child(pId).child("pLikes").setValue(""+(Integer.parseInt(postList.get(i).getpLikes())-1));
+                            postsRef.child(pId).child("pLikes").setValue(""+pLikes);
                             likesRef.child(pId).child(myUid).removeValue();
                         }
                         else {
+                            pLikes = Integer.parseInt(postList.get(i).getpLikes())+1;
                             //not liked, like it
-                            postsRef.child(pId).child("pLikes").setValue(""+(Integer.parseInt(postList.get(i).getpLikes())+1));
+                            postsRef.child(pId).child("pLikes").setValue(""+pLikes);
                             likesRef.child(pId).child(myUid).setValue("Liked").addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     addToHisNotifications(""+uid, ""+pId, context.getString(R.string.liked), i);
+                                    //add a like to number of likes on his profile
+                                    FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                            int userLikes = Integer.parseInt(Objects.requireNonNull(snapshot.getValue()).toString())+1;
+                                            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").setValue(""+userLikes);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                        }
+                                    });
+
                                 }
                             });
+
+                            String hotScore = String.valueOf(hot(currentDate,pLikes, Long.parseLong(postList.get(i).getpTime())));
+                            postsRef.child(pId).child("hotScore").setValue(hotScore);
                         }
                     }
 
@@ -423,55 +397,19 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         */
     }
 
-   /* private void setVideoToVideoView(MyHolder holder, ModelPost postVideo) {
-      //  DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-     //   float dpHeight = displayMetrics.heightPixels*3 / displayMetrics.density;
+    private long hot(long postDate, long likes, long currentDate) {
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTimeZone(TimeZone.getTimeZone("GMT"));
+        int year = cal2.get(Calendar.YEAR);
+        int yearNumber = (Math.abs(year) % 10)*10000;
 
-    //    ViewGroup.LayoutParams layoutParams = holder.videoView.getLayoutParams();
-     //   layoutParams.height = (int) dpHeight/2;
-     //   holder.videoView.setLayoutParams(layoutParams);
+        return (((currentDate - postDate) / 86400000) * 1000 - score(likes) - yearNumber * 10000)*(-1);
+    }
 
-          videoUrl = postVideo.getpVideo();
+    private long score(long likes) {
+        return likes * 1000;
+    }
 
-
-       // holder.pImageIv.setVisibility(View.GONE);
-       // holder.videoView.setVisibility(View.VISIBLE);
-
-      //  Uri videoUri = Uri.parse(videoUrl);
-    //    holder.videoView.setVideoURI(videoUri);
-     //   holder.videoView.requestFocus();
-
-        try {
-            long thumb = holder.getLayoutPosition()* 1000L;
-            RequestOptions options = new RequestOptions().frame(thumb);
-
-            Glide.with(context).load(videoUrl).apply(options).fitCenter().centerCrop().into(holder.pImageIv);
-            holder.playBtn.setVisibility(View.VISIBLE);
-
-        }
-        catch(NullPointerException e) {
-            Log.e("null thumbnail", String.valueOf(e));
-        }
-
-
-       *//* holder.videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
-
-                    @Override
-                    public void onVideoSizeChanged(MediaPlayer mediaPlayer, int i, int i1) {
-                        mediaController = new MediaController(context);
-                        holder.videoView.setMediaController(mediaController);
-                        mediaController.setAnchorView(holder.videoView);
-                    }
-                });
-                holder.videoView.start();
-
-            }
-        });*//*
-
-    }*/
 
 
     private void addToHisNotifications(String hisUid, String pId, String notification, int i) {
@@ -722,6 +660,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         return postList.size();
     }
 
+    @Override
+    public void onPrepared(MediaPlayer mediaPlayer) {
+
+        int duration = mediaPlayer.getDuration();
+        String sDuration = convertFormat(duration);
+        mediaPlayer.start();
+    }
 
 
     //view holder class
@@ -729,24 +674,21 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
         //views from row_post.xml
 
         ImageView uPictureIv, pImageIv, imageView2, ic_arrow_left, ic_arrow_right;
-        TextView uPseudonymTv, uPracticTv, pTimeTv, pTitleTv, pDescriptionTv, pLikesTv, pCommentsTv;
+        TextView uPseudonymTv, uPracticTv, pTimeTv, pTitleTv, pDescriptionTv, pLikesTv, pCommentsTv, audioTv;
         ImageButton moreBtn, zoomInBtn, zoomOutBtn;
         Button likeBtn, commentBtn, shareBtn,playBtn;
         LinearLayout profileLayout;
-        VideoView videoView;
-
+        PlayerView playerView;
 
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
 
             //init views
+            playerView = itemView.findViewById(R.id.player);
             uPictureIv = itemView.findViewById(R.id.uPictureIv);
             pImageIv = itemView.findViewById(R.id.pImageIv);
-            videoView = itemView.findViewById(R.id.videoView);
             playBtn = itemView.findViewById(R.id.playBtn);
-
-
             ic_arrow_left = itemView.findViewById(R.id.ic_arrow_left);
             ic_arrow_right = itemView.findViewById(R.id.ic_arrow_right);
             imageView2 = itemView.findViewById(R.id.imageView2);
@@ -910,5 +852,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> {
                     .start();
                         }
         }
-
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
+    }
     }

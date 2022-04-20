@@ -1,5 +1,6 @@
 package com.android.yoganetwork.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -33,9 +34,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 public class ChatListFragment extends Fragment {
@@ -128,6 +131,7 @@ public class ChatListFragment extends Fragment {
     private void lastMessage(String userId) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
         reference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String theLastMessage = "default";
@@ -142,7 +146,7 @@ public class ChatListFragment extends Fragment {
                             chat.getSender().equals(currentUser.getUid())) {
                         //instead of displayinh url in message show "sent photo"
                         if (chat.getType().equals("image")) {
-                            theLastMessage = getString(R.string.fotomsg);
+                                theLastMessage = "Envió una foto";
                         }
                         else {
                             theLastMessage = chat.getMessage();
@@ -167,12 +171,7 @@ public class ChatListFragment extends Fragment {
     private void checkUserStatus() {
         //get current user
         FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
-            //user is signed in stay here
-            //set email of logged in user
-            //mProfileTv.setText(user.getEmail());
-        }
-        else {
+        if (user == null)  {
             //user not signed in, go to mainactivity
             startActivity(new Intent(getActivity(), MainActivity.class));
             getActivity().finish();
@@ -186,7 +185,7 @@ public class ChatListFragment extends Fragment {
 
     /*inflate options menu*/
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NotNull Menu menu, MenuInflater inflater) {
         //inflating menu
         inflater.inflate(R.menu.menu_main, menu);
 

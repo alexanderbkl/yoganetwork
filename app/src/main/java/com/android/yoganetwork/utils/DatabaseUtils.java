@@ -26,6 +26,7 @@ import java.io.FileNotFoundException;
 
 import com.android.yoganetwork.constants.Constant;
 import com.android.yoganetwork.constants.Database;
+
 import static com.android.yoganetwork.constants.Database.userLocation;
 
 
@@ -120,12 +121,12 @@ public class DatabaseUtils {
         //debug listeners
         uploadTask.addOnFailureListener(exception -> {
             // Handle unsuccessful uploads
-            Log.w(Constant.NEARBY_CHAT, "save picture online: ko ", exception);
+            Log.w(Constant.YOGANET, "save picture online: ko ", exception);
         }).addOnSuccessListener(taskSnapshot -> {
-            Log.d(Constant.NEARBY_CHAT, "save picture: ok");
+            Log.d(Constant.YOGANET, "save picture: ok");
             // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
             Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-            Log.d(Constant.NEARBY_CHAT, "save picture online : uri= " + downloadUrl);
+            Log.d(Constant.YOGANET, "save picture online : uri= " + downloadUrl);
         });
     }
 
@@ -165,7 +166,7 @@ public class DatabaseUtils {
                 }
                 //debug listeners
                 task.addOnSuccessListener(bytes -> {
-                    Log.d(Constant.NEARBY_CHAT, "loadImage() called with: storagReference = [" + storageReference + "], onSuccessListener = [" + onSuccessListener + "], onFailureListener = [" + onFailureListener + "]");
+                    Log.d(Constant.YOGANET, "loadImage() called with: storagReference = [" + storageReference + "], onSuccessListener = [" + onSuccessListener + "], onFailureListener = [" + onFailureListener + "]");
                     Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                     if (image != null) {
@@ -180,11 +181,11 @@ public class DatabaseUtils {
 
                 }).addOnFailureListener(exception -> {
                     // Handle any errors
-                    Log.d(Constant.NEARBY_CHAT, "loadImage() called with: storagReference = [" + storageReference + "], onSuccessListener = [" + onSuccessListener + "], onFailureListener = [" + onFailureListener + "]");
-                    Log.w(Constant.NEARBY_CHAT, "loadProfileImage: ", exception);
+                    Log.d(Constant.YOGANET, "loadImage() called with: storagReference = [" + storageReference + "], onSuccessListener = [" + onSuccessListener + "], onFailureListener = [" + onFailureListener + "]");
+                    Log.w(Constant.YOGANET, "loadProfileImage: ", exception);
                 });
             } catch (RuntimeException e) {
-                Log.w(Constant.NEARBY_CHAT, "loadImage: ", e);
+                Log.w(Constant.YOGANET, "loadImage: ", e);
             }
         }
     }
@@ -213,12 +214,12 @@ public class DatabaseUtils {
         //debug listeners
         uploadTask.addOnFailureListener(exception -> {
             // Handle unsuccessful uploads
-            Log.w(Constant.NEARBY_CHAT, "save audio online: ko ", exception);
+            Log.w(Constant.YOGANET, "save audio online: ko ", exception);
         }).addOnSuccessListener(taskSnapshot -> {
-            Log.d(Constant.NEARBY_CHAT, "save audio: ok");
+            Log.d(Constant.YOGANET, "save audio: ok");
             // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
             Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-            Log.d(Constant.NEARBY_CHAT, "save audio online : uri= " + downloadUrl);
+            Log.d(Constant.YOGANET, "save audio online : uri= " + downloadUrl);
         });
     }
 
@@ -257,7 +258,7 @@ public class DatabaseUtils {
                             }
 
                         } catch (FileNotFoundException e) {
-                            Log.e(Constant.NEARBY_CHAT, "loadRecord: fail ", e);
+                            Log.e(Constant.YOGANET, "loadRecord: fail ", e);
                         }
                     });
                 }
@@ -265,17 +266,18 @@ public class DatabaseUtils {
                     task.addOnFailureListener(onFailureListener);
                 }
                 //debug listeners
-                task.addOnSuccessListener(bytes -> Log.d(Constant.NEARBY_CHAT, "loadRecord() called with: storagReference = [" + storageReference + "], onSuccessListener = [" + onSuccessListener + "], onFailureListener = [" + onFailureListener + "]"));
+                task.addOnSuccessListener(bytes -> Log.d(Constant.YOGANET, "loadRecord() called with: storagReference = [" + storageReference + "], onSuccessListener = [" + onSuccessListener + "], onFailureListener = [" + onFailureListener + "]"));
                 task.addOnFailureListener(exception -> {
                     // Handle any errors
-                    Log.d(Constant.NEARBY_CHAT, "loadRecord() called with: storagReference = [" + storageReference + "], onSuccessListener = [" + onSuccessListener + "], onFailureListener = [" + onFailureListener + "]");
-                    Log.w(Constant.NEARBY_CHAT, "loadRecord: ", exception);
+                    Log.d(Constant.YOGANET, "loadRecord() called with: storagReference = [" + storageReference + "], onSuccessListener = [" + onSuccessListener + "], onFailureListener = [" + onFailureListener + "]");
+                    Log.w(Constant.YOGANET, "loadRecord: ", exception);
                 });
             } catch (RuntimeException e) {
-                Log.w(Constant.NEARBY_CHAT, "loadRecord: ", e);
+                Log.w(Constant.YOGANET, "loadRecord: ", e);
             }
         }
     }
+
 
 
 }

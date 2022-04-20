@@ -19,29 +19,41 @@
             app:c_border_color="@color/teal_700"
             android:visibility="gone"
             android:src="@drawable/ic_default_img"/>
-
-        <TextView
+<LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/bg_sender"
+>
+    <TextView
             android:id="@+id/messageTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:background="@drawable/bg_sender"
+            android:layout_marginEnd="5dp"
             android:padding="15dp"
             android:text="@string/su_mensaje"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="16sp" />
+            android:textColor="@color/colorWhite"
+            android:textSize="16sp"/>
+
+</LinearLayout>
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_marginStart="50dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/bg_sender"
+                android:layout_height="wrap_content">
         <ImageView
             android:id="@+id/messageIv"
             android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             android:visibility="gone"
+            android:gravity="center"
             android:padding="15dp"
-            android:layout_alignParentEnd="true"
+            android:cropToPadding="false"
             android:src="@drawable/ic_image_black"
-            android:scaleType="fitCenter"
-            android:background="@drawable/bg_sender"
             android:contentDescription="@string/todo" />
+        </LinearLayout>
 
 
     </RelativeLayout>
@@ -49,7 +61,8 @@
         android:id="@+id/timeTv"
         android:layout_width="wrap_content"
         android:translationY="1dp"
-        android:translationX="310dp"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="end"
         android:layout_height="wrap_content"
         android:text="@string/_23_12_21_23"
         android:textColor="@color/colorPrimaryDark"

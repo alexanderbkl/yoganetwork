@@ -55,12 +55,6 @@ private FirebaseAuth mAuth;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Actionbar and its title
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.iniciarsesion);
-        //enable back button
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
         //before mAuth
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

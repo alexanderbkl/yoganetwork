@@ -12,6 +12,7 @@
 
         <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/appbar"
+                android:outlineProvider="none"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
@@ -26,136 +27,174 @@
                     app:popupTheme="@style/AppTheme.PopupOverlay"
             />
 
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar_main"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#00171212"
+                    app:layout_scrollFlags="scroll|enterAlways|snap"
+                    android:contentInsetLeft="0dp"
+                    android:contentInsetStart="0dp"
+                    app:contentInsetLeft="0dp"
+                    app:contentInsetStart="0dp"
+                    android:outlineProvider="none"
+                    android:contentInsetRight="0dp"
+                    android:contentInsetEnd="0dp"
+                    app:contentInsetRight="0dp"
+                    app:contentInsetEnd="0dp">
+                <RelativeLayout
+                        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                    <ImageView
+                            android:id="@+id/coverIv"
+                            android:layout_width="match_parent"
+                            android:layout_height="150dp"
+                            android:scaleType="fitXY"
+                            android:adjustViewBounds="true"
+                            android:background="#E4CACACA"
+                            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                            android:contentDescription="@string/todo"/>
+
+                    <LinearLayout
+                            android:id="@+id/linearLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="135dp"
+                            android:layout_above="@+id/descriptionTv"
+                            android:gravity="bottom"
+                            android:orientation="horizontal"
+                    >
+
+
+                        <ImageView
+                                android:id="@+id/avatarIv"
+                                android:background="@drawable/layout_border"
+                                android:src="@drawable/ic_default_img_white"
+                                android:layout_width="100dp"
+                                android:layout_marginStart="10dp"
+                                android:layout_height="100dp"
+                                android:contentDescription="@string/todo"/>
+                        <RelativeLayout
+
+                                android:layout_width="match_parent"
+                                android:layout_height="100dp"
+                                android:orientation="vertical"
+                                android:layout_marginStart="-2dp"
+                                android:layout_marginEnd="10dp"
+                                android:background="@drawable/layout_profile_data_border">
+
+                            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                                    android:id="@+id/fab"
+                                    android:src="@drawable/ic_message_white"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:scaleX="0.5"
+                                    android:scaleY="0.5"
+                                    android:translationY="-5dp"
+                                    android:background="#AECFD5"
+                                    android:layout_alignParentEnd="true"
+                                    android:contentDescription="@string/send_message"/>
+                            <TextView
+                                    android:id="@+id/nameTv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginTop="5dp"
+                                    android:text="@string/nombre1"
+                                    android:textColor="@color/white"
+                                    android:textSize="25sp"/>
+                            <TextView
+                                    android:id="@+id/realNameTv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_below="@+id/nameTv"
+                                    android:textSize="18sp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:textColor="@color/white"
+                                    android:text="Real name"/>
+                            <TextView
+                                    android:id="@+id/typeTv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignEnd="@+id/realNameTv"
+                                    android:textSize="18sp"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_marginEnd="10dp"
+                                    android:layout_below="@+id/nameTv"
+                                    android:textColor="@color/white"
+                                    android:text="Yoga type"/>
+                            <TextView
+                                    android:id="@+id/practicTv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:textSize="18sp"
+                                    android:paddingBottom="10dp"
+                                    android:textColor="@color/white"
+                                    android:layout_below="@+id/typeTv"
+                                    android:text="@string/tipo_de_pr_ctica"/>
+                            <TextView
+                                    android:id="@+id/dietTv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:layout_below="@+id/typeTv"
+                                    android:layout_alignParentEnd="true"
+                                    android:textSize="18sp"
+                                    android:textColor="@color/white"
+                                    android:text="@string/dieta"/>
+
+
+                        </RelativeLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                            android:id="@+id/descriptionTv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="10dp"
+                            android:layout_below="@+id/coverIv"
+                            android:layout_marginEnd="10dp"
+                            android:justificationMode="inter_word"
+                            android:layout_marginTop="-2dp"
+                            android:text="Description"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:padding="5dp"
+                            android:background="@drawable/layout_profile_comment_border"/>
+
+
+
+                </RelativeLayout>
+
+
+            </androidx.appcompat.widget.Toolbar>
+
+
 
         </com.google.android.material.appbar.AppBarLayout>
         <!--Cover Photo-->
 
-<RelativeLayout
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_width="match_parent"
-        android:layout_marginTop="-10dp"
-        android:layout_height="match_parent">
-        <ImageView
-                android:id="@+id/coverIv"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:background="#00000000"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                android:contentDescription="@string/todo"/>
 
-    <LinearLayout
-            android:id="@+id/linearLayout"
+    <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScroll"
+            android:layout_below="@+id/coverIv"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
-            android:layout_height="135dp"
-            android:layout_above="@+id/nestedScroll"
-            android:gravity="bottom"
-            android:layout_marginBottom="10dp"
-            android:orientation="horizontal"
-    >
-
-
-        <ImageView
-                android:id="@+id/avatarIv"
-                android:layout_marginStart="10dp"
-                android:background="@drawable/layout_border"
-                android:padding="5dp"
-                android:src="@drawable/ic_default_img_white"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:contentDescription="@string/todo"/>
-        <RelativeLayout
-
+            android:layout_marginTop="-50dp"
+            android:descendantFocusability="blocksDescendants"
+            android:layout_height="wrap_content">
+        <!--RecyvlerView: User specific posts-->
+        <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:orientation="vertical"
-                android:layout_marginStart="-5dp"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/layout_profile_data_border">
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab"
-                    android:src="@drawable/ic_message_white"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scaleX="0.5"
-                    android:scaleY="0.5"
-                    android:translationY="-5dp"
-                    android:background="#AECFD5"
-                    android:layout_alignParentEnd="true"
-                    android:contentDescription="@string/send_message"/>
-            <TextView
-                    android:id="@+id/nameTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:text="@string/nombre1"
-                    android:textColor="@color/white"
-                    android:textSize="25sp"/>
-            <TextView
-                    android:id="@+id/realNameTv"
-                    android:layout_width="wrap_content"
-                    android:layout_below="@+id/nameTv"
-                    android:textSize="18sp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textColor="@color/white"
-                    android:text="Real name"/>
-            <TextView
-                    android:id="@+id/typeTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignEnd="@+id/realNameTv"
-                    android:textSize="18sp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="10dp"
-                    android:layout_below="@+id/nameTv"
-                    android:textColor="@color/white"
-                    android:text="Yoga type"/>
-            <TextView
-                    android:id="@+id/practicTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:textSize="18sp"
-                    android:paddingBottom="10dp"
-                    android:textColor="@color/white"
-                    android:layout_below="@+id/typeTv"
-                    android:text="@string/tipo_de_pr_ctica"/>
-            <TextView
-                    android:id="@+id/dietTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:paddingBottom="10dp"
-                    android:layout_below="@+id/typeTv"
-                    android:layout_alignParentEnd="true"
-                    android:textSize="18sp"
-                    android:textColor="@color/white"
-                    android:text="@string/dieta"/>
-
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-        <androidx.core.widget.NestedScrollView
-                android:id="@+id/nestedScroll"
-                android:layout_below="@+id/coverIv"
-                android:layout_width="match_parent"
-                android:descendantFocusability="blocksDescendants"
+                android:fastScrollEnabled="true"
                 android:layout_height="wrap_content">
-            <!--RecyvlerView: User specific posts-->
-            <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view"
-                    android:layout_width="match_parent"
-                    android:fastScrollEnabled="true"
-                    android:layout_height="wrap_content">
 
-            </androidx.recyclerview.widget.RecyclerView>
-        </androidx.core.widget.NestedScrollView>
-
-
-</RelativeLayout>
+        </androidx.recyclerview.widget.RecyclerView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

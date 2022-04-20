@@ -1,5 +1,6 @@
 package com.android.yoganetwork;
 
+import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,15 +26,16 @@ import com.google.android.exoplayer2.ui.PlayerView;
 
 public class VideoPlayerActivity extends AppCompatActivity {
 
-    PlayerView playerView;
     ProgressBar progressBar;
     ImageView fullScreenBtn, lockBtn;
+    PlayerView playerView;
     SimpleExoPlayer simpleExoPlayer;
+    MediaItem mediaItem;
     String videoUrl;
     Uri videoSource;
-    MediaItem mediaItem;
     Boolean isFullScreen = false, isLock = false;
     LinearLayout sec_controlvid1, sec_controlvid2;
+    @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +55,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 videoUrl= null;
             } else {
                 videoUrl= extras.getString("videoUrl");
-                Toast.makeText(VideoPlayerActivity.this, "a:  "+videoUrl, Toast.LENGTH_SHORT).show();
             }
 
 

@@ -19,6 +19,7 @@ import com.android.yoganetwork.ChatActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.ThereProfileActivity;
 import com.android.yoganetwork.models.ModelUsers;
+import com.android.yoganetwork.utils.MapUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,18 +29,26 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.android.yoganetwork.constants.Database.userLocation;
 
 public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
 {
     Context context;
     List<ModelUsers> userList;
 
+
     //for getting current user's uid
     FirebaseAuth firebaseAuth;
     String myUid;
+
+
     //constructor
 
 
@@ -58,21 +67,42 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
         //!!!
         View view = LayoutInflater.from(context).inflate(R.layout.row_users, viewGroup, false);
 
+
         return new MyHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyHolder myHolder, @SuppressLint("RecyclerView") int i) {
+
+
+
+
+
+
         //get data
         String hisUid = userList.get(i).getUid();
         String userImage = userList.get(i).getImage();
-        String userName = userList.get(i).getPseudonym();
-       String userPractic = userList.get(i).getPractic();
-        String userType = userList.get(i).getType();
+        String userNameL = userList.get(i).getPseudonym();
+        String userName = userNameL;
+        if (!userNameL.equals("")) {
+            userName = userNameL.substring(0,1).toUpperCase() + userNameL.substring(1);
+        }
+       String userPracticL = userList.get(i).getPractic();
+       String userPractic = userPracticL;
+       if (!userPracticL.equals("")) {
+           userPractic = userPracticL.substring(0,1).toUpperCase() + userPracticL.substring(1);
+       }
+        String userTypeL = userList.get(i).getType();
+       String userType = userTypeL;
+       if (!userTypeL.equals("")) {
+           userType = userTypeL.substring(0,1).toUpperCase() + userTypeL.substring(1);
+       }
+       String userDescription = userList.get(i).getDescription();
     //set data
         myHolder.mNameTv.setText(userName);
         myHolder.mPracticTv.setText(userPractic);
         myHolder.mTypeTv.setText(userType);
+        myHolder.mDescriptionTv.setText(userDescription);
         try {
             Picasso.get().load(userImage)
                     .placeholder(R.drawable.ic_default_img_white)
@@ -81,9 +111,72 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
 catch (Exception e) {
 
 }
-        myHolder.blockIv.setImageResource(R.drawable.ic_unblocked_green);
         //check if each user is blocked or not
         checkIsBlocked(hisUid, myHolder, i);
+        checkIsLiked(hisUid, myHolder, i);
+
+
+
+        //create a database reference to userLocations
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference(userLocation);
+        //create a datasnapshot to get the key name of every child inside userLocation
+        ref.addValueEventListener(new ValueEventListener() {
+
+            String myGeoHash="";
+            String hisGeoHash="";
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //get the key of every child inside userLocation
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    //get the key of every child inside userLocation
+                    String key = ds.getKey();
+                    //get the value of every child inside userLocation
+                    String value = ds.child("g").getValue().toString();
+                    //check if the key is equal to the current user's uid
+                    if (key.equals(myUid)) {
+                        //if the key is equal to the current user's uid, then get the value of the child
+                        //and set it to the current user's location
+                        myGeoHash  = value;
+
+                    } else if (key.equals(hisUid)) {
+                        //if the key is equal to the other user's uid, then get the value of the child
+                        //and set it to the other user's location
+                        hisGeoHash = value;
+                    }
+
+                    if (!myGeoHash.equals("") && !hisGeoHash.equals("")) {
+                        double[] myLocation = MapUtils.decodeHash(myGeoHash);
+                        double[] hisLocation = MapUtils.decodeHash(hisGeoHash);
+                        double myLat = myLocation[0];
+                        double myLon = myLocation[1];
+                        double hisLat = hisLocation[0];
+                        double hisLon = hisLocation[1];
+
+                        //calculate the distance between the current user and the other user
+                        double distanceRaw = MapUtils.distance(myLat, myLon, hisLat, hisLon);
+                        BigDecimal distance = BigDecimal.valueOf(distanceRaw);
+                        distance = distance.setScale(2, RoundingMode.HALF_UP);
+
+                        //set the distance to the textview
+                        myHolder.mDistanceTv.setText(distance + " km");
+
+
+                    }
+
+
+
+
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
 
         //handle item click
         myHolder.itemView.setOnClickListener(v -> {
@@ -112,7 +205,7 @@ catch (Exception e) {
             });
 builder.create().show();
         });
-        //click to block unblock user
+  /*      //click to block unblock user
         myHolder.blockIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,6 +214,20 @@ builder.create().show();
             }
             else {
                 blockUser(hisUid);
+            }
+            }
+        });*/
+
+        myHolder.likeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userList.get(i).isLiked()) {
+                    myHolder.likeIv.setImageResource(R.drawable.ic_heart_dark);
+                    unLikeUser(hisUid, myHolder, i);
+            }
+            else {
+                    myHolder.likeIv.setImageResource(R.drawable.ic_heart_dark);
+                    likeUser(hisUid, myHolder, i);
             }
             }
         });
@@ -166,8 +273,31 @@ builder.create().show();
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot ds: snapshot.getChildren()) {
                             if (ds.exists()) {
-                                myHolder.blockIv.setImageResource(R.drawable.ic_blocked_red);
+                             //   myHolder.blockIv.setImageResource(R.drawable.ic_heart_red);
                                 userList.get(i).setBlocked(true);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
+    private void checkIsLiked(String hisUid, MyHolder myHolder, int i) {
+        //check each user, if blocked or not
+        //if uid of the user exists in "BlockedUsers then that user is blocked, otherwise not
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(myUid).child("LikedUsers").orderByChild("uid").equalTo(hisUid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds: snapshot.getChildren()) {
+                            if (ds.exists()) {
+                                myHolder.likeIv.setImageResource(R.drawable.ic_heart_red);
+                                userList.get(i).setLiked(true);
                             }
                         }
                     }
@@ -203,6 +333,99 @@ builder.create().show();
                         Toast.makeText(context, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    private void likeUser(String hisUid, MyHolder myHolder, int i) {
+        //like the user, by adding uid to current user's "LikedUsers" node
+
+        //put values in hashmap to put in db
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("uid", hisUid);
+
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(myUid).child("LikedUsers").child(hisUid).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    //liked successfully
+                        userList.get(i).setLiked(true);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                    //failed to block
+                        Toast.makeText(context, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+
+
+        //like the user, by adding uid to current user's "LikedUsers" node
+
+
+
+        //add post id and uid in likes node
+        DatabaseReference profileLikesRef = FirebaseDatabase.getInstance().getReference("Users").child(hisUid).child("profileLikes").child(myUid);
+        profileLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                snapshot.getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+
+
+                        if (snapshot.exists()) {
+                            //already liked, so remove like
+                            profileLikesRef.child(myUid).removeValue();
+                        }
+                        else {
+
+                                    addToHisNotifications(hisUid, myUid);
+                                }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void addToHisNotifications(String hisUid, String myUid) {
+        String timestamp = ""+System.currentTimeMillis();
+
+        HashMap<Object, String> hashMap = new HashMap<>();
+        hashMap.put("pId", "like");
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("pUid", hisUid);
+        hashMap.put("notification", "Liked your profile");
+        hashMap.put("sUid", myUid);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(hisUid).child("profileLikes").child(myUid).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //added successfully
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //failed
+                    }
+                });
+
+
     }
 
     private void unBlockUser(String hisUid) {
@@ -240,6 +463,41 @@ builder.create().show();
                     }
                 });
     }
+    private void unLikeUser(String hisUid, MyHolder myHolder, int i) {
+        //unblock the user, by removing uid from current user's "BlockedUsers" node
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(myUid).child("LikedUsers").orderByChild("uid").equalTo(hisUid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds: snapshot.getChildren()) {
+                            if (ds.exists()) {
+                                //remove blocked user data from current user's BlockedUsers list
+                                ds.getRef().removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //unliked successfully
+                                                userList.get(i).setLiked(false);
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                //failed to unblock
+                                                Toast.makeText(context, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
 
     /*In this Part(12):
 * ->Show sent messages
@@ -252,21 +510,30 @@ builder.create().show();
         return userList.size();
     }
 
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
+    }
+
     //view holder class
     class MyHolder extends RecyclerView.ViewHolder {
 
-        ImageView mAvatarIv, blockIv;
-        TextView mNameTv, mPracticTv, mTypeTv;
+        ImageView mAvatarIv, blockIv, likeIv;
+        TextView mNameTv, mPracticTv, mTypeTv, mDescriptionTv, mDistanceTv;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
 
             //init views
             mAvatarIv = itemView.findViewById(R.id.avatarIv);
-            blockIv = itemView.findViewById(R.id.blockIv);
+          //  blockIv = itemView.findViewById(R.id.blockIv);
+            likeIv = itemView.findViewById(R.id.likeIv);
             mNameTv = itemView.findViewById(R.id.nameTv);
             mPracticTv = itemView.findViewById(R.id.practicTv);
             mTypeTv = itemView.findViewById(R.id.typeTv);
+            mDescriptionTv = itemView.findViewById(R.id.descriptionTv);
+            mDistanceTv = itemView.findViewById(R.id.distanceTv);
 
 
         }

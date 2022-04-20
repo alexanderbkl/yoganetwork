@@ -86,6 +86,11 @@ public class AdapterChatlist extends RecyclerView.Adapter<AdapterChatlist.MyHold
 
     }
 
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
+    }
 
     @Override
     public int getItemCount() {

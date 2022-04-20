@@ -2,8 +2,7 @@ package com.android.yoganetwork.models;
 
 public class ModelPost {
     //use same name as we given while uploading post
-    String pId, pTitle, pDescr, pLikes, pDislikes, pComments, pImage, pTime, uid, uPseudonym, uPractic, uDp, pVideo;
-    private double hotScore;
+    String pId, pTitle, pDescr, pLikes, pDislikes, pComments, pImage, pTime, uid, uPseudonym, uPractic, uDp, pVideo, hotScore, pAudio;
 
     public ModelPost() {
     }
@@ -38,6 +37,14 @@ public class ModelPost {
 
     public void setpLikes(String pLikes) {
         this.pLikes = pLikes;
+    }
+
+    public String getpDislikes() {
+        return pDislikes;
+    }
+
+    public void setpDislikes(String pDislikes) {
+        this.pDislikes = pDislikes;
     }
 
     public String getpComments() {
@@ -104,19 +111,19 @@ public class ModelPost {
         this.pVideo = pVideo;
     }
 
-    public double getHotScore() {
+    public String getHotScore() {
         return hotScore;
     }
 
-    public void setHotScore(double hotScore) {
+    public void setHotScore(String hotScore) {
         this.hotScore = hotScore;
     }
 
-    public void setpDislikes(String pDislikes) {
-        this.pDislikes = pDislikes;
+    public String getpAudio() {
+        return pAudio;
     }
 
-    public String getpDislikes() {
-        return pDislikes;
+    public void setpAudio(String pAudio) {
+        this.pAudio = pAudio;
     }
 }

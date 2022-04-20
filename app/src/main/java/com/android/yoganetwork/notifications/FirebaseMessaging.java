@@ -74,6 +74,20 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                     }
                 }
             }
+        } else {
+            //other notification
+            String sent = remoteMessage.getData().get("sent");
+            String user = remoteMessage.getData().get("user");
+            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (fUser != null && sent.equals(fUser.getUid())) {
+                if (!savedCurrentUser.equals(user)) {
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        sendOAndAboveNotification(remoteMessage);
+                    } else {
+                        sendNormalNotification(remoteMessage);
+                    }
+                }
+            }
         }
         }
 
@@ -83,7 +97,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         int notificationID = new Random().nextInt(3000);
 
         /*Apps targeting SDK 26 or above (Android O and above) must implement notification
-        * cjammels and add its notifications to at least one of them
+        * channels and add its notifications to at least one of them
         * Let's add check if version is Oreo or higher then setup notification channel*/
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setupPostNotificationChannel(notificationManager);
@@ -207,5 +221,10 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         Token token = new Token(tokenRefresh);
         ref.child(user.getUid()).setValue(token);
     }
+
+    public static String getToken(Context context) {
+        return context.getSharedPreferences("_", MODE_PRIVATE).getString("fb", "empty");
+    }
+
 }
 

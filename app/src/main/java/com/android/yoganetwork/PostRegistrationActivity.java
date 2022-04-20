@@ -2,12 +2,15 @@ package com.android.yoganetwork;
 
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
+import android.text.InputFilter;
+import android.text.Spanned;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.BitmapCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
@@ -29,6 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.yoganetwork.fragments.ProfileFragment;
+import com.android.yoganetwork.utils.ImageUtils;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -57,7 +62,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PostRegistrationActivity extends AppCompatActivity {
 
    //views
-    EditText pseudonymEt, nameEt, typeEt, practicEt, dietEt;
+    EditText pseudonymEt, nameEt, typeEt, practicEt, dietEt, descriptionEt;
     AppCompatButton updateBtn;
     ImageView coverIv, addCoverBtn, avatarIv;
     //firebase
@@ -82,6 +87,19 @@ public class PostRegistrationActivity extends AppCompatActivity {
         practicEt = findViewById(R.id.practicEt);
         dietEt = findViewById(R.id.dietEt);
         updateBtn = findViewById(R.id.updateBtn);
+        descriptionEt = findViewById(R.id.descriptionEt);
+        descriptionEt.setFilters(new InputFilter[]{new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                if (source != null) {
+                    String s = source.toString();
+                    if (s.contains("\n\n")) {
+                        return s.replaceAll("\n\n", "\n");
+                    }
+                }
+                return null;
+            }
+        }});
         coverIv = findViewById(R.id.coverIv);
         addCoverBtn = findViewById(R.id.addCoverBtn);
         avatarIv = findViewById(R.id.avatarIv);
@@ -114,6 +132,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                     String diet = ""+ ds.child("diet").getValue();
                     String image = ""+ ds.child("image").getValue();
                     String cover = ""+ ds.child("cover").getValue();
+                    String description = ""+ ds.child("description").getValue();
 
                     //set data
                     pseudonymEt.setText(pseudonym);
@@ -121,9 +140,10 @@ public class PostRegistrationActivity extends AppCompatActivity {
                     typeEt.setText(type);
                     practicEt.setText(practic);
                     dietEt.setText(diet);
+                    descriptionEt.setText(description);
                     try {
                         //if image is received then set
-                        Picasso.get().load(image).into(avatarIv);
+                        Glide.with(PostRegistrationActivity.this).load(image).fitCenter().centerCrop().into(avatarIv);
                     }
                     catch (Exception e) {
                         //if there is any exception while getting image then set default
@@ -213,15 +233,25 @@ public class PostRegistrationActivity extends AppCompatActivity {
     }
 
     private void uploadProfileData() {
-            final String[] entrada = new String[]{"nombre espiritual", "nombre", "camino espiritual", "tipo de práctica", "alimentación"};
-            final String[] keys = new String[]{"pseudonym", "realname","practic", "type", "diet"};
-            final String[] entries = new String[5];
+        String description = String.valueOf(descriptionEt.getText().toString().trim());
+        if (descriptionEt.getText().toString().contains("\n\n\n") || descriptionEt.getText().toString().contains("\n\n\n\n") || descriptionEt.getText().toString().contains("\n\n\n\n\n")) {
+            description = descriptionEt.getText().toString().replace("\n\n\n\n\n", "\n");
+            description = description.replace("\n\n\n\n", "\n");
+            description = description.replace("\n\n\n", "\n");
+        }
+
+
+
+            final String[] entrada = new String[]{"nombre espiritual", "nombre", "camino espiritual", "tipo de práctica", "alimentación", "descripción"};
+            final String[] keys = new String[]{"pseudonym", "realname","practic", "type", "diet", "description"};
+            final String[] entries = new String[6];
                  entries[0] = pseudonymEt.getText().toString().trim();
                  entries[1] = nameEt.getText().toString().trim();
                  entries[2] = practicEt.getText().toString().trim();
                  entries[3] = typeEt.getText().toString().trim();
                  entries[4] = dietEt.getText().toString().trim();
-            for (int i = 0; i<= 4; i++) {
+                 entries[5] = description;
+            for (int i = 0; i<= 5; i++) {
 
 
             if (!TextUtils.isEmpty(entries[0])&&!TextUtils.isEmpty(entries[1])&&!TextUtils.isEmpty(entries[2])&&!TextUtils.isEmpty(entries[3])&&!TextUtils.isEmpty(entries[4])) {
@@ -291,24 +321,22 @@ public class PostRegistrationActivity extends AppCompatActivity {
 
         //path and name of image to be stored in firebase storage
         String filePathAndName = storagePath+ ""+ profileOrCoverPhoto +"_"+ user.getUid()+".jpeg";
-
-        //get bitmap of uri
-        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        Uri profileOrCoverUri = uri;
-        if (profileOrCoverPhoto.equals("image")) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 10, baos);
-             String imagePath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Profile image", "YogaNet profile image");
-            profileOrCoverUri = Uri.parse(imagePath);
-        } else if (profileOrCoverPhoto.equals("cover")) {
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 10, baos);
-            String imagePath = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Profile image", "YogaNet cover image");
-            profileOrCoverUri = Uri.parse(imagePath);
-        }
-
+        //get bitmap of uri
+        Bitmap bitmap1 = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+        Bitmap bitmap2;
+        byte[] data;
+        int n = 2;
+        do {
+            bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
+            n+=2;
+            System.out.println("Hola"+BitmapCompat.getAllocationByteCount(bitmap2));
+        } while (BitmapCompat.getAllocationByteCount(bitmap2) > 30000);
+        bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        data = baos.toByteArray();
 
         StorageReference storageReference2nd = storageReference.child(filePathAndName);
-        storageReference2nd.putFile(profileOrCoverUri)
+        storageReference2nd.putBytes(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -367,7 +395,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                                     }
                                 });
                                 //update user image in current users comments on posts
-                                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                ref.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         for (DataSnapshot ds: dataSnapshot.getChildren()){

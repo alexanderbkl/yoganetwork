@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.adapters.AdapterNotification;
 import com.android.yoganetwork.models.ModelNotification;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +38,10 @@ public class NotificationsFragment extends Fragment {
 
     private AdapterNotification adapterNotification;
 
+    boolean profileLikes = false;
+
+    TabLayout tabs;
+
     public NotificationsFragment() {
         // Required empty public constructor
     }
@@ -48,9 +54,41 @@ public class NotificationsFragment extends Fragment {
 
         //init recyclerview
 
+        tabs = view.findViewById(R.id.tabs);
+
+        tabs.addTab(tabs.newTab().setIcon(R.drawable.ic_chat_black));
+        tabs.addTab(tabs.newTab().setIcon(R.drawable.ic_heart_red));
+
         notificationsRv = view.findViewById(R.id.notificationsRv);
 
         firebaseAuth = FirebaseAuth.getInstance();
+
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()){
+                    case 0:
+                        profileLikes = false;
+                        getAllNotifications();
+                        break;
+                    case 1:
+                        profileLikes = true;
+                        getAllNotifications();
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
 
         getAllNotifications();
 
@@ -58,9 +96,16 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void getAllNotifications() {
+        String notifications = "";
+        if (!profileLikes) {
+             notifications = "Notifications";
+        } else {
+             notifications = "profileLikes";
+        }
+
         notificationsList = new ArrayList<>();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.child(firebaseAuth.getUid()).child("Notifications")
+        ref.child(Objects.requireNonNull(firebaseAuth.getUid())).child(notifications)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {

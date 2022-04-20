@@ -3,6 +3,7 @@ package com.android.yoganetwork;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -27,15 +28,19 @@ public class PostLikedByActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<ModelUsers> usersList;
     private AdapterUsers adapterUsers;
+    Toolbar toolbar;
 
     private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_liked_by);
-        //actionbar
+        toolbar = findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Likes");
+        //actionbar
+         actionBar.setTitle("Likes");
         //add back button
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);

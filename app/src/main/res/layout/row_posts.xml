@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/colorWhite"
-    app:cardCornerRadius="3dp"
-    app:cardElevation="3dp"
+    app:cardCornerRadius="10dp"
+                                   app:cardElevation="3dp"
     app:cardUseCompatPadding="true"
     app:contentPadding="5dp">
 
 
     <LinearLayout
-        android:id="@+id/postsRv"
+            android:id="@+id/postsRv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
@@ -81,12 +80,7 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/pDescriptionTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/descripci_n_del_post"
-            android:textColor="@color/colorPrimaryDark" />
+
 
         <FrameLayout android:layout_height="wrap_content"
             android:layout_width="match_parent">
@@ -99,7 +93,8 @@
                 android:background="@color/colorWhite"
                 android:contentDescription="@string/todo"
                 android:cropToPadding="false"
-                android:visibility="visible" />
+                android:visibility="visible"
+                />
             <Button
                 android:layout_width="65dp"
                 android:background="@drawable/ic_play"
@@ -108,30 +103,38 @@
                 android:id="@+id/playBtn"
                 android:layout_gravity = "center"
                 />
-        </FrameLayout>
-     
-        
+            <com.google.android.exoplayer2.ui.PlayerView
+                    app:show_timeout="0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/player"
+                    app:use_controller="true"
+                    android:layout_margin="5dp"
+                    android:visibility="gone"
+                    app:player_layout_id="@layout/exo_player_view"
+                    app:controller_layout_id="@layout/audio_controller"/>
 
-        <VideoView
-            android:layout_gravity="center"
-            android:id="@+id/videoView"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="600dp"/>
+        </FrameLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="wrap_content"
+                    android:layout_gravity="center"
                     android:layout_height="wrap_content">
-                    <ImageView
-                        android:id="@+id/imageView2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
 
-                        android:scaleType="centerCrop"
-                        android:textAlignment="center"
-                        android:visibility="gone"
-                        tools:ignore="MissingConstraints" />
+                    <ImageView
+                            android:id="@+id/imageView2"
+                            app:flow_horizontalAlign="center"
+                            app:flow_verticalAlign="center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+
+                            android:scaleType="centerCrop"
+                            android:textAlignment="center"
+                            android:visibility="gone"
+                            tools:ignore="MissingConstraints"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent" android:contentDescription="@string/big_image"/>
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -159,6 +162,7 @@
                             android:src="@drawable/ic_arrow_right"
                             android:visibility="gone" />
                     </androidx.constraintlayout.widget.ConstraintLayout>
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageButton
@@ -182,7 +186,13 @@
             android:src="@drawable/ic_baseline_zoom_out_24"
             android:translationX="10dp"
             android:translationY="-45dp" />
-
+        <TextView
+                android:id="@+id/pDescriptionTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/descripci_n_del_post"
+                android:textColor="@color/colorPrimaryDark" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

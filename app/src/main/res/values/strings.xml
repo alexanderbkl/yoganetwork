@@ -276,6 +276,7 @@
     <string name="section_format" translatable="false">Hello World from section: %1$d</string>
     <string name="title_activity_maps" translatable="false">Map</string>
     <string name="send_message">send message</string>
+    <string name="big_image">Big image</string>
 
 
     <array name="users_array">

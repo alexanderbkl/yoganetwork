@@ -3,14 +3,15 @@ package com.android.yoganetwork.models;
 public class ModelUsers {
 
     //use same name as in firebase database
-    String pseudonym, realname, practic, type, diet, image, cover, uid, onlineStatus, typingTo;
+    String pseudonym, realname, practic, type, diet, image, cover, uid, onlineStatus, notifications, email, description, profileLikes;
     boolean isBlocked = false;
+    boolean isLiked = false;
 
     public ModelUsers() {
 
     }
 
-    public ModelUsers(String pseudonym, String realname, String practic, String type, String diet, String image, String cover, String uid, String onlineStatus, String typingTo, boolean isBlocked) {
+    public ModelUsers(String pseudonym, String realname, String practic, String type, String diet, String image, String cover, String uid, String onlineStatus, String notifications, String email, String description, String profileLikes, boolean isBlocked, boolean isLiked) {
         this.pseudonym = pseudonym;
         this.realname = realname;
         this.practic = practic;
@@ -20,8 +21,12 @@ public class ModelUsers {
         this.cover = cover;
         this.uid = uid;
         this.onlineStatus = onlineStatus;
-        this.typingTo = typingTo;
+        this.notifications = notifications;
+        this.email = email;
+        this.description = description;
+        this.profileLikes = profileLikes;
         this.isBlocked = isBlocked;
+        this.isLiked = isLiked;
     }
 
     public String getPseudonym() {
@@ -36,9 +41,6 @@ public class ModelUsers {
         return realname;
     }
 
-    public void setRealname(String realname) {
-        this.realname = realname;
-    }
 
     public String getPractic() {
         return practic;
@@ -60,9 +62,6 @@ public class ModelUsers {
         return diet;
     }
 
-    public void setDiet(String diet) {
-        this.diet = diet;
-    }
 
     public String getImage() {
         return image;
@@ -92,16 +91,12 @@ public class ModelUsers {
         return onlineStatus;
     }
 
-    public void setOnlineStatus(String onlineStatus) {
-        this.onlineStatus = onlineStatus;
+    public String getNotifications() {
+        return notifications;
     }
 
-    public String getTypingTo() {
-        return typingTo;
-    }
-
-    public void setTypingTo(String typingTo) {
-        this.typingTo = typingTo;
+    public void setNotifications(String notifications) {
+        this.notifications = notifications;
     }
 
     public boolean isBlocked() {
@@ -111,4 +106,30 @@ public class ModelUsers {
     public void setBlocked(boolean blocked) {
         isBlocked = blocked;
     }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
 }

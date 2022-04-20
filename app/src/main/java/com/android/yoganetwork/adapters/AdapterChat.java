@@ -1,5 +1,7 @@
 package com.android.yoganetwork.adapters;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ablanco.zoomy.Zoomy;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.ThereProfileActivity;
 import com.android.yoganetwork.models.ModelChat;
@@ -71,7 +74,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyHolder myHolder, int i) {
+    public void onBindViewHolder(@NonNull MyHolder myHolder, @SuppressLint("RecyclerView") int i) {
         //get data
         String message = chatList.get(i).getMessage();
         String timeStamp = chatList.get(i).getTimestamp();
@@ -93,8 +96,10 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
             //image message
             myHolder.messageTv.setVisibility(View.GONE);
             myHolder.messageIv.setVisibility(View.VISIBLE);
-
             Picasso.get().load(message).placeholder(R.drawable.ic_image_black).into(myHolder.messageIv);
+
+            new Zoomy.Builder((Activity) context)
+                    .target(myHolder.messageIv).register();
 
         }
 

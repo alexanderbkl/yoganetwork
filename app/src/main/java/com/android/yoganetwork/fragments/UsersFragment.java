@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.SearchView;
@@ -63,7 +64,9 @@ List<ModelUsers> userList;
      recyclerView = view.findViewById(R.id.users_recyclerView);
      //set it's properties
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 2);
+        recyclerView.setLayoutManager(mLayoutManager);
         //init user list
         userList = new ArrayList<>();
         //getAll users
@@ -79,7 +82,7 @@ List<ModelUsers> userList;
         //get path of database named "Users" containing users info
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         //get all data from path
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 userList.clear();
@@ -90,6 +93,10 @@ List<ModelUsers> userList;
                         userList.add(dataSnapshot.getValue(ModelUsers.class));
                     }
                     adapterUsers = new AdapterUsers(getActivity(), userList);
+
+                    adapterUsers.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.ALLOW);
+                    //set adapter to recycler_view
+
                     //set adapter to recycler view
                     recyclerView.setAdapter(adapterUsers);
                 }

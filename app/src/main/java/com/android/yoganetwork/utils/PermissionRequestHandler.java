@@ -61,7 +61,7 @@ import static androidx.core.content.PermissionChecker.PERMISSION_DENIED;
  * Created by ben on 9/28/17.
  */
 
-public class PermissionRequestHandler extends Context {
+public class  PermissionRequestHandler extends Context {
 
     private static Object Scheduler;
 

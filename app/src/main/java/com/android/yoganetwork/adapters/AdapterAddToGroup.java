@@ -152,7 +152,11 @@ public class AdapterAddToGroup extends RecyclerView.Adapter<AdapterAddToGroup.Ho
     public int getItemCount() {
         return groupChatLists.size();
     }
-
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
+    }
     //view holder class
     class HolderAddToGroup extends RecyclerView.ViewHolder{
 

@@ -1,5 +1,8 @@
 package com.android.yoganetwork;
 
+import android.graphics.Outline;
+import android.view.ViewOutlineProvider;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -29,21 +32,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.MediaController;
-import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -64,15 +67,16 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+
+import static android.content.ContentValues.TAG;
 
 
 public class AddPostActivity extends AppCompatActivity {
+    private static final int PICK_AUD_REQUEST = 103;
     //firebase
     FirebaseAuth firebaseAuth;
     FirebaseUser user;
@@ -81,6 +85,9 @@ public class AddPostActivity extends AppCompatActivity {
     //storage
     StorageReference storageReference;
 
+    SimpleExoPlayer simpleExoPlayer;
+    PlayerView playerView;
+    MediaItem mediaItem;
 
 
 
@@ -88,18 +95,21 @@ public class AddPostActivity extends AppCompatActivity {
     EditText titleEt, descriptionEt;
     ImageView imageIv;
     VideoView videoView;
-    Button uploadBtn;
+    Button uploadBtn, playBtn;
     //likes
     String pLikes = "0";
     String pDislikes ="0";
     String pComments = "0";
+    private Uri audioPath;
+
+    ;
     //user info
     String pseudonym, practic, uid, dp;
     boolean isVideo = false;
     boolean isAudio = false;
     Toolbar toolbar;
     //info of post to be edited
-    String editTitle, editDescription, editImage;
+    String editTitle, editDescription, editImage, editVideo;
 
     //image picked will be samed in this uri
     Uri image_rui = null;
@@ -162,11 +172,17 @@ public class AddPostActivity extends AppCompatActivity {
         descriptionEt = findViewById(R.id.pDescriptionEt);
         imageIv = findViewById(R.id.pImageIv);
         uploadBtn = findViewById(R.id.pUploadBtn);
-        videoView = findViewById(R.id.videoView);
+        playBtn = findViewById(R.id.playBtn);
+        playerView = findViewById(R.id.player);
 
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-
+        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            Log.v(TAG,"Permission is granted");
+            //File write logic here
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
+        }
 
 
         //get data through intent from previous activities
@@ -187,24 +203,20 @@ public class AddPostActivity extends AppCompatActivity {
         }
 
 
+        int REQUEST_CODE_PERMISSION_STORAGE = 100;
+        String[] permissions = {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
 
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            int REQUEST_CODE_PERMISSION_STORAGE = 100;
-            String[] permissions = {
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-            };
-
-            for (String str : permissions) {
-                if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
-                    this.requestPermissions(permissions, REQUEST_CODE_PERMISSION_STORAGE);
-                    return;
-                }
+        for (String str : permissions) {
+            if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                this.requestPermissions(permissions, REQUEST_CODE_PERMISSION_STORAGE);
+                return;
             }
         }
 
-            String isUpdateKey = ""+intent.getStringExtra("key");
+        String isUpdateKey = ""+intent.getStringExtra("key");
         String editPostId = ""+intent.getStringExtra("editPostId");
         //validate if we came here to update post i.e. came from AdapterPost
         if (isUpdateKey.equals("editPost")) {
@@ -226,10 +238,8 @@ public class AddPostActivity extends AppCompatActivity {
         imageIv.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+
                 showMediaPickDialog();
-
-
-
 
             }
         });
@@ -277,18 +287,22 @@ public class AddPostActivity extends AppCompatActivity {
 
                 //handle dialog items clicks
                 if(which == 0){
-                    pd.setMessage("Añadiendo imagen...");
+                    Snackbar.make(imageIv, "Abriendo imagen", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                     showImagePickDialog();
                 }
                 else if (which == 1){
-                    pd.setMessage("Añadiendo vídeo...");
+                    Snackbar.make(imageIv, "Abriendo vídeo", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                     isVideo = true;
                     videoPickDialog();
 
 
                 }
                 else if (which == 2){
-                    pd.setMessage("Añadiendo audio...");
+                    Snackbar.make(imageIv, "Abriendo explorador", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    chooseAud();
                 }
             }
         });
@@ -296,6 +310,13 @@ public class AddPostActivity extends AppCompatActivity {
         builder.create().show();
 
 
+    }
+
+    private void chooseAud() {
+        Intent intent = new Intent();
+        intent.setType("audio/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Aud"), PICK_AUD_REQUEST);
     }
 
     private void videoPickDialog() {
@@ -596,19 +617,41 @@ public class AddPostActivity extends AppCompatActivity {
                     //get data
                     editTitle = ""+ds.child("pTitle").getValue();
                     editDescription = ""+ds.child("pDescr").getValue();
-                    editImage = ""+ds.child("pImage").getValue();
+                    editImage = ds.child("pImage").getValue(String.class);
+                    editVideo = ds.child("pVideo").getValue(String.class);
+
 
                     //set data to views
                     titleEt.setText(editTitle);
                     descriptionEt.setText(editDescription);
 
                     //set image
-                    if (!editImage.equals("noImage")) {
+                    if (!Objects.equals(editImage, "null") && !Objects.equals(editImage, "") && !Objects.equals(editImage, null)) {
                         try {
                             Picasso.get().load(editImage).into(imageIv);
                         }
-                        catch (Exception e) {
+                        catch (Exception ignored) {
 
+                        }
+                    } else if (editVideo != null && !Objects.equals(editVideo, "") && !Objects.equals(editVideo, "null")) {
+
+                        try {
+                            long thumb = 1000L;
+                            RequestOptions options = new RequestOptions().frame(thumb);
+                            Glide.with(AddPostActivity.this).load(editVideo).apply(options).fitCenter().centerCrop().into(imageIv);
+                            playBtn.setVisibility(View.VISIBLE);
+
+                            playBtn.setOnClickListener(view -> {
+                                Intent intent = new Intent(AddPostActivity.this, VideoPlayerActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.putExtra("videoUrl", editVideo);
+                                getApplicationContext().startActivity(intent);
+                            });
+
+                        }
+                        catch(NullPointerException e) {
+                            Log.e("null thumbnail", String.valueOf(e));
+                            Toast.makeText(AddPostActivity.this, "error"+e, Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -631,6 +674,7 @@ public class AddPostActivity extends AppCompatActivity {
 
         final String timeStamp = String.valueOf(System.currentTimeMillis());
 
+        String hotScore = String.valueOf(hot(Long.parseLong(timeStamp),1, Long.parseLong(timeStamp)));
         String filePathAndName = "Posts/" + "post_" + timeStamp;
         if (imageIv.getDrawable() != null) {
             //get image from imageview
@@ -664,7 +708,7 @@ public class AddPostActivity extends AppCompatActivity {
                                 hashMap.put("pId", timeStamp);
                                 hashMap.put("pTitle", title);
                                 hashMap.put("pLikes", pLikes);
-                                hashMap.put("pDislikes", pDislikes);
+                                hashMap.put("hotScore", hotScore);
                                 hashMap.put("pComments", pComments);
                                 hashMap.put("pDescr", description);
                                 hashMap.put("pImage", downloadUri);
@@ -728,6 +772,8 @@ public class AddPostActivity extends AppCompatActivity {
             pd.setCanceledOnTouchOutside(false);*/
 
             uploadVideoFirebase(title, description);
+        } else if (audioPath != null) {
+            uploadAud(title, description);
         }
 
         else {
@@ -740,6 +786,7 @@ public class AddPostActivity extends AppCompatActivity {
             hashMap.put("pLikes", pLikes);
             hashMap.put("pDislikes", pDislikes);
             hashMap.put("pComments", pComments);
+            hashMap.put("hotScore", hotScore);
             hashMap.put("uDp", dp);
             hashMap.put("pId", timeStamp);
             hashMap.put("pTitle", title);
@@ -784,6 +831,19 @@ public class AddPostActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    private long hot(long postDate, long likes, long currentDate) {
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTimeZone(TimeZone.getTimeZone("GMT"));
+        int year = cal2.get(Calendar.YEAR);
+        int yearNumber = (Math.abs(year) % 10)*10000;
+
+        return (((currentDate - postDate) / 86400000) * 1000 - score(likes) - yearNumber * 10000)*(-1);
+    }
+
+    private long score(long likes) {
+        return likes * 1000;
     }
 
     private void uploadVideoFirebase(String title, String description) {
@@ -852,7 +912,7 @@ public class AddPostActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //error occurred
-                        Toast.makeText(AddPostActivity.this, "uuu"+error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddPostActivity.this, ""+error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {
@@ -860,7 +920,7 @@ public class AddPostActivity extends AppCompatActivity {
                 //put required headers
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
-                headers.put("Authorization", "key=AAAAQamk8xY:APA91bGUIhTv9TUj9ST-1Z-1uCkgfszxVP3I_yrOeo7Xuudb-zbW73Usx6yD5afnYE-fZqPIJIsvBXgCo11JUAXv1vLU8cZSOS7UTRcYVrhTlvw3oGzGlwuapE0m1gV6qWgjYMM20Oms");
+                headers.put("Authorization", "key=AAAAQamk8xY:APA91bHY2PqvH237jhVIXZEI0OlvUQACRVffSLfv_pU7gmO1EZL2wcV2J52AFpC3QL5H16DSsAUHwJ2T7nXiVAYgPGuMmyPXRs8efYuZlOWvIttxIl49GsrMw54939LA8gBFsXGp41S7");
                 return headers;
             }
         };
@@ -1029,10 +1089,120 @@ public class AddPostActivity extends AppCompatActivity {
                 videoUri = data.getData();
                 setVideoToVideoView();
             }
+            else if (requestCode == PICK_AUD_REQUEST && data != null && data.getData() != null) {
+                Toast.makeText(this, "Got data", Toast.LENGTH_SHORT).show();
+                audioPath = data.getData();
+                imageIv.setVisibility(View.GONE);
+                playerView.setVisibility(View.VISIBLE);
+
+                simpleExoPlayer = new SimpleExoPlayer.Builder(AddPostActivity.this)
+                        .setSeekBackIncrementMs(5000)
+                        .setSeekForwardIncrementMs(5000)
+                        .build();
+                playerView.setPlayer(simpleExoPlayer);
+                playerView.setKeepScreenOn(true);
+                playerView.setOutlineProvider(new ViewOutlineProvider() {
+                    @Override
+                    public void getOutline(View view, Outline outline) {
+                        outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), 40);
+                    }
+                });
+
+                playerView.setClipToOutline(true);
+                mediaItem = MediaItem.fromUri(audioPath);
+                simpleExoPlayer.setMediaItem(mediaItem);
+                simpleExoPlayer.prepare();
+                simpleExoPlayer.setPlayWhenReady(false);
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+    private void uploadAud(String title, String description) {
+        //upload audio to firebase storage
+        if (audioPath != null) {
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Uploading");
+            pd.show();
+            String timeStamp = "" + System.currentTimeMillis();
+            String hotScore = String.valueOf(hot(Long.parseLong(timeStamp),1, Long.parseLong(timeStamp)));
+            String filePathAndName = "Posts/" + "post_" + timeStamp;
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
+            storageReference.putFile(audioPath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            //image is uploaded to firebase storage, now get it's url
+                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                            while (!uriTask.isSuccessful());
+
+                            String downloadUri = uriTask.getResult().toString();
+                            if (uriTask.isSuccessful()) {
+                                //url is received upload post to firebase database
+
+                                HashMap<Object, String> hashMap = new HashMap<>();
+                                //put post info
+                                hashMap.put("uid", uid);
+                                hashMap.put("uPseudonym", pseudonym);
+                                hashMap.put("uPractic", practic);
+                                hashMap.put("uDp", dp);
+                                hashMap.put("pId", timeStamp);
+                                hashMap.put("pTitle", title);
+                                hashMap.put("pLikes", pLikes);
+                                hashMap.put("hotScore", hotScore);
+                                hashMap.put("pComments", pComments);
+                                hashMap.put("pDescr", description);
+                                hashMap.put("pAudio", downloadUri);
+                                hashMap.put("pTime", timeStamp);
+                                //path to store post data
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                                //put data in this ref
+                                ref.child(timeStamp).setValue(hashMap)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //added in database
+                                                pd.dismiss();
+                                                Toast.makeText(AddPostActivity.this, ""+R.string.publicado, Toast.LENGTH_SHORT).show();
+                                                //reset views
+                                                titleEt.setText("");
+                                                descriptionEt.setText("");
+                                                imageIv.setImageURI(null);
+                                                image_rui = null;
+
+                                                //send notification
+                                                prepareNotification(
+                                                        ""+timeStamp,
+                                                        ""+pseudonym+" añadió un post nuevo!",
+                                                        ""+title+"\n"+description,
+                                                        "PostNotification",
+                                                        "POST"
+                                                );
+                                                startActivity(new Intent(AddPostActivity.this, DashboardActivity.class));
+                                                finish();
+
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                //failed adding post in database
+
+                                                Log.e("YogaNetwork", "failed uploading post to database", e);
+                                                pd.dismiss();
+                                                Toast.makeText(AddPostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
+                            }
+
+                        }
+
+                    });
+        }
+    }
+
 
 
     private class CompressVideo extends AsyncTask<String,String,String> {
@@ -1074,16 +1244,13 @@ public class AddPostActivity extends AppCompatActivity {
 
             String timestamp = ""+System.currentTimeMillis();
             String filePathAndName = "Posts/" + "post_" + timestamp;
-
+            String hotScore = String.valueOf(hot(Long.parseLong(timestamp),1, Long.parseLong(timestamp)));
             StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
 
             storageReference.putFile(uri)
                     .addOnSuccessListener(taskSnapshot -> {
-                        Toast.makeText(AddPostActivity.this, "Done!", Toast.LENGTH_SHORT).show();
-
                         //video is uploaded to firebase storage, now get it's url
                         Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                        while (!uriTask.isSuccessful());
                         String title = titleEt.getText().toString();
                         String description = descriptionEt.getText().toString();
 
@@ -1104,6 +1271,7 @@ public class AddPostActivity extends AppCompatActivity {
                             hashMap.put("pDislikes", pDislikes);
                             hashMap.put("pComments", pComments);
                             hashMap.put("pDescr", description);
+                            hashMap.put("hotScore", hotScore);
                             hashMap.put("pVideo", downloadUri);
                             hashMap.put("pTime", timestamp);
                             //path to store post data

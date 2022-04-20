@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
+import androidx.appcompat.widget.Toolbar;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -32,6 +33,8 @@ public class SettingsActivity extends AppCompatActivity {
     SharedPreferences sp;
     SharedPreferences.Editor editor; //to edit value of shared pref
 
+    Toolbar toolbar;
+
     //constant for topic
     private static final String TOPIC_POST_NOTIFICATION = "POST"; //assing any value but use same for this kind of notification
 
@@ -40,6 +43,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_settings);
+
+        setSupportActionBar(findViewById(R.id.toolbar));
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.ajustes);

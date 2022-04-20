@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.yoganetwork.PostDetailActivity;
 import com.android.yoganetwork.R;
+import com.android.yoganetwork.ThereProfileActivity;
 import com.android.yoganetwork.models.ModelNotification;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,6 +32,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 public class AdapterNotification extends RecyclerView.Adapter<AdapterNotification.HolderNotification> {
 
@@ -115,10 +117,18 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //start PostDetailActivity
-                Intent intent = new Intent(context, PostDetailActivity.class);
-                intent.putExtra("postId", pId); //will get detail of post using this id, its id of the post clicked
-                context.startActivity(intent);
+                if (!pId.equals("like")) {
+                    //start PostDetailActivity
+                    Intent intent = new Intent(context, PostDetailActivity.class);
+                    intent.putExtra("postId", pId); //will get detail of post using this id, its id of the post clicked
+                    context.startActivity(intent);
+                } else {
+                    Intent intent = new Intent(context, ThereProfileActivity.class);
+                    intent.putExtra("uid", senderUid);
+                    intent.putExtra("myUid", Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid());
+                    context.startActivity(intent);
+                }
+
 
             }
         });
@@ -172,7 +182,11 @@ public class AdapterNotification extends RecyclerView.Adapter<AdapterNotificatio
     public int getItemCount() {
         return notificationsList.size();
     }
-
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
+    }
     //holder class for views of row_notifications.xml
     class HolderNotification extends RecyclerView.ViewHolder {
 

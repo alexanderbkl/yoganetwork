@@ -64,6 +64,7 @@ import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import com.theartofdev.edmodo.cropper.CropImage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -94,7 +95,7 @@ public class ChatActivity extends AppCompatActivity {
     //views from xml
     Toolbar toolbar;
     RecyclerView recyclerView;
-    ImageView profileIv, blockIv;
+    ImageView profileIv, blockIv, likeIv;
     TextView nameTv, userStatusTv;
     EditText messageEt;
     ImageButton sendBtn, attachBtn;
@@ -115,6 +116,7 @@ public class ChatActivity extends AppCompatActivity {
     String hisImage;
 
     boolean isBlocked = false;
+    boolean isLiked = false;
 
     //volley request queue for notification
     private RequestQueue requestQueue;
@@ -131,7 +133,8 @@ public class ChatActivity extends AppCompatActivity {
         toolbar.setTitle("");
         recyclerView = findViewById(R.id.chat_recyclerView);
         profileIv = findViewById(R.id.profileIv);
-        blockIv = findViewById(R.id.blockIv);
+        likeIv = findViewById(R.id.likeIv);
+      //  blockIv = findViewById(R.id.blockIv);
         nameTv = findViewById(R.id.nameTv);
         userStatusTv = findViewById(R.id.userStatusTv);
         messageEt = findViewById(R.id.messageEt);
@@ -172,7 +175,7 @@ public class ChatActivity extends AppCompatActivity {
                 //check until required info is received
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     //get data
-                    String name =""+ ds.child("pseudonym").getValue()+"/"+ds.child("realname").getValue();
+                    String name =""+ ds.child("pseudonym").getValue();
                     hisImage =""+ ds.child("image").getValue();
                     String typingStatus =""+ ds.child("typingTo").getValue();
                     //check typing status
@@ -200,11 +203,12 @@ public class ChatActivity extends AppCompatActivity {
                     nameTv.setText(name);
                     try {
                         //image received, set it to imageview in toolbar
-                        Picasso.get().load(hisImage).placeholder(R.drawable.ic_default_img_white).into(profileIv);
+                        Picasso.get().load(hisImage).fit().centerCrop().placeholder(R.drawable.ic_default_img_white).into(profileIv);
                     }
                     catch (Exception e) {
                         //there is exception getting picture, set default picture
                         Picasso.get().load(R.drawable.ic_default_img_white).into(profileIv);
+                        Toast.makeText(ChatActivity.this, ""+e, Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -247,6 +251,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        messageEt.setOnClickListener(view -> recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount()));
+
         //check edit text change listener
         messageEt.addTextChangedListener(new TextWatcher() {
             @Override
@@ -271,7 +277,7 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         //click to block unblock user
-       blockIv.setOnClickListener(new View.OnClickListener() {
+/*       blockIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (isBlocked) {
@@ -281,10 +287,25 @@ public class ChatActivity extends AppCompatActivity {
                     blockUser();
                 }
             }
-        });
+        }); */
+
+
+        //click to like unlike user
+  /*     likeIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isLiked) {
+                    unLikeUser();
+                }
+                else {
+                    likeUser();
+                }
+            }
+        });*/
 
         readMessages ();
         checkIsBlocked();
+        checkIsLiked();
         seenMessage();
 
         //handle item click
@@ -309,8 +330,30 @@ public class ChatActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot ds: snapshot.getChildren()) {
                             if (ds.exists()) {
-                                blockIv.setImageResource(R.drawable.ic_blocked_red);
+                       //         blockIv.setImageResource(R.drawable.ic_heart_red);
                                 isBlocked = true;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
+    private void checkIsLiked() {
+        //check each user, if blocked or not
+        //if uid of the user exists in "BlockedUsers then that user is blocked, otherwise not
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(firebaseAuth.getCurrentUser().getUid()).child("LikedUsers").orderByChild("uid").equalTo(hisUid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds: snapshot.getChildren()) {
+                            if (ds.exists()) {
+                                isLiked = true;
                             }
                         }
                     }
@@ -337,7 +380,33 @@ public class ChatActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         //blocked successfully
                         Toast.makeText(ChatActivity.this, R.string.bloqueado, Toast.LENGTH_SHORT).show();
-                        blockIv.setImageResource(R.drawable.ic_blocked_red);
+                 //       blockIv.setImageResource(R.drawable.ic_heart_red);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //failed to block
+                        Toast.makeText(ChatActivity.this, getString(R.string.bloqerror)+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void likeUser() {
+        //block the user, by adding uid to current user's "BlockedUsers" node
+
+        //put values in hashmap to put in db
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("uid", hisUid);
+
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(firebaseAuth.getUid()).child("LikedUsers").child(hisUid).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //blocked successfully
+                  //      likeIv.setImageResource(R.drawable.ic_heart_red);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -364,8 +433,46 @@ public class ChatActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 //unblocked successfully
-                                                blockIv.setImageResource(R.drawable.ic_unblocked_green);
-                                                Toast.makeText(ChatActivity.this, R.string.desbloqueado, Toast.LENGTH_SHORT).show();
+                                                blockIv.setImageResource(R.drawable.ic_heart_dark);
+                                    //            Toast.makeText(ChatActivity.this, R.string.desbloqueado, Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                //failed to unblock
+                                                Toast.makeText(ChatActivity.this, getString(R.string.bloqerror)+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
+
+    private void unLikeUser() {
+        //unblock the user, by removing uid from current user's "BlockedUsers" node
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(myUid).child("LikedUsers").orderByChild("uid").equalTo(hisUid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds: snapshot.getChildren()) {
+                            if (ds.exists()) {
+                                //remove blocked user data from current user's BlockedUsers list
+                                ds.getRef().removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                //unblocked successfully
+                            //                    likeIv.setImageResource(R.drawable.ic_heart_dark);
+                                                //            Toast.makeText(ChatActivity.this, R.string.desbloqueado, Toast.LENGTH_SHORT).show();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -387,6 +494,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void showImagePickDialog() {
+        CropImage.activity()
+                .start(this);
+
+
+
+        /*
         //options (camera, gallery) to show in dialog
         String[] options = {getString(R.string.camera), getString(R.string.galeria)};
         //dialog
@@ -423,7 +536,7 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
         //create and show dialog
-        builder.create().show();
+        builder.create().show();*/
     }
 
     private void pickFromGallery() {
@@ -514,6 +627,7 @@ public class ChatActivity extends AppCompatActivity {
                     adapterChat.notifyDataSetChanged();
                     //set adapter to recycleview
                     recyclerView.setAdapter(adapterChat);
+
                     recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount());
                 }
             }
@@ -616,7 +730,7 @@ public class ChatActivity extends AppCompatActivity {
         //get bitmap from image uri
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 90, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
         byte[] data = baos.toByteArray(); //convert image to bytes
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileNameAndPath);
         ref.putBytes(data)
@@ -732,10 +846,12 @@ public class ChatActivity extends AppCompatActivity {
                 );
 
                 Sender sender = new Sender(data, token.getToken());
+
                 //fcm json object request
                 try {
                     JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
-                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj, new Response.Listener<JSONObject>() {
+                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
+                            new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             //response of the request
@@ -753,7 +869,7 @@ public class ChatActivity extends AppCompatActivity {
                             //put params
                             Map<String, String> headers = new HashMap<>();
                             headers.put("Content-Type", "application/json");
-                            headers.put("Authorization", "key=AAAAQamk8xY:APA91bGUIhTv9TUj9ST-1Z-1uCkgfszxVP3I_yrOeo7Xuudb-zbW73Usx6yD5afnYE-fZqPIJIsvBXgCo11JUAXv1vLU8cZSOS7UTRcYVrhTlvw3oGzGlwuapE0m1gV6qWgjYMM20Oms");
+                            headers.put("Authorization", "key=AAAAQamk8xY:APA91bHY2PqvH237jhVIXZEI0OlvUQACRVffSLfv_pU7gmO1EZL2wcV2J52AFpC3QL5H16DSsAUHwJ2T7nXiVAYgPGuMmyPXRs8efYuZlOWvIttxIl49GsrMw54939LA8gBFsXGp41S7");
 
                             return headers;
                         }
@@ -782,9 +898,6 @@ public class ChatActivity extends AppCompatActivity {
             //set email of logged in user
             //mProfileTv.setText(user.getEmail());
             myUid = user.getUid(); //currently signed in user's uid
-            System.out.println(myUid);
-            System.out.println("HOLA");
-
         }
         else {
             //user not signed in, go to mainactivity
@@ -886,6 +999,26 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(resultCode == RESULT_OK) {
+
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK) {
+
+
+
+                    Uri image_rui = result.getUri();
+                    try {
+                        sendImageMessage(image_rui);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Exception error = result.getError();
+                    System.out.println(error);
+                }
+            }
+
             if (requestCode == IMAGE_PICK_GALLERY_CODE) {
                 //image is picked from gallery, get "uri" of image
                 image_rui = data.getData();

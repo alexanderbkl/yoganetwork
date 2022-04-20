@@ -1,8 +1,14 @@
 package com.android.yoganetwork.fragments;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,6 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -36,7 +44,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class PostsFragment extends Fragment {
@@ -46,6 +58,13 @@ public class PostsFragment extends Fragment {
     RecyclerView recycler_view;
     List<ModelPost> postList;
     AdapterPost adapterPosts;
+    TextView playerPosition, playerDuration;
+    SeekBar seekBar;
+    ImageView btRew, btPlay, btPause, btFf;
+    String pAudio;
+    MediaPlayer mediaPlayer;
+    Handler handler = new Handler();
+    Runnable runnable;
 
     ImageView pImageIv;
     public PostsFragment() {
@@ -64,21 +83,24 @@ public class PostsFragment extends Fragment {
             //init
             firebaseAuth = FirebaseAuth.getInstance();
             //recycler_view and its properties
-        recycler_view = view.findViewById(R.id.recycler_view);
-
 
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             //show  newest post first, for this load from last
-            layoutManager.setStackFromEnd(true);
-            layoutManager.setReverseLayout(true);
-            //set layout to recycler_view
-        recycler_view.setLayoutManager(layoutManager);
-        recycler_view.setNestedScrollingEnabled(false);
+
+
             //init post list
             postList = new ArrayList<>();
 
             loadPosts();
+        recycler_view = view.findViewById(R.id.recycler_view);
 
+
+        //set layout to recycler_view
+        recycler_view.setLayoutManager(layoutManager);
+        recycler_view.setNestedScrollingEnabled(false);
+
+        SharedPreferences prefs = getActivity().getSharedPreferences("DeviceToken", MODE_PRIVATE);
+        pAudio = prefs.getString("pAudio", null); // get it here
 
         return view;
 
@@ -108,17 +130,15 @@ public class PostsFragment extends Fragment {
                     long likes = Long.parseLong(modelPost.getpLikes());
                     //calculate the hot score
 
-                    long hotScore = hot(postDate,likes, currentDate);
+                  //  String hotScore = String.valueOf(hot(postDate,likes, currentDate));
 
-                    //add the hot score to the post
-                    modelPost.setHotScore(hotScore);
                     //add the post to the list
                     postList.add(modelPost);
 
                     //sort the list by hot score
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        postList.sort((o1, o2) -> (int) (o2.getHotScore() - o1.getHotScore()));
+                        postList.sort((o1, o2) -> (int) (Double.parseDouble(o2.getHotScore()) - Double.parseDouble(o1.getHotScore())));
                     }
 
                     //adapter
@@ -144,20 +164,20 @@ public class PostsFragment extends Fragment {
 
     }
 
-    private long hot(long postDate, long likes, long currentDate) {
+ /*   private long hot(long postDate, long likes, long currentDate) {
         Calendar cal2 = Calendar.getInstance();
         cal2.setTimeZone(TimeZone.getTimeZone("GMT"));
         int year = cal2.get(Calendar.YEAR);
         int yearNumber = (Math.abs(year) % 10)*10000;
 
-        return ((currentDate - postDate) / 86400000) * 1000 - score(likes) - yearNumber * 10000;
+        return (((currentDate - postDate) / 86400000) * 1000 - score(likes) - yearNumber * 10000)*(-1);
     }
 
 
     //return score sorted by likes and dislikes
     private long score(long likes) {
         return likes * 1000;
-    }
+    }*/
     private void searchPosts(String searchQuery) {
         //path of all posts
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");

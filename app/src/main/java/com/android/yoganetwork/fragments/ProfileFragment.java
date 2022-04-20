@@ -86,7 +86,7 @@ public class ProfileFragment extends Fragment {
 
     //view from xml
     ImageView avatarIv, coverIv;
-    TextView nameTv, typeTv, practicTv, dietTv;
+    TextView nameTv, realNameTv, typeTv, practicTv, dietTv, descriptionTv;
     FloatingActionButton fab;
     ClipData.Item action_groupinfo;
     //progress dialog
@@ -146,9 +146,11 @@ public class ProfileFragment extends Fragment {
         avatarIv = view.findViewById(R.id.avatarIv);
         coverIv = view.findViewById(R.id.coverIv);
         nameTv = view.findViewById(R.id.nameTv);
+        realNameTv = view.findViewById(R.id.realNameTv);
         typeTv = view.findViewById(R.id.typeTv);
         practicTv = view.findViewById(R.id.practicTv);
         dietTv = view.findViewById(R.id.dietTv);
+        descriptionTv = view.findViewById(R.id.descriptionTv);
         fab = view.findViewById(R.id.fab);
 
         //init progress dialog
@@ -169,19 +171,46 @@ public class ProfileFragment extends Fragment {
                 //check until required data get
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     //get data
-                    String pseudonym = ""+ ds.child("pseudonym").getValue();
-                    String realname = ""+ds.child("realname").getValue();
-                    String type = ""+ ds.child("type").getValue();
-                    String practic = ""+ ds.child("practic").getValue();
-                    String diet = ""+ ds.child("diet").getValue();
+                    String pseudonymL = ""+ ds.child("pseudonym").getValue();
+                    String pseudonym = pseudonymL;
+                    if (!pseudonymL.equals("")) {
+                        pseudonym = pseudonymL.substring(0, 1).toUpperCase() + pseudonymL.substring(1);
+                    }
+                    String realnameL = ""+ds.child("realname").getValue();
+                    String realname = realnameL;
+                    if (!realnameL.equals("")) {
+                        realname = realnameL.substring(0, 1).toUpperCase() + realnameL.substring(1);
+                    }
+                    String typeL = ""+ ds.child("type").getValue();
+                    String type = typeL;
+                    if (!typeL.equals("")) {
+                        type = typeL.substring(0, 1).toUpperCase() + typeL.substring(1);
+                    }
+                    String practicL = ""+ ds.child("practic").getValue();
+                    String practic = practicL;
+                    if (!practicL.equals("")) {
+                        practic = practicL.substring(0, 1).toUpperCase() + practicL.substring(1);
+                    }
+                    String dietL = ""+ ds.child("diet").getValue();
+                    String diet = dietL;
+                    if (!dietL.equals("")) {
+                        diet = dietL.substring(0, 1).toUpperCase() + dietL.substring(1);
+                    }
+                    String descriptionL = ""+ ds.child("description").getValue();
+                    String description = descriptionL;
+                    if (!descriptionL.equals("")) {
+                        description = descriptionL.substring(0, 1).toUpperCase() + descriptionL.substring(1);
+                    }
                     String image = ""+ ds.child("image").getValue();
                     String cover = ""+ ds.child("cover").getValue();
 
                     //set data
                     nameTv.setText(pseudonym);
+                    realNameTv.setText(realname);
                     typeTv.setText(type);
                     practicTv.setText(practic);
                     dietTv.setText(diet);
+                    descriptionTv.setText(description);
                     try {
                         //if image is received then set
                         Picasso.get().load(image).into(avatarIv);
@@ -301,129 +330,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-    }
-
-
-    private boolean checkStoragePermissions(){
-        //check if storage permission is enabled or not
-        //return true if enabled
-        //return false if not enabled
-        boolean result = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == (PackageManager.PERMISSION_GRANTED);
-        return result;
-    }
-    private void requestStoragePermission(){
-        //request runtime storage permission
-        requestPermissions(storagePermissions, STORAGE_REQUEST_CODE);
-    }
-
-
-    private boolean checkCameraPermissions(){
-        //check if storage permission is enabled or not
-        //return true if enabled
-        //return false if not enabled
-        boolean result = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CAMERA)
-                == (PackageManager.PERMISSION_GRANTED);
-
-        boolean result1 = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == (PackageManager.PERMISSION_GRANTED);
-        return result && result1;
-    }
-    private void requestCameraPermission(){
-        //request runtime storage permission
-        requestPermissions(cameraPermissions, CAMERA_REQUEST_CODE);
-    }
-
-
-   /* private void showEditProfileDialog() {
-
-
-        *//*Show dialog containing options
-         * 1) Edit Profile Picture
-         * 2) Edit Cover Photo
-         * 3) Edit Name
-         * 4) Edit Type
-         * 5) Edit Practic
-         * 6) Edit Diet
-         * 7) Change password *//*
-
-        //options to show in dialog
-        String options[] = {getString(R.string.editprofimg), getString(R.string.editcover),
-                getString(R.string.editpseud), getString(R.string.editrealname), getString(R.string.editartipo), getString(R.string.tipopractica), getString(R.string.editardieta), getString(R.string.cambiarcontraseña)};
-        //alert dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        //set title
-        builder.setTitle(R.string.editarperfil);
-        //set items to dialog
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                //handle dialog items clicks
-                if(which == 0){
-                    //edit profile clicked
-                    pd.setMessage(getString(R.string.actualizimagen));
-                    profileOrCoverPhoto = "image"; //i.e. changing profile picture, make sure to assign same value
-                   //suk showImagePicDialog();
-                    startProfileCropActivity();
-
-                }
-                else if (which == 1){
-                    //edit cover clicked
-                    pd.setMessage(getString(R.string.actualizcover));
-                    profileOrCoverPhoto = "cover"; //i.e. changing cover photo+, make sure to assign same value
-                    startCoverCropActivity();
-                }
-                else if (which == 2){
-                    //edit name clicked
-                    pd.setMessage(getString(R.string.actpseudon));
-                    //calling method and pass key "name" as parameter to update its value in database
-                    showNameProfileStatusUpdateDialog("pseudonym");
-                }
-                else if (which == 3){
-                    //edit name clicked
-                    pd.setMessage(getString(R.string.actname));
-                    //calling method and pass key "name" as parameter to update its value in database
-                    showNameProfileStatusUpdateDialog("realname");
-                }
-
-                else if (which == 4){
-                    //edit type clicked
-                    pd.setMessage(getString(R.string.acttype));
-                    showNameProfileStatusUpdateDialog("type");
-                }
-                else if (which == 5){
-                    //edit practic clicked
-                    pd.setMessage(getString(R.string.acttype1));
-                    showNameProfileStatusUpdateDialog("practic");
-                }
-                else if (which == 6){
-                    //edit diet clicked
-                    pd.setMessage(getString(R.string.actdiet));
-                    showNameProfileStatusUpdateDialog("diet");
-                }  else if (which == 7){
-                    //edit diet clicked
-                    pd.setMessage(getString(R.string.actcontra));
-                    showChangePasswordDialog();
-                }
-            }
-        });
-        //create and show dialog
-        builder.create().show();
-    }*/
-
-    private void startCoverCropActivity() {
-        CropImage.activity()
-                .setAspectRatio(10, 5)
-        .start(getContext(), this);
-    }
-
-    private void startProfileCropActivity() {
-        // for fragment (DO NOT use `getActivity()`)
-        
-        CropImage.activity()
-                .setAspectRatio(1,1)
-                .start(getContext(), this);
     }
 
     private void showChangePasswordDialog() {

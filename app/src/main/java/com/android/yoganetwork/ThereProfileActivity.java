@@ -1,14 +1,20 @@
 package com.android.yoganetwork;
 
 import android.graphics.*;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.ViewOutlineProvider;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +31,8 @@ import android.widget.Toast;
 
 import com.android.yoganetwork.adapters.AdapterPost;
 import com.android.yoganetwork.models.ModelPost;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,6 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
+import static android.text.TextUtils.isEmpty;
 
 public class ThereProfileActivity extends AppCompatActivity {
 
@@ -52,7 +61,7 @@ public class ThereProfileActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     //view from xml
     ImageView avatarIv, coverIv;
-    TextView nameTv, typeTv, practicTv, dietTv;
+    TextView nameTv, realNameTv, typeTv, practicTv, dietTv, descriptionTv;
 
     RecyclerView postsRecyclerView;
 
@@ -64,7 +73,6 @@ public class ThereProfileActivity extends AppCompatActivity {
     AsyncTask<?, ?, ?> runningTask;
     Toolbar toolbar;
     String myUid;
-    public String cover;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,11 +89,13 @@ public class ThereProfileActivity extends AppCompatActivity {
         avatarIv = findViewById(R.id.avatarIv);
         coverIv = findViewById(R.id.coverIv);
         nameTv = findViewById(R.id.nameTv);
+        realNameTv = findViewById(R.id.realNameTv);
         fab = findViewById(R.id.fab);
         typeTv = findViewById(R.id.typeTv);
         practicTv = findViewById(R.id.practicTv);
         dietTv = findViewById(R.id.dietTv);
         postsRecyclerView = findViewById(R.id.recycler_view);
+        descriptionTv = findViewById(R.id.descriptionTv);
 
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -101,18 +111,45 @@ public class ThereProfileActivity extends AppCompatActivity {
                 //check until required data get
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     //get data
-                    String name = "" + ds.child("pseudonym").getValue() + "/" + ds.child("realname").getValue();
-                    String type = "" + ds.child("type").getValue();
-                    String practic = "" + ds.child("practic").getValue();
-                    String diet = "" + ds.child("diet").getValue();
+                    String pseudonymL = ""+ ds.child("pseudonym").getValue();
+                    String pseudonym = pseudonymL;
+                    if (!pseudonymL.equals("")) {
+                        pseudonym = pseudonymL.substring(0, 1).toUpperCase() + pseudonymL.substring(1);
+                    }
+                    String realnameL = ""+ds.child("realname").getValue();
+                    String realname = realnameL;
+                    if (!realnameL.equals("")) {
+                        realname = realnameL.substring(0, 1).toUpperCase() + realnameL.substring(1);
+                    }
+                    String typeL = ""+ ds.child("type").getValue();
+                    String type = typeL;
+                    if (!typeL.equals("")) {
+                        type = typeL.substring(0, 1).toUpperCase() + typeL.substring(1);
+                    }
+                    String practicL = ""+ ds.child("practic").getValue();
+                    String practic = practicL;
+                    if (!practicL.equals("")) {
+                        practic = practicL.substring(0, 1).toUpperCase() + practicL.substring(1);
+                    }
+                    String dietL = ""+ ds.child("diet").getValue();
+                    String diet = dietL;
+                    if (!dietL.equals("")) {
+                        diet = dietL.substring(0, 1).toUpperCase() + dietL.substring(1);
+                    }
+                    String description = ""+ ds.child("description").getValue();
+
                     String image = "" + ds.child("image").getValue();
-                    cover = "" + ds.child("cover").getValue();
+                    String cover = "" + ds.child("cover").getValue();
+
+
 
                     //set data
-                    nameTv.setText(name);
+                    nameTv.setText(pseudonym);
+                    realNameTv.setText(realname);
                     typeTv.setText(type);
                     practicTv.setText(practic);
                     dietTv.setText(diet);
+                    descriptionTv.setText(description);
                     try {
                         //if image is received then set
                         Picasso.get().load(image).into(avatarIv);
@@ -120,19 +157,14 @@ public class ThereProfileActivity extends AppCompatActivity {
                         //if there is any exception while getting image then set default
                         Picasso.get().load(R.drawable.ic_default_img_white).into(avatarIv);
                     }
+                    if (cover.isEmpty()) {
+                        Picasso.get().load(R.drawable.ic_profile_black).fit().into(coverIv);
+                    } else{
+                        Picasso.get().load(cover).fit().into(coverIv);
+                    }
+
                 }
-
-
-
-
-                if (runningTask != null)
-                    runningTask.cancel(true);
-                runningTask = new LongOperation();
-                runningTask.execute();
-
             }
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -297,7 +329,7 @@ public class ThereProfileActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 //called when user press search button
-                if (!TextUtils.isEmpty(s)) {
+                if (!isEmpty(s)) {
                     //search
                     searchHistPosts(s);
                 } else {
@@ -308,7 +340,7 @@ public class ThereProfileActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                if (!TextUtils.isEmpty(s)) {
+                if (!isEmpty(s)) {
                     //search
                     searchHistPosts(s);
                 } else {
@@ -341,42 +373,6 @@ public class ThereProfileActivity extends AppCompatActivity {
     }
 
 
-
-    private final class LongOperation extends AsyncTask<Object, Void, String> {
-
-
-
-
-        @Override
-        protected String doInBackground(Object... objects) {
-            try {
-                URL url = new URL(ThereProfileActivity.this.cover);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                Bitmap bitmap = imageHelper.getRoundedCornerBitmap(myBitmap, 50);
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-                String path = MediaStore.Images.Media.insertImage(ThereProfileActivity.this.getContentResolver(), bitmap, "YogaNet: cover profile image", null);
-                Uri coverUri = Uri.parse(path);
-                Log.d(TAG, "get json: " + input);
-                connection.disconnect();
-                return coverUri.toString();
-
-            } catch (IOException e) {
-                Toast.makeText(ThereProfileActivity.this, "3"+e, Toast.LENGTH_SHORT).show();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Picasso.get().load(result).into(coverIv);
-            }
-
-    }
 
 
 }

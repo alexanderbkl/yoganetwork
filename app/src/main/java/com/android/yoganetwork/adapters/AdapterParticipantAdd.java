@@ -315,7 +315,11 @@ public class AdapterParticipantAdd extends RecyclerView.Adapter<AdapterParticipa
     public int getItemCount() {
         return userList.size();
     }
-
+    @Override
+    public int getItemViewType(int position)
+    {
+        return position;
+    }
     static class HolderParticipantAdd extends RecyclerView.ViewHolder{
 
         private final ImageView avatarIv;

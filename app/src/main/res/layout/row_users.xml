@@ -1,61 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="2dp"
+                                   android:background="#448C8C8C"
+                                   android:orientation="vertical"
     app:cardElevation="2dp"
     app:cardBackgroundColor="@color/white"
     app:contentPadding="3dp">
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-<com.blogspot.atifsoftwares.circularimageview.CircularImageView
-    android:id="@+id/avatarIv"
-android:src="@drawable/ic_default_img_white"
-    android:layout_width="70dp"
-    android:layout_height="70dp"/>
+
+<RelativeLayout
+
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_weight="1"
-        android:layout_width="345dp"
-        android:layout_marginEnd="5dp"
-        android:paddingEnd="5dp"
-        android:paddingStart="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/nameTv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-        android:text="@string/seud_nimo"
-            android:textSize="18sp"
-            android:textColor="@color/black"/>
-        <!--emailTv: -->
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+        <LinearLayout
+                android:id="@+id/contentLayout"
+                android:layout_width="match_parent"
+                android:clipToPadding="false"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+            <androidx.cardview.widget.CardView
+                    app:cardCornerRadius="8dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/layout_user_list_border"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                <ImageView
+                        android:id="@+id/avatarIv"
+                        android:background="#ECECEC"
+                        android:src="@drawable/ic_default_img_white"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:contentDescription="coverimg"/>
 
-        <TextView
-            android:id="@+id/practicTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/tipo"
-            android:textColor="@color/black"/>
-        <TextView
-            android:id="@+id/typeTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text ="@string/pr_ctica"
-            android:textColor="@color/black"/>
+            </androidx.cardview.widget.CardView>
 
-</LinearLayout>
-    <!--Add icons to indecate blocked/unblocked-->
+
+            <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="10dp"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                <TextView
+                        android:id="@+id/nameTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/seud_nimo"
+                        android:autoSizeTextType="uniform"
+                        android:textColor="@color/black"/>
+                <!--emailTv: -->
+
+                <TextView
+                        android:id="@+id/practicTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tipo"
+                        android:textColor="@color/black"/>
+                <TextView
+                        android:id="@+id/typeTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:text="@string/pr_ctica"
+                        android:textColor="@color/black"/>
+                <TextView
+                        android:layout_gravity="end"
+                        android:id="@+id/distanceTv"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:textAlignment="textEnd"
+                        android:text=""
+                        android:textSize="12sp"
+                        android:textColor="#5C5C5C"/>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+        <TextView
+                android:id="@+id/descriptionTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:justificationMode="inter_word"
+                android:textSize="14sp"
+                android:text="In publishing and graphic design, Lorem ipsum is a placeholder text commonly
+used to demonstrate the visuadegft d typeface without relying
+on meaningful content."
+                android:textColor="@color/black"/>
+
+    </LinearLayout>
     <ImageView
-        android:id="@+id/blockIv"
-        android:layout_gravity="center_vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@string/todo" />
-
-</LinearLayout>
+            android:id="@+id/likeIv"
+            android:src="@drawable/ic_heart_dark"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/todo"/>
+</RelativeLayout>
 </androidx.cardview.widget.CardView>

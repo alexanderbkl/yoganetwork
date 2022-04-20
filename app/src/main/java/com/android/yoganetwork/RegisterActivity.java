@@ -47,12 +47,6 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        //Actionbar and its title
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.crearcuenta);
-        //enable back button
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
  //init
         mEmailEt = findViewById(R.id.emailEt);
         mPasswordEt = findViewById(R.id.passwordEt);
@@ -125,6 +119,8 @@ public class RegisterActivity extends AppCompatActivity {
                             hashMap.put("practic", "");
                             hashMap.put("diet", "");
                             hashMap.put("cover", "");
+                            hashMap.put("description","");
+                            hashMap.put("userLikes","0");
 
                             //firebase database instance
                             FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -147,7 +143,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 //error, dismiss progress dialog and get and show the error message
                 progressDialog.dismiss();
-                Toast.makeText(RegisterActivity.this, getString(R.string.bienvenido)+e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
