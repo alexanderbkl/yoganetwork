@@ -378,7 +378,7 @@ public class AddPostActivity extends AppCompatActivity {
         Uri imageURI = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageURI != null) {
             //set to imageview
-            imageIv.setImageURI(image_rui);
+            Glide.with(this).load(image_rui).into(imageIv);
         }
     }
 

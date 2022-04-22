@@ -110,7 +110,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
 
         final String uid = postList.get(i).getUid();
         String uPseudonym = postList.get(i).getuPseudonym();
-        String uPractic = postList.get(i).getuPractic();
+        String uPracticRaw = postList.get(i).getuPractic();
+        String uPractic = "";
+        if (uPracticRaw.equals("")) {
+            uPractic = uPracticRaw;
+        } else {
+            uPractic = uPracticRaw.substring(0, 1).toUpperCase() + uPracticRaw.substring(1);
+        }
         String uDp = postList.get(i).getuDp();
         final String pId = postList.get(i).getpId();
         String pTitle = postList.get(i).getpTitle();

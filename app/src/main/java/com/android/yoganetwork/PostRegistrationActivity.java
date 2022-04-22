@@ -318,7 +318,9 @@ public class PostRegistrationActivity extends AppCompatActivity {
         //show progress
         pd.show();
         /*Instead of creating separate function for profile picture and cover photo this will work in the same function*/
-
+        if (profileOrCoverPhoto == null){
+            profileOrCoverPhoto = "cover";
+        }
         //path and name of image to be stored in firebase storage
         String filePathAndName = storagePath+ ""+ profileOrCoverPhoto +"_"+ user.getUid()+".jpeg";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -326,13 +328,27 @@ public class PostRegistrationActivity extends AppCompatActivity {
         Bitmap bitmap1 = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
         Bitmap bitmap2;
         byte[] data;
-        int n = 2;
+        int n = 1;
+        int i = 0;
+        int bitSize;
+        int quality;
+        if (profileOrCoverPhoto.equals("image")) {
+            bitSize = 300000;
+            quality = 60;
+        } else {
+            bitSize = 500000;
+            quality = 70;
+        }
+
         do {
             bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
-            n+=2;
-            System.out.println("Hola"+BitmapCompat.getAllocationByteCount(bitmap2));
-        } while (BitmapCompat.getAllocationByteCount(bitmap2) > 100000);
-        bitmap2.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            if (n % 2 != 0) {
+                n++;
+            } else {
+                n+=2;
+            }
+        } while (BitmapCompat.getAllocationByteCount(bitmap2) > bitSize);
+        bitmap2.compress(Bitmap.CompressFormat.JPEG, quality, baos);
         data = baos.toByteArray();
 
         StorageReference storageReference2nd = storageReference.child(filePathAndName);
@@ -353,6 +369,8 @@ public class PostRegistrationActivity extends AppCompatActivity {
                             /*first parameter is profileorcover photo thas has value "image" or "cover" which are keys in users database where url of the image
                              * be saved in of them
                              * Second parameter contains the url of the image stored in firebase storage, this url will be saved as value against key "image" or "cover"*/
+
+
                             results.put(profileOrCoverPhoto, downloadUri.toString());
 
                             databaseReference.child(user.getUid()).updateChildren(results)
