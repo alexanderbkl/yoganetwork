@@ -2,11 +2,19 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_sender"
     android:layout_marginStart="100dp"
     android:layout_marginTop="10dp"
+
+
     android:orientation="vertical"
     android:padding="10dp">
+    <LinearLayout
+            android:id="@+id/textMessageLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@drawable/bg_sender"
+    >
     <TextView
         android:id="@+id/pseudonymTv"
         android:text="@string/seud_nimo"
@@ -22,19 +30,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:padding="10dp"
         android:layout_marginBottom="5dp"
         android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
+        android:layout_marginEnd="10dp"
         android:text="@string/mensaje_del_usuario"
         android:textColor="#FFFFFF"/>
+    </LinearLayout>
+    <LinearLayout
+            android:id="@+id/imageMessageLayout"
+            android:layout_width="wrap_content"
+            android:layout_gravity="end"
+            android:layout_height="wrap_content">
     <ImageView
-        android:id="@+id/messageIv"
-        android:layout_width="200dp"
-        android:cropToPadding="false"
-        android:adjustViewBounds="true"
-        android:layout_height="200dp"
-        android:src="@drawable/ic_image_black"
-        android:contentDescription="@string/todo" />
+            android:id="@+id/messageIv"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_image_black"
+            android:contentDescription="@string/todo"/>
+    </LinearLayout>
 
 
     <TextView

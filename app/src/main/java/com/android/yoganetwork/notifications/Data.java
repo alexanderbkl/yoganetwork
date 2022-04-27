@@ -2,13 +2,12 @@ package com.android.yoganetwork.notifications;
 
 public class Data {
 
-    private String user, body, title, sent, notificationType;
-    private Integer icon;
+    private String user, body, title, sent, notificationType, icon;
 
     public Data() {
     }
 
-    public Data(String user, String body, String title, String sent, String notificationType, Integer icon) {
+    public Data(String user, String body, String title, String sent, String notificationType, String icon) {
         this.user = user;
         this.body = body;
         this.title = title;
@@ -57,11 +56,11 @@ public class Data {
         this.sent = sent;
     }
 
-    public Integer getIcon() {
+    public String getIcon() {
         return icon;
     }
 
-    public void setIcon(Integer icon) {
+    public void setIcon(String icon) {
         this.icon = icon;
     }
 }

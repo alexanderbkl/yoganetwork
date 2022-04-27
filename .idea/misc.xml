@@ -4,6 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Amit/.gradle/caches/transforms-3/06d22490a2164c3998e19c7339945b04/transformed/jetified-android-image-cropper-2.8.0/res/layout/crop_image_activity.xml" value="0.16032608695652173" />
+        <entry key="..\:/Users/Amit/.gradle/caches/transforms-3/06d22490a2164c3998e19c7339945b04/transformed/jetified-android-image-cropper-2.8.0/res/layout/crop_image_view.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Amit/.gradle/caches/transforms-3/06d22490a2164c3998e19c7339945b04/transformed/jetified-android-image-cropper-2.8.0/res/menu/crop_image_menu.xml" value="0.38125" />
         <entry key="..\:/Users/Amit/.gradle/caches/transforms-3/ec5550462e904340abbeb8979ef17e55/transformed/jetified-exoplayer-ui-2.15.0/res/layout/exo_player_view.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/drawable-anydpi/ic_chat_black.xml" value="0.21481481481481482" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/drawable-anydpi/ic_comment_black.xml" value="0.2859375" />
@@ -27,11 +29,17 @@
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout-v23/activity_there_profile.xml" value="0.28229166666666666" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout-v26/activity_there_profile.xml" value="0.22395833333333334" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_add_post.xml" value="0.18854166666666666" />
-        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_chat.xml" value="0.4768856447688564" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_chat.xml" value="0.33" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_comment_liked_by.xml" value="0.33" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_dashboard.xml" value="0.33" />
-        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_chat.xml" value="0.14270833333333333" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_full_screen.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_chat.xml" value="0.25" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_chat_image.xml" value="0.14270833333333333" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_create.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_edit.xml" value="0.33" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_info.xml" value="0.14270833333333333" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_group_participant_add.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_post_liked_by.xml" value="0.2630208333333333" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_post_registration.xml" value="0.25" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_register.xml" value="0.1859375" />
@@ -40,6 +48,7 @@
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/activity_video_player.xml" value="0.26979166666666665" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/audio_controller.xml" value="0.34444444444444444" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/custom_controller.xml" value="0.25" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_group_chats.xml" value="0.338768115942029" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_notifications.xml" value="0.20618556701030927" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/fragment_posts.xml" value="0.21197916666666666" />
@@ -50,7 +59,9 @@
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_chat_right.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_groupchat_left.xml" value="0.5" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_groupchat_right.xml" value="0.36666666666666664" />
-        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_posts.xml" value="0.67" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_groupchats_list.xml" value="0.35104166666666664" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_participant_add.xml" value="0.338768115942029" />
+        <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_posts.xml" value="0.5838068181818182" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/row_users.xml" value="0.33" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/layout/screen_now_playing.xml" value="0.1" />
         <entry key="..\:/Users/Amit/Documents/GitHub/yoganetwork/app/src/main/res/menu/menu_main.xml" value="0.38125" />

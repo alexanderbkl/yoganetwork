@@ -49,8 +49,6 @@
             android:adjustViewBounds="true"
             android:visibility="gone"
             android:gravity="center"
-            android:padding="15dp"
-            android:cropToPadding="false"
             android:src="@drawable/ic_image_black"
             android:contentDescription="@string/todo" />
         </LinearLayout>

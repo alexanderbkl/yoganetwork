@@ -1,11 +1,14 @@
 package com.android.yoganetwork;
 
+import android.graphics.Bitmap;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.BitmapCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
@@ -24,15 +27,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.yoganetwork.adapters.AdapterGroupChat;
 import com.android.yoganetwork.models.ModelGroupChat;
 import com.android.yoganetwork.notifications.Data;
+import com.android.yoganetwork.utils.ImageUtils;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -46,11 +46,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class GroupChatActivity extends AppCompatActivity {
+public class  GroupChatActivity extends AppCompatActivity {
 
   private FirebaseAuth firebaseAuth;
 
@@ -64,7 +67,7 @@ public class GroupChatActivity extends AppCompatActivity {
   private TextView groupTitleTv;
   private EditText messageEt;
   private RecyclerView chatRv;
-
+private RelativeLayout toolbar_layout;
   private ArrayList<ModelGroupChat> groupChatList;
   private AdapterGroupChat adapterGroupChat;
 
@@ -87,6 +90,7 @@ public class GroupChatActivity extends AppCompatActivity {
 
     //init views
     toolbar = findViewById(R.id.toolbar);
+    toolbar_layout = findViewById(R.id.toolbar_layout);
     groupIconIv = findViewById(R.id.groupIconIv);
     attachBtn = findViewById(R.id.attachBtn);
     groupTitleTv = findViewById(R.id.groupTitleTv);
@@ -96,7 +100,12 @@ public class GroupChatActivity extends AppCompatActivity {
 
     setSupportActionBar(toolbar);
 
+    toolbar_layout.setOnClickListener(v -> {
 
+      Intent intent = new Intent(this, GroupInfoActivity.class);
+      intent.putExtra("groupId", groupId);
+      startActivity(intent);
+            });
 
     //get id of the group
     Intent intent = getIntent();
@@ -140,7 +149,10 @@ public class GroupChatActivity extends AppCompatActivity {
       @Override
       public void onClick(View v) {
         //attach image
-        showImageImportDialog();
+       // showImageImportDialog();
+        CropImage.activity()
+                .start(GroupChatActivity.this);
+
       }
     });
 
@@ -221,7 +233,7 @@ public class GroupChatActivity extends AppCompatActivity {
     return result && result1;
   }
 
-  private void sendImageMessage() {
+  private void sendImageMessage() throws IOException {
     //progress dialog
     ProgressDialog pd = new ProgressDialog(this);
     pd.setTitle(getString(R.string.wait));
@@ -233,8 +245,38 @@ public class GroupChatActivity extends AppCompatActivity {
     String filenamePath = "ChatImages/"+""+System.currentTimeMillis();
 
     StorageReference storageReference = FirebaseStorage.getInstance().getReference(filenamePath);
+
+
+
+    int bitSize = 4000000;
+    int quality = 20;
+
+
+
+    //get image from imageview
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte[] data = baos.toByteArray();
+    Bitmap bitmap1 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_uri);
+    Bitmap bitmap2;
+    int n = 1;
+    do {
+      bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
+      if (n % 2 != 0) {
+        n++;
+      } else {
+        n+=2;
+      }
+    } while (BitmapCompat.getAllocationByteCount(bitmap2) > bitSize);
+    //image compress
+    bitmap2.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+    data = baos.toByteArray(); //convert image to bytes
+
+
+
+
+
     //upload image
-    storageReference.putFile(image_uri)
+    storageReference.putBytes(data)
             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
               @Override
               public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -384,11 +426,8 @@ public class GroupChatActivity extends AppCompatActivity {
                   String createdBy= ""+ds.child("createdBy").getValue();
 
                   groupTitleTv.setText(groupTitle);
-                  try {
-                    Picasso.get().load(groupIcon).placeholder(R.drawable.ic_group_white).into(groupIconIv);
-                  } catch (Exception e) {
-                    groupIconIv.setImageResource(R.drawable.ic_group_white);
-                  }
+                    Glide.with(getApplication().getApplicationContext()).load(groupIcon).placeholder(R.drawable.ic_group_white).into(groupIconIv);
+
 
                 }
               }
@@ -439,14 +478,18 @@ public class GroupChatActivity extends AppCompatActivity {
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
     if (resultCode == RESULT_OK) {
-      if (requestCode == IMAGE_PICK_GALLERY_CODE) {
-        //picked from gallery
-        image_uri = data.getData();
-        sendImageMessage();
-      }
-      if (requestCode == IMAGE_PICK_CAMERA_CODE) {
-        //picked from camera
-        sendImageMessage();
+      if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+        CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+
+        assert result != null;
+        image_uri = result.getUri();
+        try {
+          sendImageMessage();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+
       }
     }
   }

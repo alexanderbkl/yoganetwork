@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.android.yoganetwork.adapters.AdapterParticipantAdd;
 import com.android.yoganetwork.models.ModelUsers;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -172,7 +173,9 @@ public class GroupInfoActivity extends AppCompatActivity {
                  public void onSuccess(Void aVoid) {
                      //sucessfully deleted group
                      Toast.makeText(GroupInfoActivity.this, R.string.grpeliminado, Toast.LENGTH_SHORT).show();
-                     startActivity(new Intent(GroupInfoActivity.this, DashboardActivity.class));
+                     Intent intent = new Intent(GroupInfoActivity.this, DashboardActivity.class);
+                     intent.putExtra("fragPos", "5");
+                     startActivity(intent);
                      finish();
                  }
              })
@@ -211,7 +214,12 @@ public class GroupInfoActivity extends AppCompatActivity {
                    descriptionTv.setText(groupDescription);
 
                   try {
-                      Picasso.get().load(groupIcon).placeholder(R.drawable.ic_group_primary).into(groupIconIv);
+                      if (!groupIcon.equals("")) {
+                          Glide.with(getApplicationContext()).load(groupIcon).centerCrop().placeholder(R.drawable.ic_group_primary).into(groupIconIv);
+                      } else {
+                          Glide.with(getApplicationContext()).load(R.drawable.ic_group_primary).into(groupIconIv);
+
+                      }
                   } catch (Exception e) {
                       groupIconIv.setImageResource(R.drawable.ic_group_primary);
                   }

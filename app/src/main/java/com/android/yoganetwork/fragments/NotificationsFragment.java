@@ -4,12 +4,14 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.yoganetwork.DashboardActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.adapters.AdapterNotification;
 import com.android.yoganetwork.models.ModelNotification;
@@ -35,9 +37,8 @@ public class NotificationsFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
 
     private ArrayList<ModelNotification> notificationsList;
-
+    private String extra;
     private AdapterNotification adapterNotification;
-
     boolean profileLikes = false;
 
     TabLayout tabs;
@@ -88,7 +89,9 @@ public class NotificationsFragment extends Fragment {
 
             }
         });
-
+        Bundle args = getArguments();
+        assert args != null;
+        extra = args.getString("extra", "");
 
         getAllNotifications();
 
@@ -96,8 +99,13 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void getAllNotifications() {
-        String notifications = "";
-        if (!profileLikes) {
+        String notifications;
+        if (!Objects.equals(extra, "") && Objects.equals(extra, "profileLikes")) {
+            notifications = "profileLikes";
+            tabs.selectTab(tabs.getTabAt(1));
+            extra = "";
+        }
+        else if (!profileLikes) {
              notifications = "Notifications";
         } else {
              notifications = "profileLikes";
@@ -119,6 +127,7 @@ public class NotificationsFragment extends Fragment {
                         }
                         //adapter
                         adapterNotification = new AdapterNotification(getActivity(), notificationsList);
+
                         //set to recyclerview
                         notificationsRv.setAdapter(adapterNotification);
                     }
@@ -129,4 +138,5 @@ public class NotificationsFragment extends Fragment {
                     }
                 });
     }
+
 }

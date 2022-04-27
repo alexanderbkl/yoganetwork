@@ -3,6 +3,7 @@ package com.android.yoganetwork;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -27,14 +28,17 @@ public class CommentLikedByActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private List<ModelUsers> usersList;
     private AdapterUsers adapterUsers;
-
+    private Toolbar toolbar;
     private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comment_liked_by);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         //actionbar
         ActionBar actionBar = getSupportActionBar();
+        assert actionBar != null;
         actionBar.setTitle("Likes");
         //add back button
         actionBar.setDisplayHomeAsUpEnabled(true);

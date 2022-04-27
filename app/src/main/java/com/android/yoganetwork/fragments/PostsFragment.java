@@ -196,6 +196,7 @@ public class PostsFragment extends Fragment {
                     }
                     //adapter
                     adapterPosts = new AdapterPost(getActivity(), postList, recycler_view);
+                    adapterPosts.setHasStableIds(true);
                     //set adapter to recyclerview
                     recycler_view.setAdapter(adapterPosts);
                 }
@@ -204,7 +205,7 @@ public class PostsFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 //in case of error
-                Toast.makeText(getActivity(), ""+error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "err"+error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 

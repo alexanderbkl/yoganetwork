@@ -20,6 +20,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.android.yoganetwork.ChatActivity;
+import com.android.yoganetwork.DashboardActivity;
 import com.android.yoganetwork.PostDetailActivity;
 import com.android.yoganetwork.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,11 +30,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class FirebaseMessaging extends FirebaseMessagingService {
     private static final String ADMIN_CHANNEL_ID = "admin_channel";
-
+    private String notificationType;
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -46,7 +48,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         /*Now there are two types of notifications
         *           > notificationType="PostNotification"
         *           > notificationType="ChatNotification"*/
-        String notificationType = remoteMessage.getData().get("notificationType");
+        notificationType = remoteMessage.getData().get("notificationType");
         if (notificationType.equals("PostNotification")) {
             //post notification
             String sender = remoteMessage.getData().get("sender");
@@ -67,7 +69,30 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             if (fUser != null && sent.equals(fUser.getUid())) {
                 if (!savedCurrentUser.equals(user)) {
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        sendOAndAboveNotification(remoteMessage);
+                        try {
+                            sendOAndAboveNotification(remoteMessage);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        sendNormalNotification(remoteMessage);
+                    }
+                }
+            }
+        } else if (notificationType.equals("LikeNotification")) {
+            //chat notification
+            String sent = remoteMessage.getData().get("sent");
+            String user = remoteMessage.getData().get("user");
+            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (fUser != null && sent.equals(fUser.getUid())) {
+                if (!savedCurrentUser.equals(user)) {
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        try {
+                            sendOAndAboveNotification(remoteMessage);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                     else {
                         sendNormalNotification(remoteMessage);
@@ -82,7 +107,11 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             if (fUser != null && sent.equals(fUser.getUid())) {
                 if (!savedCurrentUser.equals(user)) {
                     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        sendOAndAboveNotification(remoteMessage);
+                        try {
+                            sendOAndAboveNotification(remoteMessage);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         sendNormalNotification(remoteMessage);
                     }
@@ -104,6 +133,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         }
 
         //show post detail activity using post id when notification clicked
+       
         Intent intent = new Intent(this, PostDetailActivity.class);
         intent.putExtra("postId", pId);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -115,6 +145,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
         //sound for notification
         Uri notificationSoundUri =RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, ""+ADMIN_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_lotus)
                 .setLargeIcon(largeIcon)
@@ -150,17 +181,30 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int i = Integer.parseInt(user.replaceAll("[\\D]", ""));
-        Intent intent = new Intent(this, ChatActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("hisUid", user);
-        intent.putExtras(bundle);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pIntent = null;
+        if (notificationType.equals("LikeNotification")) {
+            Intent intent = new Intent(this, DashboardActivity.class);
+            intent.putExtra("fragPos", "4");
+            intent.putExtra("extra", "profileLikes");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);
 
+        } else if (notificationType.equals("ChatNotification")) {
+            Intent intent = new Intent(this, ChatActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("hisUid", user);
+            intent.putExtras(bundle);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        }
+        
         Uri defSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        int icone = getApplicationContext().getResources().getIdentifier(icon, "drawable", getApplicationContext().getPackageName());
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(Integer.parseInt(icon))
+                .setSmallIcon(R.drawable.ic_lotus)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(), icone))
                 .setContentText(body)
                 .setContentTitle(title)
                 .setAutoCancel(true)
@@ -176,7 +220,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void sendOAndAboveNotification(RemoteMessage remoteMessage) {
+    private void sendOAndAboveNotification(RemoteMessage remoteMessage) throws IOException {
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -184,17 +228,31 @@ public class FirebaseMessaging extends FirebaseMessagingService {
 
         RemoteMessage.Notification notification = remoteMessage.getNotification();
         int i = Integer.parseInt(user.replaceAll("[\\D]", ""));
-        Intent intent = new Intent(this, ChatActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("hisUid", user);
-        intent.putExtras(bundle);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        PendingIntent pIntent = null;
+        if (notificationType.equals("LikeNotification")) {
+            Intent intent = new Intent(this, DashboardActivity.class);
+            intent.putExtra("fragPos", "4");
+            intent.putExtra("extra", "profileLikes");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        } else if (notificationType.equals("ChatNotification")) {
+            Intent intent = new Intent(this, ChatActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("hisUid", user);
+            intent.putExtras(bundle);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            pIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        }
 
         Uri defSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
             OreoAndAboveNotification notification1 = new OreoAndAboveNotification(this);
-            Notification.Builder builder = notification1.getONotifications(title, body, pIntent, defSoundUri, icon);
+        int icone = getApplicationContext().getResources().getIdentifier(icon, "drawable", getApplicationContext().getPackageName());
+
+        Notification.Builder builder = notification1.getONotifications(title, body, pIntent, defSoundUri, BitmapFactory.decodeResource(getApplicationContext().getResources(), icone));
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         int j = 0;

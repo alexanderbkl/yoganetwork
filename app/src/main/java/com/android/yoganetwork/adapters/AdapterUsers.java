@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,39 +16,47 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.android.yoganetwork.ChatActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.ThereProfileActivity;
 import com.android.yoganetwork.models.ModelUsers;
+import com.android.yoganetwork.notifications.Data;
+import com.android.yoganetwork.notifications.Sender;
+import com.android.yoganetwork.notifications.Token;
 import com.android.yoganetwork.utils.MapUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.*;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static android.provider.Settings.System.getString;
 import static com.android.yoganetwork.constants.Database.userLocation;
 
 public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
 {
-    Context context;
+    private final Context context;
     List<ModelUsers> userList;
 
 
-    //for getting current user's uid
-    FirebaseAuth firebaseAuth;
-    String myUid;
-
+    private final String myUid;
+    private RequestQueue requestQueue;
 
     //constructor
 
@@ -56,7 +65,8 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
         this.context = context;
         this.userList = usersList;
 
-        firebaseAuth = FirebaseAuth.getInstance();
+        //for getting current user's uid
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         myUid = firebaseAuth.getUid();
     }
 
@@ -76,6 +86,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
 
 
 
+        requestQueue = Volley.newRequestQueue(context);
 
 
 
@@ -349,6 +360,17 @@ builder.create().show();
                     public void onSuccess(Void aVoid) {
                     //liked successfully
                         userList.get(i).setLiked(true);
+                        String hisName = userList.get(i).getPseudonym();
+                        String hisPic = userList.get(i).getImage();
+                        //send notification
+                        sendNotification(
+                                ""+ServerValue.TIMESTAMP,
+                                ""+hisName+" te ha dado like!",
+                                hisUid,
+                                hisPic
+                        );
+
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -463,6 +485,100 @@ builder.create().show();
                     }
                 });
     }
+
+    private void sendNotification(String pId, String name, String hisUid, String hisPic) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(hisUid);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds: snapshot.getChildren()) {
+                    Token token = ds.getValue(Token.class);
+                    Data data = new Data(
+                            ""+myUid,
+                            ""+name,
+                            "Someone liked you",
+                            ""+hisUid,
+                            "LikeNotification",
+                            ""+hisPic
+                    );
+
+                    assert token != null;
+                    Sender sender = new Sender(data, token.getToken());
+
+                    //fcm json object request
+                    try {
+                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
+                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        //response of the request
+                                        Log.d("JSON_RESPONSE", "onResponse: "+response.toString());
+                                    }
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("JSON_RESPONSE", "onResponse: "+error.toString());
+
+                            }
+                        }) {
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                //put params
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Content-Type", "application/json");
+                                headers.put("Authorization", "key=AAAAQamk8xY:APA91bHY2PqvH237jhVIXZEI0OlvUQACRVffSLfv_pU7gmO1EZL2wcV2J52AFpC3QL5H16DSsAUHwJ2T7nXiVAYgPGuMmyPXRs8efYuZlOWvIttxIl49GsrMw54939LA8gBFsXGp41S7");
+
+                                return headers;
+                            }
+                        };
+                        //add this request to queue
+                        requestQueue.add(jsonObjectRequest);
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void sendLikeNotification(JSONObject notificationJo) {
+        //send volley object request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", notificationJo,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("FCM_RESPONSE", "onResponse: "+response.toString());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //error occurred
+                        Toast.makeText(context, "err"+error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+        {
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                //put required headers
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", "key=AAAAQamk8xY:APA91bHY2PqvH237jhVIXZEI0OlvUQACRVffSLfv_pU7gmO1EZL2wcV2J52AFpC3QL5H16DSsAUHwJ2T7nXiVAYgPGuMmyPXRs8efYuZlOWvIttxIl49GsrMw54939LA8gBFsXGp41S7");
+                return headers;
+            }
+        };
+        //enqueue the volley request
+        Volley.newRequestQueue(context).add(jsonObjectRequest);
+    }
+
     private void unLikeUser(String hisUid, MyHolder myHolder, int i) {
         //unblock the user, by removing uid from current user's "BlockedUsers" node
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");

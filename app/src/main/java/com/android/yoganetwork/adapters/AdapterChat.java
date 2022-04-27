@@ -2,9 +2,12 @@ package com.android.yoganetwork.adapters;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +21,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ablanco.zoomy.TapListener;
 import com.ablanco.zoomy.Zoomy;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.ThereProfileActivity;
 import com.android.yoganetwork.models.ModelChat;
 import com.android.yoganetwork.models.ModelPost;
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,7 +38,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -96,12 +105,88 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
             //image message
             myHolder.messageTv.setVisibility(View.GONE);
             myHolder.messageIv.setVisibility(View.VISIBLE);
-            Picasso.get().load(message).placeholder(R.drawable.ic_image_black).into(myHolder.messageIv);
+            Glide.with(context).load(message).placeholder(R.drawable.ic_image_black).into(myHolder.messageIv);
 
             new Zoomy.Builder((Activity) context)
-                    .target(myHolder.messageIv).register();
+                    .target(myHolder.messageIv)
+                    .tapListener(view -> {
+                        String myUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-        }
+                        /*Logic:
+                         * Get timestamp of clicked message
+                         * Compare the timestamp of the clicked message with all messages in Chats
+                         * Where both values matches delete that message*/
+
+                        //delete message from database
+                        String msgTimeStamp = chatList.get(i).getTimestamp();
+                        DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
+                        Query query = dbRef.orderByChild("timestamp").equalTo(msgTimeStamp);
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for (DataSnapshot ds : snapshot.getChildren()) {
+                                    /*If you want to allow sender o delete only his message then
+                                     * compare sender value with current user's uid
+                                     * if the match means its the message of sende that is trying to delete*/
+
+                                    if (ds.child("sender").getValue().equals(myUID)) {
+
+
+
+                                        //show delete message confirm dialog
+
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                                        builder.setTitle(R.string.eliminar);
+                                        builder.setMessage(R.string.seguro);
+                                        //delete button
+                                        builder.setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                                deleteMessage(i);
+                                            }
+                                        });
+                                        //cancel delete button
+                                        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                //dismiss dialog
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        //create and show dialog
+                                        builder.create().show();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
+                            })
+                    .longPressListener(view ->{
+
+                                DownloadManager downloadmanager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+
+                                long ts = System.currentTimeMillis();
+                                cal.setTimeInMillis(ts * 1000L);
+                                String date = DateFormat.format("dd-MM-yyyy HH:mm:ss", cal).toString();
+                                Uri uri = Uri.parse(message);
+                                DownloadManager.Request request = new DownloadManager.Request(uri);
+                                request.setTitle("YogaNet:"+date);
+                                request.setDescription("Downloading...");
+                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "YogaNet chat: "+date+".jpg");
+
+                                downloadmanager.enqueue(request);
+                            }
+                            )
+                    .register();
+
+            }
+
 
         //cal in am or pm
        /* Calendar cal = Calendar.getInstance(Locale.ENGLISH);
@@ -112,7 +197,7 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
         myHolder.messageTv.setText(message);
         myHolder.timeTv.setText(dateTime);
         try {
-            Picasso.get().load(imageUrl).into(myHolder.profileIv);
+            Glide.with(context).load(imageUrl).into(myHolder.profileIv);
         } catch (Exception e) {
 
         }
@@ -120,30 +205,66 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
         myHolder.messageLayout.setOnClickListener (new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //show delete message confirm dialog
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(R.string.eliminar);
-                builder.setMessage(R.string.seguro);
-                //delete button
-                builder.setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                String myUID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-                        deleteMessage(i);
-                    }
-                });
-                //cancel delete button
-                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                /*Logic:
+                 * Get timestamp of clicked message
+                 * Compare the timestamp of the clicked message with all messages in Chats
+                 * Where both values matches delete that message*/
+
+                //delete message from database
+                String msgTimeStamp = chatList.get(i).getTimestamp();
+                DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
+                Query query = dbRef.orderByChild("timestamp").equalTo(msgTimeStamp);
+                query.addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //dismiss dialog
-                        dialog.dismiss();
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            /*If you want to allow sender o delete only his message then
+                             * compare sender value with current user's uid
+                             * if the match means its the message of sende that is trying to delete*/
+
+                            if (ds.child("sender").getValue().equals(myUID)) {
+
+
+
+                            }
+                            //show delete message confirm dialog
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle(R.string.eliminar);
+                            builder.setMessage(R.string.seguro);
+                            //delete button
+                            builder.setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    deleteMessage(i);
+                                }
+                            });
+                            //cancel delete button
+                            builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //dismiss dialog
+                                    dialog.dismiss();
+                                }
+                            });
+                            //create and show dialog
+                            builder.create().show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
                     }
                 });
-                //create and show dialog
-                builder.create().show();
+
             }
         });
+
+
         //set seen/delivered state of essage
         if (i == chatList.size() - 1) {
             if (chatList.get(i).isSeen()) {
@@ -163,10 +284,12 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
         * Get timestamp of clicked message
         * Compare the timestamp of the clicked message with all messages in Chats
         * Where both values matches delete that message*/
+
+        //delete message from database
         String msgTimeStamp = chatList.get(position).getTimestamp();
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("Chats");
         Query query = dbRef.orderByChild("timestamp").equalTo(msgTimeStamp);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds: snapshot.getChildren()) {
@@ -188,16 +311,35 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
 
                         Toast.makeText(context, "Mensaje eliminado...", Toast.LENGTH_SHORT).show();
                     }
-                    else {
-                        Toast.makeText(context, "Sólo puedes eliminar tus mensajes...", Toast.LENGTH_SHORT).show();
+                    //    Toast.makeText(context, "Sólo puedes eliminar tus mensajes...", Toast.LENGTH_SHORT).show();
 
-                    }
                 }
+                //delete image from storage
+                String message = chatList.get(position).getMessage();
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference contentRef;
+                try {
+                    contentRef = storage.getReferenceFromUrl(message);
+                    contentRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(context, "Error al eliminar imagen: "+e, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Toast.makeText(context, "Error al eliminar mensaje: "+error, Toast.LENGTH_SHORT).show();
             }
         });
     }

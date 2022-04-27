@@ -84,4 +84,5 @@ public class ModelNotification {
     public void setsImage(String sImage) {
         this.sImage = sImage;
     }
+
 }

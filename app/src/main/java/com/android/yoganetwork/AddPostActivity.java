@@ -33,11 +33,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.core.graphics.BitmapCompat;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.android.yoganetwork.utils.ImageUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.exoplayer2.MediaItem;
@@ -449,16 +451,38 @@ public class AddPostActivity extends AppCompatActivity {
         }
         else {
 
-
+            if (editImage != null && !editImage.equals("noImage") && !editImage.equals("")) {
+                StorageReference mPictureRef = FirebaseStorage.getInstance().getReferenceFromUrl(editImage);
+                mPictureRef.delete();
+            }
             String timeStamp = String.valueOf(System.currentTimeMillis());
             String filePathAndName = "Posts/" + "post_" + timeStamp;
 
+            int bitSize = 1000000;
+            int quality = 80;
+
+
+
             //get image from imageview
-            Bitmap bitmap = ((BitmapDrawable) imageIv.getDrawable()).getBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            //image compress
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, baos);
             byte[] data = baos.toByteArray();
+            Bitmap bitmap1 = ((BitmapDrawable) imageIv.getDrawable()).getBitmap();
+            Bitmap bitmap2;
+            int n = 1;
+            do {
+                bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
+                if (n % 2 != 0) {
+                    n++;
+                } else {
+                    n+=2;
+                }
+            } while (BitmapCompat.getAllocationByteCount(bitmap2) > bitSize);
+            //image compress
+            bitmap2.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            data = baos.toByteArray();
+
+
+
 
             StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
             ref.putBytes(data)
@@ -521,6 +545,9 @@ public class AddPostActivity extends AppCompatActivity {
 
     private void updateWasWithImage(String title, String description, String editPostId) {
         //post is with image, delete previous image first
+        if (editImage != null && !editImage.equals("") && !editImage.equals("noImage")) {
+
+
         StorageReference mPictureRef = FirebaseStorage.getInstance().getReferenceFromUrl(editImage);
         mPictureRef.delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -531,12 +558,29 @@ public class AddPostActivity extends AppCompatActivity {
                         String timeStamp = String.valueOf(System.currentTimeMillis());
                         String filePathAndName = "Posts/"+ "post_"+timeStamp;
 
+                        int bitSize = 1000000;
+                        int quality = 90;
+
+
+
                         //get image from imageview
-                        Bitmap bitmap = ((BitmapDrawable)imageIv.getDrawable()).getBitmap();
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        //image compress
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 85, baos);
                         byte[] data = baos.toByteArray();
+                        Bitmap bitmap1 = ((BitmapDrawable)imageIv.getDrawable()).getBitmap();
+                        Bitmap bitmap2;
+                        int n = 1;
+                        do {
+                            bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
+                            if (n % 2 != 0) {
+                                n++;
+                            } else {
+                                n+=2;
+                            }
+                        } while (BitmapCompat.getAllocationByteCount(bitmap2) > bitSize);
+                        //image compress
+                        bitmap2.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+                        data = baos.toByteArray();
+
 
                         StorageReference ref = FirebaseStorage.getInstance().getReference().child(filePathAndName);
                         ref.putBytes(data)
@@ -602,7 +646,7 @@ public class AddPostActivity extends AppCompatActivity {
                         pd.dismiss();
                         Toast.makeText(AddPostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-                });
+                });}
     }
 
 
@@ -628,7 +672,7 @@ public class AddPostActivity extends AppCompatActivity {
                     //set image
                     if (!Objects.equals(editImage, "null") && !Objects.equals(editImage, "") && !Objects.equals(editImage, null)) {
                         try {
-                            Picasso.get().load(editImage).into(imageIv);
+                            Glide.with(getApplication().getApplicationContext()).load(editImage).into(imageIv);
                         }
                         catch (Exception ignored) {
 
@@ -638,7 +682,7 @@ public class AddPostActivity extends AppCompatActivity {
                         try {
                             long thumb = 1000L;
                             RequestOptions options = new RequestOptions().frame(thumb);
-                            Glide.with(AddPostActivity.this).load(editVideo).apply(options).fitCenter().centerCrop().into(imageIv);
+                            Glide.with(getApplication().getApplicationContext()).load(editVideo).apply(options).fitCenter().centerCrop().into(imageIv);
                             playBtn.setVisibility(View.VISIBLE);
 
                             playBtn.setOnClickListener(view -> {
@@ -677,12 +721,33 @@ public class AddPostActivity extends AppCompatActivity {
         String hotScore = String.valueOf(hot(Long.parseLong(timeStamp),1, Long.parseLong(timeStamp)));
         String filePathAndName = "Posts/" + "post_" + timeStamp;
         if (imageIv.getDrawable() != null) {
+            if (editImage != null) {
+                StorageReference mPictureRef = FirebaseStorage.getInstance().getReferenceFromUrl(editImage);
+                mPictureRef.delete();
+            }
+
+
+            int bitSize = 3000000;
+            int quality = 90;
+
             //get image from imageview
-            Bitmap bitmap = ((BitmapDrawable)imageIv.getDrawable()).getBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            //image compress
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos);
             byte[] data = baos.toByteArray();
+            Bitmap bitmap1 = ((BitmapDrawable)imageIv.getDrawable()).getBitmap();
+            Bitmap bitmap2;
+            int n = 1;
+            do {
+                bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
+                if (n % 2 != 0) {
+                    n++;
+                } else {
+                    n+=2;
+                }
+            } while (BitmapCompat.getAllocationByteCount(bitmap2) > bitSize);
+            //image compress
+            bitmap2.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            data = baos.toByteArray();
+
 
 
             //post with image
@@ -749,7 +814,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                                                 Log.e("YogaNetwork", "failed uploading post to database", e);
                                                 pd.dismiss();
-                                                Toast.makeText(AddPostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(AddPostActivity.this, "err"+e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -827,7 +892,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                             Log.e("YogaNetwork", "failed uploading post to database", e);
                             pd.dismiss();
-                            Toast.makeText(AddPostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddPostActivity.this, "err"+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         }
@@ -894,7 +959,7 @@ public class AddPostActivity extends AppCompatActivity {
             notificationJo.put("to", NOTIFICATION_TOPIC);
             notificationJo.put("data", notificationBodyJo); //combine data to be sent
         } catch (JSONException e) {
-            Toast.makeText(this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "err"+e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         sendPostNotification(notificationJo);
     }
@@ -912,7 +977,7 @@ public class AddPostActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //error occurred
-                        Toast.makeText(AddPostActivity.this, ""+error.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddPostActivity.this, "err"+error.toString(), Toast.LENGTH_SHORT).show();
                     }
                 })
         {
@@ -1072,7 +1137,7 @@ public class AddPostActivity extends AppCompatActivity {
 
 
                 Uri resultUri = result.getUri();
-                imageIv.setImageURI(resultUri);
+                Glide.with(this).load(resultUri).into(imageIv);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 System.out.println(error);
@@ -1191,7 +1256,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                                                 Log.e("YogaNetwork", "failed uploading post to database", e);
                                                 pd.dismiss();
-                                                Toast.makeText(AddPostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(AddPostActivity.this, "err"+e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
 
@@ -1310,7 +1375,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                                             Log.e("YogaNetwork", "failed uploading post to database", e);
                                             pd.dismiss();
-                                            Toast.makeText(AddPostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(AddPostActivity.this, "err"+e.getMessage(), Toast.LENGTH_SHORT).show();
                                         }
                                     });
 
@@ -1321,7 +1386,7 @@ public class AddPostActivity extends AppCompatActivity {
                         pd.dismiss();
                         //failed adding post in storage
                         Log.e("YogaNetwork", "failed uploading post to database", e);
-                        Toast.makeText(AddPostActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddPostActivity.this, "err"+e.getMessage(), Toast.LENGTH_SHORT).show();
 
                     });
 

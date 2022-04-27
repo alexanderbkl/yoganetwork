@@ -1,21 +1,28 @@
 package com.android.yoganetwork.adapters;
 
+import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Environment;
 import android.renderscript.Sampler;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ablanco.zoomy.Zoomy;
 import com.android.yoganetwork.GroupChatImageActivity;
 import com.android.yoganetwork.GroupInfoActivity;
 import com.android.yoganetwork.R;
+import com.android.yoganetwork.ThereProfileActivity;
 import com.android.yoganetwork.models.ModelGroupChat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -74,31 +81,49 @@ public class AdapterGroupChat extends RecyclerView.Adapter<AdapterGroupChat.Hold
 
         if (messageType.equals("text")) {
             //text message, hide imageview, show messageTv
-            holder.messageIv.setVisibility(View.GONE);
-            holder.messageTv.setVisibility(View.VISIBLE);
-            holder.messageTv.setText(message);
+            if (holder.imageMessageLayout != null && holder.textMessageLayout != null) {
+                holder.imageMessageLayout.setVisibility(View.GONE);
+                holder.textMessageLayout.setVisibility(View.VISIBLE);
+                holder.messageTv.setText(message);
+            }
+
 
         }
         else {
             //image message
-            holder.messageIv.setVisibility(View.VISIBLE);
-            holder.messageTv.setVisibility(View.GONE);
+            if (holder.imageMessageLayout != null && holder.textMessageLayout != null) {
+                holder.imageMessageLayout.setVisibility(View.VISIBLE);
+                holder.textMessageLayout.setVisibility(View.GONE);
+            }
+
+
             try {
                 Picasso.get().load(message).placeholder(R.drawable.ic_image_black).into(holder.messageIv);
             } catch (Exception e) {
                 holder.messageIv.setImageResource(R.drawable.ic_image_black);
             }
 
-            holder.messageIv.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), GroupChatImageActivity.class);
-                    intent.putExtra("message", message);
-                    intent.putExtra("senderUid", senderUid);
-                    context.startActivity(intent);
 
-                }
-            });
+            new Zoomy.Builder((Activity) context)
+                    .target(holder.messageIv)
+                    .longPressListener(view -> {
+                        DownloadManager downloadmanager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                        long ts = System.currentTimeMillis();
+                        cal.setTimeInMillis(ts * 1000L);
+                        String date = DateFormat.format("dd-MM-yyyy HH:mm:ss", cal).toString();
+                        Uri uri = Uri.parse(message);
+                        DownloadManager.Request request = new DownloadManager.Request(uri);
+                        request.setTitle("YogaNet_"+date);
+                        request.setDescription("Downloading...");
+                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "YogaNet group_"+date+".jpg");
+
+                        downloadmanager.enqueue(request);
+                    })
+                    .register();
+
+
+
         }
 
 
@@ -106,6 +131,19 @@ public class AdapterGroupChat extends RecyclerView.Adapter<AdapterGroupChat.Hold
         holder.timeTv.setText(dateTime);
 
         setUserName(model, holder);
+        holder.pseudonymTv.setOnClickListener(v -> {
+           Intent intent = new Intent(context, ThereProfileActivity.class);
+           intent.putExtra("uid", senderUid);
+           context.startActivity(intent);
+        });
+
+        if (holder.pseudonymImageTv != null) {
+            holder.pseudonymImageTv.setOnClickListener(v -> {
+                Intent intent = new Intent(context, ThereProfileActivity.class);
+                intent.putExtra("uid", senderUid);
+                context.startActivity(intent);
+            });
+        }
 
 
     }
@@ -119,7 +157,10 @@ public class AdapterGroupChat extends RecyclerView.Adapter<AdapterGroupChat.Hold
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         for (DataSnapshot ds: snapshot.getChildren()) {
                             String pseudonym = ""+ds.child("pseudonym").getValue();
-                            holder.pseudonymTv.setText(pseudonym);
+                            holder.pseudonymTv.setText(pseudonym+": ");
+                            if (holder.pseudonymImageTv != null) {
+                                holder.pseudonymImageTv.setText(pseudonym);
+                            }
                         }
                     }
 
@@ -146,13 +187,17 @@ public class AdapterGroupChat extends RecyclerView.Adapter<AdapterGroupChat.Hold
 
     class HolderGroupChat extends RecyclerView.ViewHolder{
 
-        private TextView pseudonymTv, messageTv, timeTv;
+        private TextView pseudonymTv, messageTv, timeTv, pseudonymImageTv;
         private ImageView messageIv;
+        private LinearLayout textMessageLayout, imageMessageLayout;
 
         public HolderGroupChat(@NonNull View itemView) {
             super(itemView);
 
             pseudonymTv = itemView.findViewById(R.id.pseudonymTv);
+            pseudonymImageTv = itemView.findViewById(R.id.pseudonymImageTv);
+            imageMessageLayout = itemView.findViewById(R.id.imageMessageLayout);
+            textMessageLayout = itemView.findViewById(R.id.textMessageLayout);
             messageTv = itemView.findViewById(R.id.messageTv);
             timeTv = itemView.findViewById(R.id.timeTv);
             messageIv = itemView.findViewById(R.id.messageIv);

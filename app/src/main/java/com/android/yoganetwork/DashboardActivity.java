@@ -29,6 +29,7 @@ import com.android.yoganetwork.fragments.MapFragment;
 import com.android.yoganetwork.fragments.NotificationsFragment;
 import com.android.yoganetwork.fragments.ProfileFragment;
 import com.android.yoganetwork.fragments.UsersFragment;
+import com.android.yoganetwork.models.ModelNotification;
 import com.android.yoganetwork.notifications.FirebaseMessaging;
 import com.android.yoganetwork.notifications.Token;
 import com.google.android.gms.common.api.ApiException;
@@ -65,7 +66,9 @@ public class DashboardActivity extends AppCompatActivity implements
     FirebaseAuth firebaseAuth;
     Toolbar toolbar;
 
-    String mUID, fragPos, prevFrag;
+    private String mUID, fragPos, prevFrag;
+    private String extra = "";
+    private boolean prevAct = false;
 
     private    BottomNavigationView navigationView;
 
@@ -76,6 +79,7 @@ public class DashboardActivity extends AppCompatActivity implements
     private FusedLocationProviderClient fusedLocationProviderClient;
     private final int REQUEST_CHECK_SETTINGS = 1;
     private PostsFragment fragment1;
+
     private ProfileFragment fragment2;
     private UsersFragment fragment3;
     private ChatListFragment fragment4;
@@ -121,30 +125,31 @@ public class DashboardActivity extends AppCompatActivity implements
 
 
 
-        /*//get savedinstance and bundle from previous activity
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            fragPos = bundle.getString("fragmentPos");
-            if (fragPos != null) {
-                if (fragPos.equals("1")) {
-                    fragPos = "1";
-                    prevFrag = "1";
-                    navigationView.setSelectedItemId(R.id.nav_profile);
-                    addFragments();
-                } else {
-                    fragPos = "0";
-                    prevFrag = "0";
-                    addFragments();
-                }} else {
+
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
                 fragPos = "0";
                 prevFrag = "0";
+             //   navigationView.setSelectedItemId(R.id.nav_home);
+                addFragments();
+            } else{
+                fragPos= extras.getString("fragPos");
+                extra= extras.getString("extra");
+
+                prevFrag = fragPos;
+                prevAct = true;
                 addFragments();
             }
-        } else {*/
-            fragPos = "0";
-            prevFrag = "0";
+        } else {
+            fragPos= (String) savedInstanceState.getSerializable("fragPos");
+            if (fragPos == null) {
+                fragPos = "0";
+                prevFrag = "0";
+            }
             addFragments();
-       // }
+        }
 
 
 
@@ -261,6 +266,7 @@ public class DashboardActivity extends AppCompatActivity implements
                             return true;
 
                         case R.id.nav_more:
+                            prevAct = false;
                             showMoreOptions();
                             return true;
                     }
@@ -271,7 +277,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
     private void showMoreOptions() {
         //popup menu to show more options
-        PopupMenu popupMenu = new PopupMenu(this, navigationView, Gravity.END);
+        PopupMenu popupMenu = new PopupMenu(DashboardActivity.this, navigationView, Gravity.END);
         //items to show in menu
         popupMenu.getMenu().add(Menu.NONE, 0, 0, R.string.notificaciones);
         popupMenu.getMenu().add(Menu.NONE, 1, 0, R.string.grupos);
@@ -344,7 +350,15 @@ public class DashboardActivity extends AppCompatActivity implements
                 return false;
             }
         });
-        popupMenu.show();
+        //check if activity redirection is false
+        if (!prevAct) {
+            popupMenu.show();
+          //  prevAct = false;
+        }
+
+
+
+
     }
 
     private void checkUserStatus() {
@@ -741,6 +755,7 @@ public class DashboardActivity extends AppCompatActivity implements
                     .replace(R.id.content, fragment1, "");
             ft1.addToBackStack(null).commit();
 
+
             if (fragment2 != null) {
                 FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
                 ft2.add(R.id.content, fragment2, "")
@@ -896,8 +911,16 @@ public class DashboardActivity extends AppCompatActivity implements
         } else if (Objects.equals(fragPos, "4")) {
             //notification fragment transaction
             toolbar.setTitle("Notificaciones"); //change actionbar title
-
             fragment5 = new NotificationsFragment();
+
+            if (!Objects.equals(extra, "")) {
+                // Supply index input as an argument.
+                Bundle args = new Bundle();
+                args.putString("extra", extra);
+                fragment5.setArguments(args);
+            }
+
+
             FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
             ft1.replace(R.id.content, fragment5, "");
             ft1.addToBackStack(null).commit();
@@ -933,6 +956,9 @@ public class DashboardActivity extends AppCompatActivity implements
                 ft7.add(R.id.content, fragment7, "")
                         .hide(fragment7).commit();
             }
+
+            navigationView.getMenu().getItem(4).setChecked(true);
+
         } else if (Objects.equals(fragPos, "5")) {
             //groups fragment transaction
             toolbar.setTitle("Grupos"); //change actionbar title
@@ -973,6 +999,10 @@ public class DashboardActivity extends AppCompatActivity implements
                 ft3.add(R.id.content, fragment3, "")
                         .hide(fragment3).commit();
             }
+
+            navigationView.getMenu().getItem(4).setChecked(true);
+
+
         } else if (Objects.equals(fragPos, "6")) {
             //maps fragment transaction
             toolbar.setTitle("Mapa"); //change actionbar title
@@ -1008,6 +1038,8 @@ public class DashboardActivity extends AppCompatActivity implements
                 ft6.add(R.id.content, fragment6, "")
                         .hide(fragment6).commit();
             }
+            navigationView.getMenu().getItem(4).setChecked(true);
+
         }
 
     }

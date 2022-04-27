@@ -33,8 +33,6 @@ public class SettingsActivity extends AppCompatActivity {
     SharedPreferences sp;
     SharedPreferences.Editor editor; //to edit value of shared pref
 
-    Toolbar toolbar;
-
     //constant for topic
     private static final String TOPIC_POST_NOTIFICATION = "POST"; //assing any value but use same for this kind of notification
 

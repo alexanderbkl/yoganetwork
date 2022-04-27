@@ -3,6 +3,7 @@ package com.android.yoganetwork;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
@@ -32,7 +33,8 @@ public class GroupParticipantAddActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_participant_add);
-
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.añadirparticipante);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -99,7 +101,7 @@ public class GroupParticipantAddActivity extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                 if(snapshot.exists()) {
                                     myGroupRole = ""+snapshot.child("role").getValue();
-                                    actionBar.setTitle(groupTitle + "["+myGroupRole+"]");
+                                    actionBar.setTitle(groupTitle + " ["+myGroupRole+"]");
                                     getAllUsers();
                                 }
 

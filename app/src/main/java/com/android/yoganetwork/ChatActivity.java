@@ -1,5 +1,6 @@
 package com.android.yoganetwork;
 
+import android.graphics.drawable.BitmapDrawable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.BitmapCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,6 +49,8 @@ import com.android.yoganetwork.models.ModelUsers;
 import com.android.yoganetwork.notifications.Data;
 import com.android.yoganetwork.notifications.Sender;
 import com.android.yoganetwork.notifications.Token;
+import com.android.yoganetwork.utils.ImageUtils;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -89,7 +93,7 @@ public class ChatActivity extends AppCompatActivity {
     //permissions array
     String[] cameraPermissions;
     String[] storagePermissions;
-    //image picked will be samed in this uri
+    //image picked will be same in this uri
     Uri image_rui = null;
 
     //views from xml
@@ -161,6 +165,7 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         hisUid = intent.getStringExtra("hisUid");
 
+
         //firebase auth instance
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -203,11 +208,11 @@ public class ChatActivity extends AppCompatActivity {
                     nameTv.setText(name);
                     try {
                         //image received, set it to imageview in toolbar
-                        Picasso.get().load(hisImage).fit().centerCrop().placeholder(R.drawable.ic_default_img_white).into(profileIv);
+                        Glide.with(getApplication().getApplicationContext()).load(hisImage).fitCenter().placeholder(R.drawable.ic_default_img_white).into(profileIv);
                     }
                     catch (Exception e) {
                         //there is exception getting picture, set default picture
-                        Picasso.get().load(R.drawable.ic_default_img_white).into(profileIv);
+                        Glide.with(getApplication().getApplicationContext()).load(R.drawable.ic_default_img_white).fitCenter().placeholder(R.drawable.ic_default_img_white).into(profileIv);
                         Toast.makeText(ChatActivity.this, ""+e, Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -726,12 +731,30 @@ public class ChatActivity extends AppCompatActivity {
 
         String fileNameAndPath = "ChatImages/" +"post_"+timeStamp;
 
-        /*Chats node will be created that will contain all images sent via chat*/
-        //get bitmap from image uri
-        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
+
+        int bitSize = 4000000;
+        int quality = 20;
+
+
+
+        //get image from imageview
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 30, baos);
-        byte[] data = baos.toByteArray(); //convert image to bytes
+        byte[] data = baos.toByteArray();
+        Bitmap bitmap1 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_rui);
+        Bitmap bitmap2;
+        int n = 1;
+        do {
+            bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
+            if (n % 2 != 0) {
+                n++;
+            } else {
+                n+=2;
+            }
+        } while (BitmapCompat.getAllocationByteCount(bitmap2) > bitSize);
+        //image compress
+        bitmap2.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+        data = baos.toByteArray(); //convert image to bytes
+
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileNameAndPath);
         ref.putBytes(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -766,7 +789,9 @@ public class ChatActivity extends AppCompatActivity {
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     ModelUsers user = snapshot.getValue(ModelUsers.class);
                                     if (notify) {
-                                        senNotification(hisUid, user.getPseudonym(), getString(R.string.teenvio));
+                                        senNotification(
+                                                hisUid, user.getPseudonym(),
+                                                getString(R.string.teenvio));
                                     }
                                     notify = false;
                                 }
@@ -842,7 +867,7 @@ public class ChatActivity extends AppCompatActivity {
                         getString(R.string.newmessage),
                         ""+hisUid,
                         "ChatNotification",
-                        R.drawable.ic_default_img
+                        hisImage
                 );
 
                 Sender sender = new Sender(data, token.getToken());
@@ -1002,25 +1027,21 @@ public class ChatActivity extends AppCompatActivity {
 
             if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
                 CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                if (resultCode == RESULT_OK) {
 
 
-
-                    Uri image_rui = result.getUri();
-                    try {
-                        sendImageMessage(image_rui);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                    Exception error = result.getError();
-                    System.out.println(error);
+                assert result != null;
+                Uri image_rui = result.getUri();
+                try {
+                    sendImageMessage(image_rui);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+
             }
 
             if (requestCode == IMAGE_PICK_GALLERY_CODE) {
                 //image is picked from gallery, get "uri" of image
+                assert data != null;
                 image_rui = data.getData();
                 try {
                     sendImageMessage(image_rui);

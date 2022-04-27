@@ -1,6 +1,5 @@
 package com.android.yoganetwork.adapters;
 
-import static android.content.Context.MODE_PRIVATE;
 import static android.text.TextUtils.isEmpty;
 
 import android.animation.Animator;
@@ -9,15 +8,12 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.*;
@@ -36,7 +32,6 @@ import com.android.yoganetwork.models.ModelPost;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -51,14 +46,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import org.jetbrains.annotations.NotNull;
 
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -125,9 +118,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
         countComments = Integer.parseInt(postList.get(i).getpComments());
         String pImage = postList.get(i).getpImage();
         String pVideo = postList.get(i).getpVideo();
+        String pAudio = postList.get(i).getpAudio();
         if (pImage != null) {
             Picasso.get().load(pImage).fit().centerCrop().into(myHolder.pImageIv);
-            myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, pImage, null));
+            myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, pImage, null, null));
             if (pImage.equals("noImage")) {
                 myHolder.pImageIv.setVisibility(View.GONE);
                 myHolder.zoomInBtn.setVisibility(View.GONE);
@@ -158,7 +152,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
             simpleExoPlayer.setMediaItem(mediaItem);
             simpleExoPlayer.prepare();
             simpleExoPlayer.setPlayWhenReady(false);
-
+            myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, null, null, pAudio));
 
 
         }
@@ -167,7 +161,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
          modelPost = postList.get(i);
         String pTimeStamp = postList.get(i).getpTime();
         if (postList.get(i).getpVideo() != null) {
-            myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, null, pVideo));
+            myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, null, pVideo, null));
             myHolder.pImageIv.setVisibility(View.VISIBLE);
             myHolder.zoomInBtn.setVisibility(View.GONE);
             String videoUrl = modelPost.getpVideo();
@@ -228,7 +222,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
 
         //set user dp
         try {
-            Picasso.get().load(uDp).placeholder(R.drawable.ic_default_img).into(myHolder.uPictureIv);
+            Glide.with(context).load(uDp).placeholder(R.drawable.ic_default_img).into(myHolder.uPictureIv);
+
         }
         catch (Exception e) {
         }
@@ -355,6 +350,23 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                             //already liked, so remove like
                             postsRef.child(pId).child("pLikes").setValue(""+pLikes);
                             likesRef.child(pId).child(myUid).removeValue();
+                            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        int userLikes = Integer.parseInt(Objects.requireNonNull(snapshot.getValue()).toString())-1;
+                                        FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").setValue(""+userLikes);
+                                    } else {
+                                        FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").setValue("1");
+                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                                }
+                            });
                         }
                         else {
                             pLikes = Integer.parseInt(postList.get(i).getpLikes())+1;
@@ -368,8 +380,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                                     FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                                            int userLikes = Integer.parseInt(Objects.requireNonNull(snapshot.getValue()).toString())+1;
-                                            FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").setValue(""+userLikes);
+                                            if (snapshot.exists()) {
+                                                int userLikes = Integer.parseInt(Objects.requireNonNull(snapshot.getValue()).toString())+1;
+                                                FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").setValue(""+userLikes);
+                                            } else {
+                                                FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").setValue("1");
+                                            }
+
                                         }
 
                                         @Override
@@ -531,7 +548,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
     }
 
 
-    private void showMoreOptions(ImageButton moreBtn, String uid, String myUid, String pId, String pImage, String pVideo) {
+    private void showMoreOptions(ImageButton moreBtn, String uid, String myUid, String pId, String pImage, String pVideo, String pAudio) {
         //creating popup menu currently having option Delete, we will add more options later
         PopupMenu popupMenu = new PopupMenu(context, moreBtn, Gravity.END);
 
@@ -549,7 +566,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
             int id = item.getItemId();
             if (id==0) {
                 //delete is clicked
-                beginDelete(pId, pImage, pVideo);
+                beginDelete(pId, pImage, pVideo, pAudio);
             }
             else   if (id==1) {
                 //edit is clicked
@@ -572,7 +589,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
         popupMenu.show();
     }
 
-    private void beginDelete(String pId, String pImage, String pVideo) {
+    private void beginDelete(String pId, String pImage, String pVideo, String pAudio) {
         //post can be with or without image
         if (!isEmpty(pImage)) {
             if (pImage.equals("noImage")) {
@@ -580,17 +597,17 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                 deleteWithoutImage(pId);
             }else {
                 //post is with image
-                deleteWithImageOrVideo(pId, pImage, pVideo);
+                 deleteWithContent(pId, pImage, pVideo, pAudio);
             }
         } else {
             //post is with image
-            deleteWithImageOrVideo(pId, pImage, pVideo);
+            deleteWithContent(pId, pImage, pVideo, pAudio);
         }
 
 
     }
 
-    private void deleteWithImageOrVideo(String pId, String pImage, String pVideo) {
+    private void deleteWithContent(String pId, String pImage, String pVideo, String pAudio) {
         //progress bar
         StorageReference picRef = null;
         ProgressDialog pd = new ProgressDialog(context);
@@ -602,7 +619,10 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
             picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pImage);
         } else if (!isEmpty(pVideo)) {
             picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pVideo);
-        } else {
+        } else if (!isEmpty(pAudio)) {
+            picRef = FirebaseStorage.getInstance().getReferenceFromUrl(pAudio);
+        }
+        else {
             Toast.makeText(context, "Error uppon deleting video or image", Toast.LENGTH_SHORT).show();
         }
         assert picRef != null;
@@ -727,18 +747,11 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
 
 
                         imageView2.setVisibility(View.VISIBLE);
-                        Picasso.get().load(pImage).into(imageView2, new Callback() {
-                            @Override
-                            public void onSuccess() {
-                                pImageIv.setVisibility(View.GONE);
-                                ivsizetofs();
-                            }
+                        Glide.with(context).load(pImage).fitCenter().into(imageView2);
+                        pImageIv.setVisibility(View.GONE);
+                        ivsizetofs();
 
-                            @Override
-                            public void onError(Exception e) {
 
-                            }
-                        });
                         Zoomy.Builder builder = new Zoomy.Builder((Activity) context)
                                 .target(imageView2);
                         builder.register();
@@ -757,7 +770,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
 
                         pImageIv.setVisibility(View.VISIBLE);
                         imageView2.setVisibility(View.GONE);
-                        Picasso.get().load(pImage).into(imageView2);
+                       // Picasso.get().load(pImage).into(imageView2);
+                        Glide.with(context).load(pImage).into(pImageIv);
                         zoomInBtn.setVisibility(View.VISIBLE);
                         zoomOutBtn.setVisibility(View.GONE);
                     }

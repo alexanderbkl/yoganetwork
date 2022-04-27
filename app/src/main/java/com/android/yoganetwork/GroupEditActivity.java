@@ -1,5 +1,7 @@
 package com.android.yoganetwork;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -24,6 +26,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.core.graphics.BitmapCompat;
+import com.android.yoganetwork.utils.ImageUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -40,8 +44,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageActivity;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -72,13 +79,13 @@ public class GroupEditActivity extends AppCompatActivity {
     private EditText groupTitleEt, groupDescriptionEt;
     private FloatingActionButton updateGroupBtn;
 
-    private String groupId;
+    private String groupId, groupIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_edit);
-
+        setSupportActionBar(findViewById(R.id.toolbar));
         actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.editargrupo);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -108,7 +115,9 @@ public class GroupEditActivity extends AppCompatActivity {
         groupIconIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showImagePickDialog();
+                CropImage.activity()
+                        .setAspectRatio(1,1)
+                        .start(GroupEditActivity.this);
             }
         });
 
@@ -116,12 +125,16 @@ public class GroupEditActivity extends AppCompatActivity {
         updateGroupBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startUpdatingGroup();
+                try {
+                    startUpdatingGroup();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
 
-    private void startUpdatingGroup() {
+    private void startUpdatingGroup() throws IOException {
         //input data
         String groupTitle = groupTitleEt.getText().toString().trim();
         String groupDescription = groupDescriptionEt.getText().toString().trim();
@@ -148,6 +161,8 @@ public class GroupEditActivity extends AppCompatActivity {
                         public void onSuccess(Void aVoid) {
                             progressDialog.dismiss();
                             Toast.makeText(GroupEditActivity.this, R.string.actualizado1, Toast.LENGTH_SHORT).show();
+
+                            finish();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -167,7 +182,37 @@ public class GroupEditActivity extends AppCompatActivity {
 
             //upload image to firebase storage
             StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
-            storageReference.putFile(image_uri)
+
+            int bitSize = 3000000;
+            int quality = 60;
+
+            //get image from imageview
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            byte[] data = baos.toByteArray();
+            //image uri to bitmap
+
+            Bitmap bitmap1 = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_uri);
+
+            Bitmap bitmap2;
+            int n = 1;
+            do {
+                bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
+                if (n % 2 != 0) {
+                    n++;
+                } else {
+                    n+=2;
+                }
+            } while (BitmapCompat.getAllocationByteCount(bitmap2) > bitSize);
+            //image compress
+            bitmap2.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+            data = baos.toByteArray();
+            if (groupIcon != null && !groupIcon.equals("")) {
+                StorageReference mPictureRef = FirebaseStorage.getInstance().getReferenceFromUrl(groupIcon);
+                mPictureRef.delete();
+            }
+
+
+            storageReference.putBytes(data)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -189,6 +234,7 @@ public class GroupEditActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 progressDialog.dismiss();
                                                 Toast.makeText(GroupEditActivity.this, R.string.actualizado1, Toast.LENGTH_SHORT).show();
+                                                finish();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -222,7 +268,7 @@ public class GroupEditActivity extends AppCompatActivity {
                     String groupId = ""+ds.child("groupId").getValue();
                     String groupTitle = ""+ds.child("groupTitle").getValue();
                     String groupDescription = ""+ds.child("groupDescription").getValue();
-                    String groupIcon = ""+ds.child("groupIcon").getValue();
+                    groupIcon = ""+ds.child("groupIcon").getValue();
                     String createdBy = ""+ds.child("createdBy").getValue();
                     String timestamp = ""+ds.child("timestamp").getValue();
 
@@ -346,6 +392,7 @@ public class GroupEditActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 groupIconIv.setImageURI(resultUri);
+                image_uri = resultUri;
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 System.out.println(error);

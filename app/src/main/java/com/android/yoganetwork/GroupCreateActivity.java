@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
@@ -24,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.yoganetwork.fragments.GroupChatsFragment;
 import com.android.yoganetwork.fragments.PostsFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -66,12 +68,11 @@ public class GroupCreateActivity extends AppCompatActivity {
     private ImageView groupIconIv;
     private EditText groupTitleEt, groupDescriptionEt;
     private FloatingActionButton createGroupBtn;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_create);
-
+        setSupportActionBar(findViewById(R.id.toolbar));
         actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
@@ -171,7 +172,7 @@ public class GroupCreateActivity extends AppCompatActivity {
         }
     }
 
-    private void createGroup(String g_timestamp, String groupTitle, String groupDescription, String groupIcon) {
+    private void  createGroup(String g_timestamp, String groupTitle, String groupDescription, String groupIcon) {
         //setup info of group
         HashMap<String, String> hashMap = new HashMap<>();
         hashMap.put("groupId", ""+g_timestamp);
@@ -203,10 +204,11 @@ public class GroupCreateActivity extends AppCompatActivity {
                                         //participant added
                                         progressDialog.dismiss();
                                         Toast.makeText(GroupCreateActivity.this, R.string.grupocreado, Toast.LENGTH_LONG).show();
-                                        PostsFragment fragment1 = new PostsFragment();
-                                        FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
-                                        ft1.replace(R.id.content, fragment1, "");
-                                        ft1.commit();                                    }
+                                        Intent intent = new Intent(GroupCreateActivity.this, DashboardActivity.class);
+                                        intent.putExtra("fragPos", "5");
+                                        startActivity(intent);
+
+                                                                          }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override

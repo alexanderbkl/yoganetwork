@@ -1,6 +1,7 @@
 package com.android.yoganetwork;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -30,6 +31,7 @@ public class GroupChatImageActivity extends AppCompatActivity {
     private ImageView imageIv;
     private String uri, senderUid;
     private Toolbar toolbar;
+    private ActionBar actionBar;
 
 
     @Override
@@ -37,6 +39,8 @@ public class GroupChatImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_chat_image);
         toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
         imageIv = findViewById(R.id.imageIv);
 
         Intent intent = getIntent();
@@ -82,7 +86,6 @@ public class GroupChatImageActivity extends AppCompatActivity {
 
             }
         });
-        getSupportActionBar().hide();
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

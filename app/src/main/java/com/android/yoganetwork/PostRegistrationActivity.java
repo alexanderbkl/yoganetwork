@@ -73,7 +73,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
     //storage
     StorageReference storageReference;
     //path where images of user profile and cover will be stored
-    String storagePath = "Users_Profile_Cover_Imgs/", profileOrCoverPhoto;
+    String storagePath = "Users_Profile_Cover_Imgs/", profileOrCoverPhoto, image;
 
     ProgressDialog pd;
 
@@ -130,7 +130,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                     String type = ""+ ds.child("type").getValue();
                     String practic = ""+ ds.child("practic").getValue();
                     String diet = ""+ ds.child("diet").getValue();
-                    String image = ""+ ds.child("image").getValue();
+                    image = ""+ ds.child("image").getValue();
                     String cover = ""+ ds.child("cover").getValue();
                     String description = ""+ ds.child("description").getValue();
 
@@ -143,7 +143,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                     descriptionEt.setText(description);
                     try {
                         //if image is received then set
-                        Glide.with(PostRegistrationActivity.this).load(image).fitCenter().centerCrop().into(avatarIv);
+                        Glide.with(getApplication().getApplicationContext()).load(image).fitCenter().centerCrop().into(avatarIv);
                     }
                     catch (Exception e) {
                         //if there is any exception while getting image then set default
@@ -300,6 +300,11 @@ public class PostRegistrationActivity extends AppCompatActivity {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+                if (image != null && !image.equals("")) {
+                    StorageReference mPictureRef = FirebaseStorage.getInstance().getReferenceFromUrl(image);
+                    mPictureRef.delete();
+                }
+
                 Uri resultUri = result.getUri();
                 try {
                     uploadProfileCoverPhoto(resultUri);
@@ -329,7 +334,6 @@ public class PostRegistrationActivity extends AppCompatActivity {
         Bitmap bitmap2;
         byte[] data;
         int n = 1;
-        int i = 0;
         int bitSize;
         int quality;
         if (profileOrCoverPhoto.equals("image")) {
