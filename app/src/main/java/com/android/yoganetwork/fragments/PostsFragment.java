@@ -36,6 +36,7 @@ import com.android.yoganetwork.R;
 import com.android.yoganetwork.SettingsActivity;
 import com.android.yoganetwork.adapters.AdapterPost;
 import com.android.yoganetwork.models.ModelPost;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -58,15 +59,10 @@ public class PostsFragment extends Fragment {
     RecyclerView recycler_view;
     List<ModelPost> postList;
     AdapterPost adapterPosts;
-    TextView playerPosition, playerDuration;
-    SeekBar seekBar;
-    ImageView btRew, btPlay, btPause, btFf;
-    String pAudio;
-    MediaPlayer mediaPlayer;
-    Handler handler = new Handler();
-    Runnable runnable;
+    ShimmerFrameLayout shimmerFrameLayout;
 
-    ImageView pImageIv;
+    String pAudio;
+
     public PostsFragment() {
         // Required empty public constructor
     }
@@ -84,6 +80,7 @@ public class PostsFragment extends Fragment {
             firebaseAuth = FirebaseAuth.getInstance();
             //recycler_view and its properties
 
+        shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             //show  newest post first, for this load from last
 
@@ -139,6 +136,7 @@ public class PostsFragment extends Fragment {
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         postList.sort((o1, o2) -> (int) (Double.parseDouble(o2.getHotScore()) - Double.parseDouble(o1.getHotScore())));
+                        shimmerFrameLayout.setVisibility(View.GONE);
                     }
 
                     //adapter

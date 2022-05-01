@@ -1,6 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">Yoga Network</string>
-    <string name="app_title" translatable="false"><u>Yoga Network</u></string>
+    <string name="app_title" translatable="false">
+        <u>Yoga Network</u>
+    </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Fragmento en blanco</string>
     <string name="todo" translatable="false">TODO</string>
@@ -143,15 +145,15 @@
     <string name="postactualizado">Updated post</string>
     <string name="publicando">Posting post...</string>
     <string name="publicado">Post published</string>
-    <string name="añadio"> added a new post! </string>
+    <string name="añadio">added a new post!</string>
     <string name="cameraaccess">Camera and Storage are required</string>
     <string name="storageacess">Required storage</string>
     <string name="escribiendo">Writing...</string>
-    <string name="ultvez"> Last seen: </string>
+    <string name="ultvez">Last seen:</string>
     <string name="nosepuedeenviarmsg">Unable to send message</string>
-    <string name="bloqerror"> Could not block: </string>
+    <string name="bloqerror">Could not block:</string>
     <string name="elegirimg">Choose image from...</string>
-    <string name="teenvio"> sent you a photo...</string>
+    <string name="teenvio">sent you a photo...</string>
     <string name="newmessage">New message!</string>
     <string name="camerastoragereq">Camera and Storage are required</string>
     <string name="storagereq">Required storage</string>
@@ -181,7 +183,7 @@
     <string name="salistedelgrp">You left the group</string>
     <string name="grpeliminado">Deleted group</string>
     <string name="creadopor">" Created by "</string>
-    <string name="el"> on "</string>
+    <string name="el">on "</string>
     <string name="participantes">Participants (</string>
     <string name="añadirparticipante">Add participant</string>
     <string name="iniciarsesion">Login</string>
@@ -264,7 +266,9 @@
     <string name="action_existing_account" translatable="false">Existing account</string>
 
     <!-- Strings related to permissions -->
-    <string name="profile_image_permission" translatable="false">This permission is needed in order to select a profile image</string>
+    <string name="profile_image_permission" translatable="false">This permission is needed in order to select a profile
+        image
+    </string>
     <string name="gps_permission" translatable="false">This permission is needed in order to use the map</string>
     <string name="typeMessage" translatable="false">Send text</string>
 
@@ -277,6 +281,17 @@
     <string name="title_activity_maps" translatable="false">Map</string>
     <string name="send_message">send message</string>
     <string name="big_image">Big image</string>
+    <string name="crop_image_activity_title"></string>
+    <string name="crop_image_menu_rotate_left">Rotate counter clockwise</string>
+    <string name="crop_image_menu_rotate_right">Rotate</string>
+    <string name="crop_image_menu_crop">Crop</string>
+    <string name="crop_image_menu_flip">Flip</string>
+    <string name="crop_image_menu_flip_horizontally">Flip horizontally</string>
+    <string name="crop_image_menu_flip_vertically">Flip vertically</string>
+
+    <string name="pick_image_intent_chooser_title">Select source</string>
+
+    <string name="crop_image_activity_no_permissions">Cancelling, required permissions are not granted</string>
 
 
     <array name="users_array">

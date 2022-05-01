@@ -1,5 +1,6 @@
 package com.android.yoganetwork;
 
+import android.app.Activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,6 +39,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ablanco.zoomy.Zoomy;
 import com.android.yoganetwork.adapters.AdapterComments;
 import com.android.yoganetwork.models.ModelComment;
 import com.bumptech.glide.Glide;
@@ -60,11 +62,7 @@ import com.squareup.picasso.Target;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class PostDetailActivity extends AppCompatActivity {
 
@@ -79,7 +77,7 @@ public class PostDetailActivity extends AppCompatActivity {
 
     //to get detail of user and post
     String hisUid, myUid, myPractic, myPseudonym, myDp,
-    postId, pLikes, hisDp, hisPractic, hisPseudonym, pImage, pVideo;
+    postId, pLikes, hisDp, hisPractic, hisPseudonym, pImage, pVideo, youtubeUrl;
     String pseudonyn, uid;
 
     boolean mProcessComment = false;
@@ -92,7 +90,7 @@ public class PostDetailActivity extends AppCompatActivity {
     ImageView uPictureIv, pImageIv;
     TextView uPseudonymTv, uPracticTv, pTimeTv, pTitleTv, pDescriptionTv, pLikesTv, pCommentsTv;
     ImageButton moreBtn;
-    Button likeBtn, shareBtn;
+    Button likeBtn, shareBtn, playBtn;
     LinearLayout profileLayout;
     RecyclerView recyclerView;
 
@@ -125,6 +123,7 @@ public class PostDetailActivity extends AppCompatActivity {
         //init views
         uPictureIv = findViewById(R.id.uPictureIv);
         pImageIv = findViewById(R.id.pImageIv);
+        playBtn = findViewById(R.id.playBtn);
         uPseudonymTv = findViewById(R.id.uPseudonymTv);
         uPracticTv = findViewById(R.id.uPracticTv);
         pTimeTv = findViewById(R.id.pTimeTv);
@@ -146,6 +145,8 @@ public class PostDetailActivity extends AppCompatActivity {
 
         commentEdit.setVisibility(View.GONE);
         editBtn.setVisibility(View.GONE);
+        playBtn.setVisibility(View.GONE);
+
         loadPostInfo();
 
         checkUserStatus();
@@ -528,6 +529,7 @@ public class PostDetailActivity extends AppCompatActivity {
         //get id of the post liked
         DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
         DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
+        final long currentDate = System.currentTimeMillis();
 
         likesRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -545,7 +547,8 @@ public class PostDetailActivity extends AppCompatActivity {
                         postsRef.child(postId).child("pLikes").setValue(""+(Integer.parseInt(pLikes)+1));
                         likesRef.child(postId).child(myUid).setValue("Liked"); //set any value
                         mProcessLike = false;
-
+                        String hotScore = String.valueOf(hot(Long.parseLong(postId), Long.parseLong(pLikes)+1,currentDate));
+                        postsRef.child(postId).child("hotScore").setValue(hotScore);
                         addToHisNotifications(""+hisUid, ""+postId, getString(R.string.hadadolike));
 
                     } } }
@@ -555,6 +558,21 @@ public class PostDetailActivity extends AppCompatActivity {
             }
         });
     }
+
+    private long hot(long postDate, long likes, long currentDate) {
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTimeZone(TimeZone.getTimeZone("GMT"));
+        int year = cal2.get(Calendar.YEAR);
+        int yearNumber = (Math.abs(year) % 10)*10000;
+
+        return (((currentDate - postDate) / 86400000) * 1000 - score(likes) - yearNumber * 10000)*(-1);
+    }
+
+    private long score(long likes) {
+        return likes * 1000;
+    }
+
+
 
     private void postComment() {
         pd = new ProgressDialog(this);
@@ -675,6 +693,7 @@ public class PostDetailActivity extends AppCompatActivity {
                     hisDp = ""+ds.child("uDp").getValue();
                     hisUid = ""+ds.child("uid").getValue();
                     pVideo = ""+ds.child("pVideo").getValue();
+                    youtubeUrl = ""+ds.child("youtubeUrl").getValue();
                     hisPractic = ""+ds.child("uPractic").getValue();
                     hisPseudonym = ""+ds.child("uPseudonym").getValue();
                     String commentCount = ""+ds.child("pComments").getValue();
@@ -697,18 +716,42 @@ public class PostDetailActivity extends AppCompatActivity {
                         //hide imageview
                         pImageIv.setVisibility(View.GONE);
 
-                    } else if (pVideo != null) {
-                        try {
-                            long thumb = 1000L;
-                            RequestOptions options = new RequestOptions().frame(thumb);
+                    } else if (!Objects.equals(pVideo, "") && !Objects.equals(pVideo, "null") || !Objects.equals(youtubeUrl, "") && !Objects.equals(youtubeUrl, "null")) {
 
-                            Glide.with(getApplicationContext()).load(pVideo).apply(options).fitCenter().centerCrop().into(pImageIv);
+                        playBtn.setVisibility(View.VISIBLE);
 
+                        if (!Objects.equals(pVideo, "") && !Objects.equals(pVideo, "null")) {
+                            try {
+                                long thumb = 1000L;
+                                RequestOptions options = new RequestOptions().frame(thumb);
+                                Glide.with(getApplicationContext()).load(pVideo).apply(options).fitCenter().centerCrop().into(pImageIv);
+                                playBtn.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(PostDetailActivity.this, VideoPlayerActivity.class);
+                                        intent.putExtra("videoUrl", pVideo);
+                                        PostDetailActivity.this.startActivity(intent);
+                                    }
+                                });
+                            }
+                            catch(NullPointerException e) {
+                                Log.e("null thumbnail", String.valueOf(e));
+                            }
+                        } else if (!Objects.equals(youtubeUrl, "") && !Objects.equals(youtubeUrl, "null")) {
+                            Glide.with(getApplicationContext()).load(pImage).into(pImageIv);
+                            playBtn.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    playBtn.setOnClickListener(view -> {
+                                        Intent intent = new Intent(PostDetailActivity.this, YouTubePlayerActivity.class);
+                                        intent.putExtra("youtubeUrl", youtubeUrl);
+                                        PostDetailActivity.this.startActivity(intent);
+                                    });
 
+                                }
+                            });
                         }
-                        catch(NullPointerException e) {
-                            Log.e("null thumbnail", String.valueOf(e));
-                        }
+
                     }
                     else {
                         //show imageview
@@ -716,7 +759,10 @@ public class PostDetailActivity extends AppCompatActivity {
 
 
                              try {
-                                 Picasso.get().load(pImage).into(pImageIv);
+                                 Glide.with(getApplicationContext()).load(pImage).into(pImageIv);
+                                 Zoomy.Builder builder = new Zoomy.Builder(PostDetailActivity.this)
+                                         .target(pImageIv);
+                                 builder.register();
 
                         }
                       catch (Exception ignored) {
@@ -726,10 +772,10 @@ public class PostDetailActivity extends AppCompatActivity {
                     }
                     //set user image in comment part
                     try {
-                        Picasso.get().load(hisDp).placeholder(R.drawable.ic_default_img).into(uPictureIv);
+                        Glide.with(getApplicationContext()).load(hisDp).placeholder(R.drawable.ic_default_img).into(uPictureIv);
                     }
                     catch (Exception e) {
-                        Picasso.get().load(R.drawable.ic_default_img).into(uPictureIv);
+                        Glide.with(getApplicationContext()).load(R.drawable.ic_default_img).into(uPictureIv);
                     }
 
                 }

@@ -23,6 +23,10 @@ allprojects {
         google()
         maven{ url "https://maven.google.com" }
         maven { url 'https://jitpack.io' }
+        maven {
+            name "jitpack"
+            url "https://jitpack.io"
+        }
     }
 }
 

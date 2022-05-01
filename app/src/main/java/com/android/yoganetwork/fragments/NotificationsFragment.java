@@ -90,8 +90,9 @@ public class NotificationsFragment extends Fragment {
             }
         });
         Bundle args = getArguments();
-        assert args != null;
-        extra = args.getString("extra", "");
+        if (args != null) {
+            extra = args.getString("extra", "");
+        }
 
         getAllNotifications();
 

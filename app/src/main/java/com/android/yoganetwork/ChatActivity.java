@@ -44,6 +44,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.android.yoganetwork.adapters.AdapterChat;
 import com.android.yoganetwork.adapters.AdapterUsers;
+import com.android.yoganetwork.crop.CropImage;
 import com.android.yoganetwork.models.ModelChat;
 import com.android.yoganetwork.models.ModelUsers;
 import com.android.yoganetwork.notifications.Data;
@@ -68,7 +69,6 @@ import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
-import com.theartofdev.edmodo.cropper.CropImage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -733,7 +733,7 @@ public class ChatActivity extends AppCompatActivity {
 
 
         int bitSize = 4000000;
-        int quality = 20;
+        int quality = 70;
 
 
 

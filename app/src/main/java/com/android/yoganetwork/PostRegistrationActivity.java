@@ -49,8 +49,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
+import com.android.yoganetwork.crop.CropImage;
+import com.android.yoganetwork.crop.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -337,10 +337,10 @@ public class PostRegistrationActivity extends AppCompatActivity {
         int bitSize;
         int quality;
         if (profileOrCoverPhoto.equals("image")) {
-            bitSize = 300000;
-            quality = 60;
+            bitSize = 100000;
+            quality = 70;
         } else {
-            bitSize = 500000;
+            bitSize = 100000;
             quality = 70;
         }
 

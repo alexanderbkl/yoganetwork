@@ -1,45 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.android.yoganetwork">
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.android.yoganetwork">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the "MyLocation" functionality.
     -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Internet Permission -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/> <!-- Internet Permission -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission
-            android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage"/>
+            android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
+            tools:ignore="ScopedStorage"/>
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:requestLegacyExternalStorage="true"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true">
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:hardwareAccelerated="true"
+            android:requestLegacyExternalStorage="true"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            android:usesCleartextTraffic="true">
         <activity
-            android:name=".VideoPlayerActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:configChanges="orientation|screenSize|screenLayout"
-            android:exported="false" />
+                android:name=".DashboardActivity"
+                android:exported="true"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".YouTubePlayerActivity"
+                android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
+                android:exported="false"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+        <provider
+                android:name="androidx.core.content.FileProvider"
+                android:authorities="com.android.yoganetwork.provider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/provider_paths"/>
+        </provider>
+
+        <activity
+                android:name=".VideoPlayerActivity"
+                android:configChanges="orientation|screenSize|screenLayout"
+                android:exported="false"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
         <activity
                 android:name=".AddToGroupActivity"
                 android:exported="false"
                 android:hardwareAccelerated="true"
-                android:screenOrientation="nosensor" />
+                android:screenOrientation="nosensor"/>
         <activity
-            android:name=".CommentLikedByActivity"
-            android:exported="false"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".CommentLikedByActivity"
+                android:exported="false"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"/>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -49,120 +78,102 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/google_maps_key"/>
 
         <activity
-            android:name=".PostRegistrationActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor"
-            android:theme="@style/AppTheme.NoActionBar" />
+                android:name=".PostRegistrationActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"
+                android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".GroupChatImageActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".GroupChatImageActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"/>
         <activity
-            android:name=".GroupEditActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".GroupEditActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"/>
         <activity
-            android:name=".GroupInfoActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".GroupInfoActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"/>
         <activity
-            android:name=".GroupParticipantAddActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".GroupParticipantAddActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"/>
         <activity
-            android:name=".GroupChatActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor"
-            android:theme="@style/AppThemeNo" />
+                android:name=".GroupChatActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"
+                android:theme="@style/AppThemeNo"/>
         <activity
-            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:screenOrientation="nosensor"
-            android:theme="@style/Base.Theme.AppCompat" /> <!-- optional (needed if default theme has no action bar) -->
+                android:name=".crop.CropImageActivity"
+                android:screenOrientation="nosensor"
+                android:theme="@style/Base.Theme.AppCompat"/> <!-- optional (needed if default theme has no action bar) -->
         <activity
-            android:name=".GroupCreateActivity"
-            android:hardwareAccelerated="true" />
+                android:name=".GroupCreateActivity"
+                android:hardwareAccelerated="true"/>
         <activity
-            android:name=".PostLikedByActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".PostLikedByActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"/>
         <activity
-            android:name=".SettingsActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".SettingsActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"/>
         <activity
-            android:name=".PostDetailActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".PostDetailActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"/>
         <activity
-            android:name=".ThereProfileActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor" />
+                android:name=".ThereProfileActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"/>
         <!--
 Intent filters inform the system what intents an application component is willing to accept
         To receive text/image type of intents we will add intent filter to activity, that will handle that data
         -->
         <activity
-            android:name=".AddPostActivity"
-            android:exported="false"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor">
-            <intent-filter>
-
+                android:name=".AddPostActivity"
+                android:exported="true"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor">
                 <!-- For image -->
+            <intent-filter>
                 <action android:name="android.intent.action.SEND" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="image/*" />
             </intent-filter>
             <intent-filter>
-
-                <!-- For text -->
                 <action android:name="android.intent.action.SEND" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ChatActivity"
-            android:hardwareAccelerated="true"
-            android:screenOrientation="nosensor"
-            android:theme="@style/AppThemeNo" />
+                android:name=".ChatActivity"
+                android:hardwareAccelerated="true"
+                android:screenOrientation="nosensor"
+                android:theme="@style/AppThemeNo"/>
         <activity
-            android:name=".LoginActivity"
-            android:hardwareAccelerated="true" />
-        <activity
-            android:name=".DashboardActivity"
-            android:exported="true"
-            android:screenOrientation="nosensor"
-            android:hardwareAccelerated="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                android:name=".LoginActivity"
+                android:hardwareAccelerated="true"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <activity
-            android:name=".RegisterActivity"
-            android:hardwareAccelerated="true" />
+                android:name=".RegisterActivity"
+                android:hardwareAccelerated="true"/>
         <activity
-            android:name=".MainActivity"
-            android:hardwareAccelerated="true" />
+                android:name=".MainActivity"
+                android:hardwareAccelerated="true"/>
 
         <service
-            android:name=".notifications.FirebaseMessaging"
-            android:exported="false">
+                android:name=".notifications.FirebaseMessaging"
+                android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
-        </service>
-     <!-- Define file provider -->
+        </service> <!-- Define file provider -->
         <!--
 Set the android:exported attribute to false;
         the FileProvider does not need to be public.
@@ -171,19 +182,9 @@ Set the android:exported attribute to false;
 Set the android:grantUriPermissions attribute to true,
         to allow you to grant temporary access to files.
         -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.android.yoganetwork.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/paths" />
-        </provider>
-
         <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+                android:name="com.google.android.gms.version"
+                android:value="@integer/google_play_services_version"/>
     </application>
 
 </manifest>

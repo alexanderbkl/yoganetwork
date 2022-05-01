@@ -100,6 +100,7 @@
 
         <FrameLayout android:layout_height="wrap_content"
             android:layout_width="match_parent">
+
             <ImageView
                 android:id="@+id/pImageIv"
                 android:layout_width="match_parent"
@@ -111,10 +112,10 @@
                 android:cropToPadding="false"
                 android:visibility="visible"
                 />
-            <Button
-                android:layout_width="65dp"
+              <Button
+                android:layout_width="75dp"
                 android:background="@drawable/ic_play"
-                android:layout_height="55dp"
+                android:layout_height="65dp"
                 android:visibility="gone"
                 android:id="@+id/playBtn"
                 android:layout_gravity = "center"

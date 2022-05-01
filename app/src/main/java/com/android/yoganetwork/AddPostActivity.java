@@ -1,11 +1,11 @@
 package com.android.yoganetwork;
 
 import android.graphics.Outline;
+import android.util.SparseArray;
 import android.view.ViewOutlineProvider;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -23,7 +23,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -34,17 +33,27 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.core.graphics.BitmapCompat;
+import com.ablanco.zoomy.Zoomy;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.android.yoganetwork.crop.CropImage;
 import com.android.yoganetwork.utils.ImageUtils;
+import com.android.yoganetwork.youtubeExtractor.VideoMeta;
+import com.android.yoganetwork.youtubeExtractor.YouTubeExtractor;
+import com.android.yoganetwork.youtubeExtractor.YtFile;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MergingMediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.util.Util;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -61,18 +70,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.iceteck.silicompressorr.SiliCompressor;
-import com.squareup.picasso.Picasso;
-import com.theartofdev.edmodo.cropper.CropImage;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.content.ContentValues.TAG;
 
@@ -88,10 +96,13 @@ public class AddPostActivity extends AppCompatActivity {
     StorageReference storageReference;
 
     SimpleExoPlayer simpleExoPlayer;
-    PlayerView playerView;
+    PlayerView playerView, player;
     MediaItem mediaItem;
-
-
+    boolean playWhenReady = true;
+    long playbackPosition = 0;
+    int currentWindow = 0;
+    String youtubeUrl = "";
+    String thumbnail = "";
 
     //views
     EditText titleEt, descriptionEt;
@@ -100,7 +111,7 @@ public class AddPostActivity extends AppCompatActivity {
     Button uploadBtn, playBtn;
     //likes
     String pLikes = "0";
-    String pDislikes ="0";
+    String pDislikes = "0";
     String pComments = "0";
     private Uri audioPath;
 
@@ -140,19 +151,19 @@ public class AddPostActivity extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference("Users");
         storageReference = FirebaseStorage.getInstance().getReference();
         setSupportActionBar(toolbar);
-
+        videoView = findViewById(R.id.videoView);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Add Post");
         Query querye = databaseReference.orderByChild("uid").equalTo(user.getUid());
         querye.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //check until required data get
-                for (DataSnapshot ds: snapshot.
+                for (DataSnapshot ds : snapshot.
                         getChildren()) {
                     //get data
-                    String name = ""+ ds.child("pseudonym").getValue();
-                    String practica = ""+ ds.child("practic").getValue();
-                    dp = ""+ ds.child("image").getValue();
+                    String name = "" + ds.child("pseudonym").getValue();
+                    String practica = "" + ds.child("practic").getValue();
+                    dp = "" + ds.child("image").getValue();
                     //set data
                     pseudonym = name;
                     practic = practica;
@@ -180,7 +191,7 @@ public class AddPostActivity extends AppCompatActivity {
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            Log.v(TAG,"Permission is granted");
+            Log.v(TAG, "Permission is granted");
             //File write logic here
         } else {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 101);
@@ -193,12 +204,11 @@ public class AddPostActivity extends AppCompatActivity {
         //get data and its type from intent
         String action = intent.getAction();
         String type = intent.getType();
-        if (Intent.ACTION_SEND.equals(action) && type!=null){
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
             if ("text/plain".equals(type)) {
                 //text type data
                 handleSendText(intent);
-            }
-            else if(type.startsWith("image")) {
+            } else if (type.startsWith("image")) {
                 //image type data
                 handleSendImage(intent);
             }
@@ -218,16 +228,15 @@ public class AddPostActivity extends AppCompatActivity {
             }
         }
 
-        String isUpdateKey = ""+intent.getStringExtra("key");
-        String editPostId = ""+intent.getStringExtra("editPostId");
+        String isUpdateKey = "" + intent.getStringExtra("key");
+        String editPostId = "" + intent.getStringExtra("editPostId");
         //validate if we came here to update post i.e. came from AdapterPost
         if (isUpdateKey.equals("editPost")) {
             //update
             getSupportActionBar().setTitle(getString(R.string.updatepost));
             uploadBtn.setText(getString(R.string.actualizar));
             loadPostData(editPostId);
-        }
-        else {
+        } else {
             //add
             getSupportActionBar().setTitle("Añadir nuevo post");
             uploadBtn.setText(getString(R.string.publicar));
@@ -237,7 +246,7 @@ public class AddPostActivity extends AppCompatActivity {
 
 
         //get image from camera/gallery on click
-        imageIv.setOnClickListener(new View.OnClickListener(){
+        imageIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -245,12 +254,15 @@ public class AddPostActivity extends AppCompatActivity {
 
             }
         });
-
+        if(!youtubeUrl.equals("")){
+            thumbnail = extractYoutubeThumbnail(youtubeUrl);
+            Glide.with(AddPostActivity.this).load(thumbnail).into(imageIv);
+        }
         //upload button click listener
         uploadBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            //get data(title, description) from EditTexts
+                //get data(title, description) from EditTexts
                 String title = titleEt.getText().toString().trim();
                 String description = descriptionEt.getText().toString().trim();
                 if (TextUtils.isEmpty(title)) {
@@ -263,21 +275,25 @@ public class AddPostActivity extends AppCompatActivity {
                 }
                 if (isUpdateKey.equals("editPost")) {
                     beginUpdate(title, description, editPostId);
+                } else if (!youtubeUrl.equals("")) {
+                    uploadYoutubeEmbed(title, description, youtubeUrl);
                 }
                 else {
                     uploadData(title, description);
                 }
 
 
-
             }
         });
+        Zoomy.Builder builder = new Zoomy.Builder(AddPostActivity.this)
+                .target(imageIv);
+        builder.register();
     }
 
     private void showMediaPickDialog() {
         //options to show in dialog
         String[] options = {"Añadir imagen", "Añadir vídeo",
-                "Añadir audio"};
+                "Añadir audio", "Añadir enlace youtube"};
         //alert dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
         //set title
@@ -288,29 +304,106 @@ public class AddPostActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
 
                 //handle dialog items clicks
-                if(which == 0){
+                if (which == 0) {
                     Snackbar.make(imageIv, "Abriendo imagen", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     showImagePickDialog();
-                }
-                else if (which == 1){
+                } else if (which == 1) {
                     Snackbar.make(imageIv, "Abriendo vídeo", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     isVideo = true;
                     videoPickDialog();
 
 
-                }
-                else if (which == 2){
+                } else if (which == 2) {
                     Snackbar.make(imageIv, "Abriendo explorador", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     chooseAud();
+                } else if (which == 3) {
+                    Snackbar.make(imageIv, "Abriendo youtube", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                    //make dialog to get youtube url from user
+                    youtubeUrlDialog();
+
                 }
+            }
+
+            private void youtubeUrlDialog() {
+                //alert dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(AddPostActivity.this);
+                //set title
+                builder.setTitle("Añadir enlace youtube");
+                //set layout of dialog
+                LinearLayout linearLayout = new LinearLayout(AddPostActivity.this);
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
+                linearLayout.setPadding(10, 10, 10, 10);
+                //add edit text
+                final EditText youtubeUrlEt = new EditText(AddPostActivity.this);
+                youtubeUrlEt.setHint("Introduce el enlace");
+                linearLayout.addView(youtubeUrlEt);
+                //add button
+                Button button = new Button(AddPostActivity.this);
+                button.setText("Añadir");
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        youtubeUrl = youtubeUrlEt.getText().toString();
+                        if (youtubeUrl.isEmpty()) {
+                            Snackbar.make(imageIv, "Introduce un enlace", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        } else {
+                            Snackbar.make(imageIv, "Enlace añadido", Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                            if(!youtubeUrl.equals("")){
+                                thumbnail = extractYoutubeThumbnail(youtubeUrl);
+                                Glide.with(AddPostActivity.this).load(thumbnail).into(imageIv);
+                            }
+                        }
+                    }
+                });
+                linearLayout.addView(button);
+                //set layout to dialog
+                builder.setView(linearLayout);
+                //show dialog
+                builder.show();
             }
         });
         //create and show dialog
         builder.create().show();
 
+
+    }
+
+    private void embedYoutube(String youtubeUrl) {
+        imageIv.setVisibility(View.VISIBLE);
+        if(!youtubeUrl.equals("")){
+            thumbnail = extractYoutubeThumbnail(youtubeUrl);
+            Glide.with(AddPostActivity.this).load(thumbnail).into(imageIv);
+        }
+
+    }
+
+    private String extractYoutubeThumbnail(String youtubeUrl) {
+        String videoId = getYoutubeVideoId(youtubeUrl);
+        //get thumbnail
+        return "https://img.youtube.com/vi/" + videoId + "/0.jpg";
+    }
+
+    static String getYoutubeVideoId(String youtubeUrl) {
+
+            String vId = null;
+            Pattern pattern = Pattern.compile(
+                    "^https?://.*(?:youtu.be/|v/|u/\\w/|embed/|watch?v=)([^#&?]*).*$",
+                    Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(youtubeUrl);
+            if (matcher.matches()){
+                vId = matcher.group(1);
+            }
+            if (vId == null) {
+                //get text after "=" in url
+                vId = youtubeUrl.split("=")[1];
+            }
+            return vId;
 
     }
 
@@ -380,14 +473,19 @@ public class AddPostActivity extends AppCompatActivity {
         Uri imageURI = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         if (imageURI != null) {
             //set to imageview
-            Glide.with(this).load(image_rui).into(imageIv);
+            Glide.with(this).load(imageURI).into(imageIv);
         }
     }
 
     private void handleSendText(Intent intent) {
         //handle the received text
         String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
-        if (sharedText!= null) {
+        //check if sharedtext has youtube url
+        if (sharedText.contains("youtube.com") || sharedText.contains("youtu.be")) {
+            youtubeUrl = sharedText;
+            embedYoutube(youtubeUrl);
+        }
+        else if (!sharedText.equals("")) {
             //set to description edit text
             descriptionEt.setText(sharedText);
         }
@@ -709,6 +807,70 @@ public class AddPostActivity extends AppCompatActivity {
 
     }
 
+    private void uploadYoutubeEmbed(String title, String description, String youtubeUrl) {
+
+        //for post-image name, post-id, post-publish-time
+
+        final String timeStamp = String.valueOf(System.currentTimeMillis());
+
+        String hotScore = String.valueOf(hot(Long.parseLong(timeStamp),1, Long.parseLong(timeStamp)));
+
+              HashMap<Object, String> hashMap = new HashMap<>();
+              //put post info
+              hashMap.put("uid", uid);
+              hashMap.put("uPseudonym", pseudonym);
+              hashMap.put("uPractic", practic);
+              hashMap.put("uDp", dp);
+              hashMap.put("pId", timeStamp);
+              hashMap.put("pTitle", title);
+              hashMap.put("pLikes", pLikes);
+              hashMap.put("hotScore", hotScore);
+              hashMap.put("youtubeUrl", youtubeUrl);
+              hashMap.put("pComments", pComments);
+              hashMap.put("pDescr", description);
+              hashMap.put("pImage", thumbnail);
+              hashMap.put("pTime", timeStamp);
+              //path to store post data
+              DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+              //put data in this ref
+              ref.child(timeStamp).setValue(hashMap)
+                      .addOnSuccessListener(new OnSuccessListener<Void>() {
+                          @Override
+                          public void onSuccess(Void aVoid) {
+                              //added in database
+                              pd.dismiss();
+                              //Toast.makeText(AddPostActivity.this, ""+R.string.publicado, Toast.LENGTH_SHORT).show();
+                              //reset views
+                              titleEt.setText("");
+                              descriptionEt.setText("");
+                              imageIv.setImageURI(null);
+                              image_rui = null;
+
+                              //send notification
+                              prepareNotification(
+                                      ""+timeStamp,
+                                      ""+pseudonym+" añadió un post nuevo!",
+                                      ""+title+"\n"+description,
+                                      "PostNotification",
+                                      "POST"
+                              );
+                              startActivity(new Intent(AddPostActivity.this, DashboardActivity.class));
+                              finish();
+
+                          }
+                      })
+                      .addOnFailureListener(new OnFailureListener() {
+                          @Override
+                          public void onFailure(@NonNull Exception e) {
+                              //failed adding post in database
+
+                              Log.e("YogaNetwork", "failed uploading post to database", e);
+                              pd.dismiss();
+                              Toast.makeText(AddPostActivity.this, "err"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                          }
+                      });
+    }
+
     private void uploadData(String title, String description) {
 
         //for post-image name, post-id, post-publish-time
@@ -787,7 +949,7 @@ public class AddPostActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 //added in database
                                                 pd.dismiss();
-                                                Toast.makeText(AddPostActivity.this, ""+R.string.publicado, Toast.LENGTH_SHORT).show();
+                                                //Toast.makeText(AddPostActivity.this, ""+R.string.publicado, Toast.LENGTH_SHORT).show();
                                                 //reset views
                                                 titleEt.setText("");
                                                 descriptionEt.setText("");
@@ -867,7 +1029,7 @@ public class AddPostActivity extends AppCompatActivity {
                         public void onSuccess(Void aVoid) {
                             //added in database
                             pd.dismiss();
-                            Toast.makeText(AddPostActivity.this, R.string.publicado, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(AddPostActivity.this, R.string.publicado, Toast.LENGTH_SHORT).show();
                             titleEt.setText("");
                             descriptionEt.setText("");
                             imageIv.setImageURI(null);
@@ -1069,13 +1231,49 @@ public class AddPostActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        checkUserStatus();
+       /* if(Util.SDK_INT >= 24){
+            initPlayer();}
+        checkUserStatus();*/
+    }
+
+    @Override
+    protected void onStop() {
+        if(Util.SDK_INT >= 24){
+            releasePlayer();}
+        super.onStop();
+    }
+
+    private void releasePlayer() {
+        if(simpleExoPlayer != null){
+            playWhenReady = simpleExoPlayer.getPlayWhenReady();
+            playbackPosition = simpleExoPlayer.getCurrentPosition();
+            currentWindow = simpleExoPlayer.getCurrentWindowIndex();
+            simpleExoPlayer.release();
+            simpleExoPlayer = null;
+        }
+    }
+
+    private void initPlayer() {
+        simpleExoPlayer = new SimpleExoPlayer.Builder(this).build();
+        player.setPlayer(simpleExoPlayer);
+        embedYoutube("https://www.youtube.com/watch?v=Gkhnwq7npM8");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         checkUserStatus();
+      /*  if ((Util.SDK_INT < 24 || simpleExoPlayer == null)) {
+            initPlayer();
+        }*/
+    }
+
+    @Override
+    protected void onPause() {
+        if (Util.SDK_INT < 24) {
+            releasePlayer();
+        }
+        super.onPause();
     }
 
     private void checkUserStatus() {
@@ -1135,7 +1333,6 @@ public class AddPostActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
 
 
-
                 Uri resultUri = result.getUri();
                 Glide.with(this).load(resultUri).into(imageIv);
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
@@ -1155,7 +1352,7 @@ public class AddPostActivity extends AppCompatActivity {
                 setVideoToVideoView();
             }
             else if (requestCode == PICK_AUD_REQUEST && data != null && data.getData() != null) {
-                Toast.makeText(this, "Got data", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Got data", Toast.LENGTH_SHORT).show();
                 audioPath = data.getData();
                 imageIv.setVisibility(View.GONE);
                 playerView.setVisibility(View.VISIBLE);
@@ -1229,7 +1426,7 @@ public class AddPostActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 //added in database
                                                 pd.dismiss();
-                                                Toast.makeText(AddPostActivity.this, ""+R.string.publicado, Toast.LENGTH_SHORT).show();
+                                                //Toast.makeText(AddPostActivity.this, ""+R.string.publicado, Toast.LENGTH_SHORT).show();
                                                 //reset views
                                                 titleEt.setText("");
                                                 descriptionEt.setText("");
@@ -1348,7 +1545,7 @@ public class AddPostActivity extends AppCompatActivity {
                                         public void onSuccess(Void aVoid) {
                                             //added in database
                                             pd.dismiss();
-                                            Toast.makeText(AddPostActivity.this, ""+R.string.publicado, Toast.LENGTH_SHORT).show();
+                                            //Toast.makeText(AddPostActivity.this, ""+R.string.publicado, Toast.LENGTH_SHORT).show();
                                             //reset views
                                             titleEt.setText("");
                                             descriptionEt.setText("");

@@ -57,6 +57,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
 
     private final String myUid;
     private RequestQueue requestQueue;
+    boolean liked;
 
     //constructor
 
@@ -84,7 +85,7 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
     @Override
     public void onBindViewHolder(@NonNull MyHolder myHolder, @SuppressLint("RecyclerView") int i) {
 
-
+        liked = false;
 
         requestQueue = Volley.newRequestQueue(context);
 
@@ -237,8 +238,11 @@ builder.create().show();
                     unLikeUser(hisUid, myHolder, i);
             }
             else {
+                if (!liked) {
                     myHolder.likeIv.setImageResource(R.drawable.ic_heart_dark);
                     likeUser(hisUid, myHolder, i);
+                }
+
             }
             }
         });
@@ -346,6 +350,9 @@ builder.create().show();
                 });
     }
     private void likeUser(String hisUid, MyHolder myHolder, int i) {
+
+        liked = true;
+
         //like the user, by adding uid to current user's "LikedUsers" node
 
         //put values in hashmap to put in db

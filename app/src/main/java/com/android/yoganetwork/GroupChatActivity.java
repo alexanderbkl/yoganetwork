@@ -46,7 +46,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.theartofdev.edmodo.cropper.CropImage;
+import com.android.yoganetwork.crop.CropImage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -249,7 +249,7 @@ private RelativeLayout toolbar_layout;
 
 
     int bitSize = 4000000;
-    int quality = 20;
+    int quality = 70;
 
 
 

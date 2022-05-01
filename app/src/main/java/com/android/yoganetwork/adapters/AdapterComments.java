@@ -73,6 +73,10 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
         String time = commentList.get(position).getTimestamp();
         String edited = commentList.get(position).getEdited();
         String cLikes = commentList.get(position).getcLikes();
+        if (cLikes == null || cLikes.equals("")) {
+            cLikes = "0";
+        }
+
         //convert timestamp to dd/mm/yy HH:mm
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(Long.parseLong(time));
@@ -82,6 +86,7 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
         holder.practicTv.setText(practic);
         holder.commentTv.setText(comment);
         if (Integer.parseInt(cLikes) != 0) {
+
             holder.cLikesTv.setText(cLikes);
         } else {
             holder.cLikesTv.setText("");
@@ -121,10 +126,11 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
 
 
         });
+        String finalCLikes = cLikes;
         holder.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                likeComment(cLikes, cid);
+                likeComment(finalCLikes, cid);
             }
         });
         setLikes(holder.likeBtn, cid);
@@ -161,7 +167,7 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
 
     }
 
-    private void likeComment(String cLikes, String cid) {
+    private void likeComment(final String cLikes, String cid) {
             /*Get total number of likes for the post, whose like button clicked
              * if currently signed in user has not liked before
              * increase value by 1, otherwise decrease value by 1*/
@@ -179,16 +185,31 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
                     if (mProcessLike) {
                         if (snapshot.child(cid).hasChild(myUid)) {
                             //already liked, so remove like
-                            commentsRef.child("cLikes").setValue(""+(Integer.parseInt(cLikes)-1));
-                            likesRef.child(cid).child(myUid).removeValue();
-                            mProcessLike = false;
+                            if (cLikes == null || cLikes.equals("")) {
+                                commentsRef.child("cLikes").setValue("0");
+                                likesRef.child(cid).child(myUid).removeValue();
+                                mProcessLike = false;
+                            } else {
+                                commentsRef.child("cLikes").setValue(""+(Integer.parseInt(cLikes)-1));
+                                likesRef.child(cid).child(myUid).removeValue();
+                                mProcessLike = false;
+                            }
+
 
                         }
                         else {
-                            //not liked, like it
-                            commentsRef.child("cLikes").setValue(""+(Integer.parseInt(cLikes)+1));
-                            likesRef.child(cid).child(myUid).setValue("Liked"); //set any value
-                            mProcessLike = false;
+                            if (cLikes == null || cLikes.equals("")) {
+                                commentsRef.child("cLikes").setValue("0");
+                                likesRef.child(cid).child(myUid).setValue("Liked"); //set any value
+                                mProcessLike = false;
+                            } else {
+                                //not liked, like it
+                                commentsRef.child("cLikes").setValue(""+(Integer.parseInt(cLikes)+1));
+                                likesRef.child(cid).child(myUid).setValue("Liked"); //set any value
+                                mProcessLike = false;
+                            }
+
+
                         } } }
 
                 @Override

@@ -119,13 +119,41 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
         String pImage = postList.get(i).getpImage();
         String pVideo = postList.get(i).getpVideo();
         String pAudio = postList.get(i).getpAudio();
+        String youtubeUrl = postList.get(i).getYoutubeUrl();
+
         if (pImage != null) {
-            Picasso.get().load(pImage).fit().centerCrop().into(myHolder.pImageIv);
+            Glide.with(context).load(pImage).fitCenter().centerCrop().into(myHolder.pImageIv);
             myHolder.moreBtn.setOnClickListener(v -> showMoreOptions(myHolder.moreBtn, uid, myUid, pId, pImage, null, null));
             if (pImage.equals("noImage")) {
                 myHolder.pImageIv.setVisibility(View.GONE);
                 myHolder.zoomInBtn.setVisibility(View.GONE);
+            } else if (!Objects.equals(youtubeUrl, "") && youtubeUrl != null) {
+                myHolder.pImageIv.setVisibility(View.VISIBLE);
+                myHolder.zoomInBtn.setVisibility(View.GONE);
+
+                // holder.pImageIv.setVisibility(View.GONE);
+                // holder.videoView.setVisibility(View.VISIBLE);
+
+                //  Uri videoUri = Uri.parse(videoUrl);
+                //    holder.videoView.setVideoURI(videoUri);
+                //   holder.videoView.requestFocus();
+
+                try {
+                    myHolder.playBtn.setVisibility(View.VISIBLE);
+
+                    myHolder.playBtn.setOnClickListener(view -> {
+                        Intent intent = new Intent(context, YouTubePlayerActivity.class);
+                        intent.putExtra("youtubeUrl", youtubeUrl);
+                        context.startActivity(intent);
+                    });
+
+                }
+                catch(NullPointerException e) {
+                    Log.e("null thumbnail", String.valueOf(e));
+                }
             }
+
+
         } else if (postList.get(i).getpAudio() != null) {
             myHolder.playerView.setControllerHideOnTouch(false);
 
@@ -398,7 +426,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                                 }
                             });
 
-                            String hotScore = String.valueOf(hot(currentDate,pLikes, Long.parseLong(postList.get(i).getpTime())));
+                            String hotScore = String.valueOf(hot(Long.parseLong(postList.get(i).getpTime()),pLikes, currentDate));
                             postsRef.child(pId).child("hotScore").setValue(hotScore);
                         }
                     }

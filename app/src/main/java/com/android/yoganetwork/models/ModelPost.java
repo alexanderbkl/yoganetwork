@@ -2,9 +2,28 @@ package com.android.yoganetwork.models;
 
 public class ModelPost {
     //use same name as we given while uploading post
-    String pId, pTitle, pDescr, pLikes, pDislikes, pComments, pImage, pTime, uid, uPseudonym, uPractic, uDp, pVideo, hotScore, pAudio;
+    String pId, pTitle, pDescr, pLikes, pDislikes, pComments, pImage, pTime, uid, uPseudonym, uPractic, uDp, pVideo, hotScore, pAudio, youtubeUrl;
 
     public ModelPost() {
+    }
+
+    public ModelPost(String pId, String pTitle, String pDescr, String pLikes, String pDislikes, String pComments, String pImage, String pTime, String uid, String uPseudonym, String uPractic, String uDp, String pVideo, String hotScore, String pAudio, String youtubeUrl) {
+        this.pId = pId;
+        this.pTitle = pTitle;
+        this.pDescr = pDescr;
+        this.pLikes = pLikes;
+        this.pDislikes = pDislikes;
+        this.pComments = pComments;
+        this.pImage = pImage;
+        this.pTime = pTime;
+        this.uid = uid;
+        this.uPseudonym = uPseudonym;
+        this.uPractic = uPractic;
+        this.uDp = uDp;
+        this.pVideo = pVideo;
+        this.hotScore = hotScore;
+        this.pAudio = pAudio;
+        this.youtubeUrl = youtubeUrl;
     }
 
     public String getpId() {
@@ -125,5 +144,13 @@ public class ModelPost {
 
     public void setpAudio(String pAudio) {
         this.pAudio = pAudio;
+    }
+
+    public String getYoutubeUrl() {
+        return youtubeUrl;
+    }
+
+    public void setYoutubeUrl(String youtubeUrl) {
+        this.youtubeUrl = youtubeUrl;
     }
 }
