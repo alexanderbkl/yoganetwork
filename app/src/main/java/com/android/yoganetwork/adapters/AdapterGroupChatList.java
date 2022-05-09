@@ -101,6 +101,8 @@ public class AdapterGroupChatList extends RecyclerView.Adapter<AdapterGroupChatL
                     if (messageType.equals("image")) {
                         holder.messageTv.setText(R.string.imagen);
 
+                    } else if (messageType.equals("audio")) {
+                        holder.messageTv.setText("Audio");
                     }
                     else {
                         holder.messageTv.setText(message);

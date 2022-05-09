@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
-    android:id="@+id/messageLayout"
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/mRelativeLayout"
-        android:layout_width="match_parent"
+            android:id="@+id/mRelativeLayout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-        <com.blogspot.atifsoftwares.circularimageview.CircularImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/profileIv"
-            app:c_border_color="@color/teal_700"
-            android:visibility="gone"
-            android:src="@drawable/ic_default_img"/>
+
 <LinearLayout
+        android:id="@+id/messageLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -52,6 +46,16 @@
             android:src="@drawable/ic_image_black"
             android:contentDescription="@string/todo" />
         </LinearLayout>
+        <com.google.android.exoplayer2.ui.PlayerView
+                app:show_timeout="0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/audioPlayer"
+                app:use_controller="true"
+                android:visibility="gone"
+                app:player_layout_id="@layout/exo_player_view"
+                app:controller_layout_id="@layout/audio_controller" android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp" android:layout_marginEnd="5dp" android:layout_marginBottom="5dp"/>
 
 
     </RelativeLayout>

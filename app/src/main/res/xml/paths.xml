@@ -8,7 +8,18 @@
         name="shared_images"
         path="images/"/>
     <external-path
-            name="fileprovider"
+            name="provider"
             path="." />
+    <external-cache-path
+            name="my_cache"
+            path="." />
+
+    <external-path
+            name="external_files"
+            path="Pictures/" />
+
+    <external-path
+            name="external_video_files"
+            path="Movies/" />
 
 </paths>

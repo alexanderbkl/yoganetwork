@@ -153,7 +153,6 @@ List<ModelUsers> userList;
                     }
                     adapterUsers = new AdapterUsers(getActivity(), userList);
                     //refreash adapter
-                    adapterUsers.notifyDataSetChanged();
                     //set adapter to recycler view
                     recyclerView.setAdapter(adapterUsers);
                 }

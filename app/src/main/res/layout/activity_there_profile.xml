@@ -78,7 +78,6 @@
 
                             <ImageView
                                     android:id="@+id/avatarIv"
-                                    android:layout_marginStart="10dp"
                                     android:background="@drawable/layout_border"
                                     android:src="@drawable/ic_default_img_white"
                                     android:layout_width="100dp"

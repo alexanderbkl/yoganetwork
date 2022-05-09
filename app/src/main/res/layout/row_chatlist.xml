@@ -16,34 +16,40 @@
             android:src="@drawable/ic_default_img"/>
         <!--ImageView: Online/Offline Status-->
         <ImageView
-            android:id="@+id/onlineStatusIv"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:contentDescription="@string/todo" />
+                android:id="@+id/onlineStatusIv"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:contentDescription="@string/todo"/>
         <!--TextView: Username-->
         <TextView
-            android:id="@+id/pseudonymTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/su_nombre"
-            android:textColor="@color/colorBlack"
-            android:textSize="16sp"
-            android:layout_marginStart="3dp"
-            android:layout_toEndOf="@+id/profileIv" />
+                android:id="@+id/pseudonymTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/su_nombre"
+                android:textColor="@color/colorBlack"
+                android:textSize="16sp"
+                android:layout_marginStart="3dp"
+                android:layout_toEndOf="@+id/profileIv"/>
         <!--TextView: Last Message (by sender/receiver)-->
         <TextView
-            android:id="@+id/lastMessageTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/ltimo_mensaje"
-            android:paddingEnd="30dp"
-            android:paddingStart="0dp"
-            android:layout_marginStart="3dp"
-            android:maxLines="2"
-            android:textColor="@color/colorBlack"
-            android:layout_below="@+id/pseudonymTv"
-            android:layout_toEndOf="@+id/profileIv" />
-
+                android:id="@+id/lastMessageTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ltimo_mensaje"
+                android:paddingEnd="30dp"
+                android:paddingStart="0dp"
+                android:layout_marginStart="3dp"
+                android:maxLines="2"
+                android:textColor="#A5ADB1"
+                android:layout_below="@+id/pseudonymTv"
+                android:layout_toEndOf="@+id/profileIv"/>
+        <ImageView
+                android:id="@+id/isSeenStatusIv"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:contentDescription="@string/todo"
+                android:layout_alignParentEnd="true"
+                />
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

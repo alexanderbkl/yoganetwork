@@ -2,16 +2,14 @@ package com.android.yoganetwork.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SearchView;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,9 +34,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 
 public class ChatListFragment extends Fragment {
@@ -52,6 +52,7 @@ public class ChatListFragment extends Fragment {
     DatabaseReference reference;
     FirebaseUser currentUser;
     AdapterChatlist adapterChatlist;
+    String chatRoomId;
 
 
 
@@ -73,9 +74,9 @@ public class ChatListFragment extends Fragment {
 
         chatlistList = new ArrayList<>();
 
-        reference = FirebaseDatabase.getInstance().getReference("Chatlist").child(currentUser.getUid());
+        reference = FirebaseDatabase.getInstance().getReference("Chatlist");
 
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 chatlistList.clear();
@@ -110,16 +111,23 @@ public class ChatListFragment extends Fragment {
                             break;
                         }
                     }
-                    //adapter
-                    adapterChatlist = new AdapterChatlist(getContext(), userList);
-                    //set adapter
-                    recyclerView.setAdapter(adapterChatlist);
-                    //set last message
-                    for (int i=0; i<userList.size(); i++) {
-                        lastMessage(userList.get(i).getUid());
+
+                    //sort by onlineStatus
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        userList.sort(Comparator.comparing(ModelUsers::getOnlineStatus));
+                        Collections.reverse(userList);
+
+                        //adapter
+                        adapterChatlist = new AdapterChatlist(getContext(), userList);
+                        //set adapter
+                        recyclerView.setAdapter(adapterChatlist);
+                        //set last message
+                        for (int i=0; i<userList.size(); i++) {
+                            lastMessage(userList.get(i).getUid());
+                        }
+                    }
                     }
                 }
-            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -129,14 +137,37 @@ public class ChatListFragment extends Fragment {
     }
 
     private void lastMessage(String userId) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+
+        StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+        char[] myCharUid = currentUser.getUid().toCharArray(); for (char ch : myCharUid)
+        { sb1.append((byte) ch);
+        }
+        char[] hisCharUid = userId.toCharArray(); for (char ch : hisCharUid)
+        { sb2.append((byte) ch);
+        }
+
+        String myStringUid = String.valueOf(sb1);
+        String hisStringUid = String.valueOf(sb2);
+
+        BigInteger myBigUid = new BigInteger(myStringUid);
+        BigInteger hisBigUid = new BigInteger(hisStringUid);
+        chatRoomId = String.valueOf(myBigUid.add(hisBigUid));
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("ChatRooms").child(chatRoomId);
+
+
         reference.addValueEventListener(new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String theLastMessage = "default";
+                boolean isSeen = true;
+
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     ModelChat chat = ds.getValue(ModelChat.class);
+
+
                     if (chat==null) {
                         continue;
                     }
@@ -145,17 +176,32 @@ public class ChatListFragment extends Fragment {
                     chat.getReceiver().equals(userId) &&
                             chat.getSender().equals(currentUser.getUid())) {
                         //instead of displayinh url in message show "sent photo"
+
                         if (chat.getType().equals("image")) {
+                            if (currentUser.getUid().equals(chat.getSender())) {
+                                theLastMessage = "Enviaste una foto";
+
+                            } else {
                                 theLastMessage = "Envió una foto";
+                                if (!chat.isSeen()) {
+                                    isSeen = false;
+                                }
+                            }
                         }
                         else {
-                            theLastMessage = chat.getMessage();
-                        }
+                                theLastMessage = chat.getMessage();
+                            if (!currentUser.getUid().equals(chat.getSender()) && !chat.isSeen()) {
+                                isSeen = false;
+                            }
+
+
+                            }
                         if (theLastMessage.length()>100) {
                             theLastMessage = chat.getMessage()+"...";
                     }}
                 }
-                adapterChatlist.setLastMessageMap(userId, theLastMessage);
+
+                adapterChatlist.setLastMessageMap(userId, theLastMessage, isSeen);
                 adapterChatlist.notifyDataSetChanged();
 
             }

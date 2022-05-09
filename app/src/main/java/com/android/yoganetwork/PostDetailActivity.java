@@ -315,7 +315,7 @@ public class PostDetailActivity extends AppCompatActivity {
             sIntent.putExtra(Intent.EXTRA_STREAM, uri);
             sIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.sujetoaqui)); //in case you share via email app
             sIntent.putExtra(Intent.EXTRA_TEXT, shareBody); //text to share
-            sIntent.setType("image/png"); //text to share
+            sIntent.setType("image/jpeg"); //text to share
             startActivity(Intent.createChooser(sIntent, getString(R.string.compartirvia1))); //message to show in share dialog
 
         }
@@ -325,13 +325,13 @@ public class PostDetailActivity extends AppCompatActivity {
             Uri uri = null;
             try {
                 imageFolder.mkdir(); //create if not exists
-                File file = new File(imageFolder, "shared_image.png");
+                File file = new File(imageFolder, "shared_image.jpeg");
 
                 FileOutputStream stream = new FileOutputStream(file);
                 bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
                 stream.flush();
                 stream.close();
-                uri = FileProvider.getUriForFile(this, "com.android.yoganetwork.fileprovider", file);
+                uri = FileProvider.getUriForFile(this, "com.android.yoganetwork.provider", file);
             }
             catch (Exception e) {
                 Toast.makeText(this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();

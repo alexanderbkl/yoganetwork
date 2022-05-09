@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="100dp"
-    android:layout_marginTop="10dp"
-    android:orientation="vertical"
-    android:padding="10dp">
+        xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+        android:layout_height="wrap_content" xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_marginEnd="100dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        android:padding="10dp">
     <LinearLayout
             android:id="@+id/textMessageLayout"
             android:layout_width="wrap_content"
@@ -59,6 +59,33 @@
             android:adjustViewBounds="true"
             android:src="@drawable/ic_image_black"
             android:contentDescription="@string/todo"/>
+    </LinearLayout>
+    <LinearLayout
+            android:id="@+id/audioMessageLayout"
+            android:layout_width="match_parent"
+            android:layout_gravity="start"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_height="wrap_content">
+    <TextView
+            android:id="@+id/pseudonymAudioTv"
+            android:text="@string/seud_nimo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+    />
+    <com.google.android.exoplayer2.ui.PlayerView
+            app:show_timeout="0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/audioPlayer"
+            app:use_controller="true"
+            app:player_layout_id="@layout/exo_player_view"
+            app:controller_layout_id="@layout/audio_controller" android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp" android:layout_marginEnd="5dp" android:layout_marginBottom="5dp"/>
     </LinearLayout>
     <TextView
         android:id="@+id/timeTv"

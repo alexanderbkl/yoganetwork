@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ChatActivity"
-    android:background="#F1EDED">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F1EDED">
     <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
@@ -91,8 +90,9 @@
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chat_recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             app:stackFromEnd="true"
+            tools:listitem="@layout/row_chat_left"
             android:layout_below="@+id/toolbar"
             android:layout_above="@+id/chatLayout"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -108,32 +108,7 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-        <!--ImageButton: to send image-->
 
-        <!--EditText: input message-->
-        <!--Button: send message-->
-
-        <ImageButton
-                android:id="@+id/attachBtn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@null"
-                android:src="@drawable/ic_attach_black"/>
-        <EditText
-                android:id="@+id/messageEt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="@string/escribir_mensaje"
-                android:inputType="textCapSentences|textImeMultiLine|textMultiLine"
-                android:background="@null"
-                android:layout_weight="1"/>
-
-        <ImageButton
-                android:id="@+id/sendBtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_send"
-                android:background="@null"/>
     </LinearLayout>
 
 </RelativeLayout>

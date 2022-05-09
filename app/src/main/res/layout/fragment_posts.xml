@@ -304,10 +304,6 @@
     </LinearLayout>
 </com.facebook.shimmer.ShimmerFrameLayout>
 
-    <androidx.core.widget.NestedScrollView
-            android:id="@+id/nestedScroll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
 
         <!-- TODO: Update blank fragment layout -->
         <androidx.recyclerview.widget.RecyclerView
@@ -315,7 +311,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-    </androidx.core.widget.NestedScrollView>
 </FrameLayout>
 
 

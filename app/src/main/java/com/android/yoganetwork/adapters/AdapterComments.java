@@ -20,7 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.yoganetwork.ChatActivity;
+import com.android.yoganetwork.ChattingActivity;
 import com.android.yoganetwork.CommentLikedByActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.ThereProfileActivity;
@@ -302,7 +302,7 @@ public class AdapterComments extends RecyclerView.Adapter<AdapterComments.MyHold
                             }
                         }
                         //not blocked, start activity
-                        Intent intent = new Intent(context, ChatActivity.class);
+                        Intent intent = new Intent(context, ChattingActivity.class);
                         intent.putExtra("hisUid", uid);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);

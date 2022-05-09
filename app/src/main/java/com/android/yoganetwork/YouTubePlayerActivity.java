@@ -19,9 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.android.yoganetwork.youtubeExtractor.VideoMeta;
-import com.android.yoganetwork.youtubeExtractor.YouTubeExtractor;
-import com.android.yoganetwork.youtubeExtractor.YtFile;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -179,50 +176,6 @@ public class YouTubePlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-    }
-
-    private void playYouTubeVideo(String youtubeUrl) {
-        new YouTubeExtractor(this) {
-            @Override
-            protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
-                if (ytFiles != null) {
-                    int videoTag = 137;
-                    int audioTag = 140;
-                    MediaSource audioSource, videoSource;
-                    try {
-                        audioSource = new ProgressiveMediaSource
-                                .Factory(new DefaultHttpDataSource.Factory())
-                                .createMediaSource(MediaItem.fromUri(ytFiles.get(audioTag).getUrl()));
-                        videoSource = new ProgressiveMediaSource
-                                .Factory(new DefaultHttpDataSource.Factory())
-                                .createMediaSource(MediaItem.fromUri(ytFiles.get(videoTag).getUrl()));
-
-                    } catch (Exception e) {
-                        Toast.makeText(YouTubePlayerActivity.this, "error"+e, Toast.LENGTH_SHORT).show();
-                        audioSource = new ProgressiveMediaSource
-                                .Factory(new DefaultHttpDataSource.Factory())
-                                .createMediaSource(MediaItem.fromUri(ytFiles.get(audioTag).getUrl()));
-                        videoSource = new ProgressiveMediaSource
-                                .Factory(new DefaultHttpDataSource.Factory())
-                                .createMediaSource(MediaItem.fromUri(ytFiles.get(22).getUrl()));
-
-
-                    }
-                     player.setMediaSource(new MergingMediaSource(
-                                    true,
-                                    videoSource,
-                                    audioSource),
-                            true
-                    );
-                    player.prepare();
-                    player.setPlayWhenReady(playWhenReady);
-                    player.seekTo(currentWindow,playbackPosition);
-
-
-                }
-            }
-
-        }.extract(youtubeUrl, false, true);
     }
 
 }

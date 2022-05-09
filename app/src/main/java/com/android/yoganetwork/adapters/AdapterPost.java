@@ -65,10 +65,9 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
     String myUid;
     boolean mProcessLike=false;
     RecyclerView recycler_view;
-    MediaPlayer mediaPlayer;
 
-    SimpleExoPlayer simpleExoPlayer;
-    MediaItem mediaItem;
+    private SimpleExoPlayer simpleExoPlayer;
+    private MediaItem mediaItem;
 
 
     int countLikes, countComments;
@@ -155,9 +154,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
 
 
         } else if (postList.get(i).getpAudio() != null) {
-            myHolder.playerView.setControllerHideOnTouch(false);
 
-            myHolder.playerView.setVisibility(View.VISIBLE);
+            myHolder.playerView.setControllerHideOnTouch(false);
             myHolder.pImageIv.setVisibility(View.GONE);
             myHolder.playBtn.setVisibility(View.GONE);
             myHolder.zoomInBtn.setVisibility(View.GONE);
@@ -176,6 +174,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
 
             myHolder.playerView.setClipToOutline(true);
             Uri audioSource = Uri.parse(postList.get(i).getpAudio());
+            myHolder.playerView.setVisibility(View.VISIBLE);
             mediaItem = MediaItem.fromUri(audioSource);
             simpleExoPlayer.setMediaItem(mediaItem);
             simpleExoPlayer.prepare();
@@ -244,8 +243,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
         //set likes for each post
 
 
-        //set itemview cache size
-        recycler_view.setItemViewCacheSize(20);
 
 
         //set user dp
@@ -524,13 +521,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
         Uri uri = null;
         try {
             imageFolder.mkdir(); //create if not exists
-            File file = new File(imageFolder, "shared_image.png");
+            File file = new File(imageFolder, "shared_image.jpeg");
 
             FileOutputStream stream = new FileOutputStream(file);
             bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
             stream.flush();
             stream.close();
-            uri = FileProvider.getUriForFile(context, "com.android.yoganetwork.fileprovider", file);
+            uri = FileProvider.getUriForFile(context, "com.android.yoganetwork.provider", file);
         }
         catch (Exception e) {
             Toast.makeText(context, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -544,7 +541,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
     private void setLikes(MyHolder holder, String postKey) {
 
 
-        likesRef.addValueEventListener(new ValueEventListener() {
+        likesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.child(postKey).hasChild(myUid)) {

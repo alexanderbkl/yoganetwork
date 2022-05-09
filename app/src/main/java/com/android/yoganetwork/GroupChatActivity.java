@@ -1,6 +1,12 @@
 package com.android.yoganetwork;
 
 import android.graphics.Bitmap;
+import android.graphics.Outline;
+import android.media.MediaRecorder;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.*;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -9,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.BitmapCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.widget.Toolbar;
 
@@ -22,17 +29,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 
+import com.android.yoganetwork.ChatView.AttachmentOption;
+import com.android.yoganetwork.ChatView.AttachmentOptionsListener;
+import com.android.yoganetwork.ChatView.AudioRecordView;
 import com.android.yoganetwork.adapters.AdapterGroupChat;
 import com.android.yoganetwork.models.ModelGroupChat;
+import com.android.yoganetwork.models.ModelUsers;
 import com.android.yoganetwork.notifications.Data;
 import com.android.yoganetwork.utils.ImageUtils;
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -49,15 +57,19 @@ import com.squareup.picasso.Picasso;
 import com.android.yoganetwork.crop.CropImage;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.UUID;
 
-public class  GroupChatActivity extends AppCompatActivity {
+public class  GroupChatActivity extends AppCompatActivity implements AudioRecordView.RecordingListener, View.OnClickListener, AttachmentOptionsListener {
 
+  private static final int PICK_AUD_REQUEST = 103;
+  private static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 104;
   private FirebaseAuth firebaseAuth;
 
-  private String groupId, myGroupRole="";
+  private String groupId, myGroupRole = "";
 
   private Toolbar toolbar;
   private ImageView groupIconIv;
@@ -66,10 +78,14 @@ public class  GroupChatActivity extends AppCompatActivity {
   private ImageButton attachBtn, sendBtn;
   private TextView groupTitleTv;
   private EditText messageEt;
-  private RecyclerView chatRv;
-private RelativeLayout toolbar_layout;
+  private RecyclerView recyclerViewMessages;
+  private RelativeLayout toolbar_layout;
   private ArrayList<ModelGroupChat> groupChatList;
   private AdapterGroupChat adapterGroupChat;
+  private AudioRecordView audioRecordView;
+  private String audioFileName, audioFilePath;
+  private MediaRecorder recorder;
+
 
   //permissions request constants
   private static final int CAMERA_REQUEST_CODE = 200;
@@ -81,22 +97,26 @@ private RelativeLayout toolbar_layout;
   private String[] cameraPermission;
   private String[] storagePermission;
   //uri of picked image
-  private Uri image_uri = null;
+  private Uri image_uri = null, audioPath = null;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_group_chat);
+    audioRecordView = new AudioRecordView();
+    audioRecordView.initView(findViewById(R.id.layoutMain));
+    View containerView = audioRecordView.setContainerView(R.layout.layout_groupchat);
+    audioRecordView.setRecordingListener(this);
+    recyclerViewMessages = containerView.findViewById(R.id.chatRv);
 
     //init views
     toolbar = findViewById(R.id.toolbar);
     toolbar_layout = findViewById(R.id.toolbar_layout);
     groupIconIv = findViewById(R.id.groupIconIv);
-    attachBtn = findViewById(R.id.attachBtn);
+    //attachBtn = findViewById(R.id.attachBtn);
     groupTitleTv = findViewById(R.id.groupTitleTv);
-    sendBtn = findViewById(R.id.sendBtn);
-    messageEt = findViewById(R.id.messageEt);
-    chatRv = findViewById(R.id.chatRv);
+    //sendBtn = findViewById(R.id.sendBtn);
+    //messageEt = findViewById(R.id.messageEt);
 
     setSupportActionBar(toolbar);
 
@@ -105,7 +125,7 @@ private RelativeLayout toolbar_layout;
       Intent intent = new Intent(this, GroupInfoActivity.class);
       intent.putExtra("groupId", groupId);
       startActivity(intent);
-            });
+    });
 
     //get id of the group
     Intent intent = getIntent();
@@ -123,114 +143,78 @@ private RelativeLayout toolbar_layout;
 
     firebaseAuth = FirebaseAuth.getInstance();
     loadGroupInfo();
-    loadGroupMessages();
+
+    int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+    if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_REQUEST_CODE);
+    } else {
+      loadGroupMessages();
+    }
+
+
     loadMyGroupRole();
 
 
-
-    sendBtn.setOnClickListener(new View.OnClickListener() {
+    audioRecordView.getSendView().setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        //input data
-        String message = messageEt.getText().toString().trim();
-        //validate
-        if (TextUtils.isEmpty(message)){
-          //empty, don't send
+        String message = audioRecordView.getMessageView().getText().toString().trim();
+        audioRecordView.hideAttachmentOptionView();
+        //get text from edit text
+        //check if text is empty or not
+        if (TextUtils.isEmpty(message)) {
+          //text empty
           Toast.makeText(GroupChatActivity.this, R.string.emptymsg, Toast.LENGTH_SHORT).show();
-        }
-        else {
-          //send message
+        } else {
+          //text not empty
           sendMesage(message);
         }
+        //reset edittext after sending message
+        audioRecordView.getMessageView().setText("");
+
       }
+
+
     });
 
-    attachBtn.setOnClickListener(new View.OnClickListener() {
+    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(GroupChatActivity.this, LinearLayoutManager.VERTICAL, false);
+    linearLayoutManager.setStackFromEnd(true);
+    recyclerViewMessages.setLayoutManager(linearLayoutManager);
+    recyclerViewMessages.setHasFixedSize(false);
+
+    //adapter
+    adapterGroupChat = new AdapterGroupChat(GroupChatActivity.this, groupChatList, groupId);
+    //set to recyclerview
+    recyclerViewMessages.setAdapter(adapterGroupChat);
+    recyclerViewMessages.smoothScrollToPosition(recyclerViewMessages.getAdapter().getItemCount());
+
+
+
+    audioRecordView.getMessageView().requestFocus();
+
+    audioRecordView.setAttachmentOptions(AttachmentOption.getList(), this);
+
+    audioRecordView.removeAttachmentOptionAnimation(false);
+
+
+    audioRecordView.getEmojiView().setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        //attach image
-       // showImageImportDialog();
-        CropImage.activity()
-                .start(GroupChatActivity.this);
+        audioRecordView.hideAttachmentOptionView();
+      }
+    });
+
+    audioRecordView.getCameraView().setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        audioRecordView.hideAttachmentOptionView();
+        showImagePickDialog();
 
       }
     });
 
-  }
 
-  private void showImageImportDialog() {
-    //options to display
-    String[] options = {getString(R.string.camera), getString(R.string.galeria)};
-
-    //dialog
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    builder.setTitle(R.string.escogerimg1)
-            .setItems(options, new DialogInterface.OnClickListener() {
-              @Override
-              public void onClick(DialogInterface dialog, int which) {
-                //handle clicks
-                if (which == 0) {
-                  //camera clicked
-                  if (!checkCameraPermission()) {
-                    //not granted, request
-                    requestCameraPermission();
-                  }
-                  else {
-                    //already granted
-                    pickCamera();
-                  }
-                }
-                else {
-                  //gallery clicked
-                  if(!checkStoragePermission()) {
-                    //not granted, request
-                    requestStoragePermission();
-                  }
-                  else {
-                    //already granted
-                    pickGallery();
-                  }
-                }
-              }
-            }).show();
-  }
-
-  private void pickGallery(){
-    //intent to pick image from gallery
-    Intent intent = new Intent(Intent.ACTION_PICK);
-    intent.setType("image/*");
-    startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
-  }
-
-  private void pickCamera(){
-    ContentValues contentValues = new ContentValues();
-    contentValues.put(MediaStore.Images.Media.TITLE, "GroupImageTitle");
-    contentValues.put(MediaStore.Images.Media.DESCRIPTION, "GroupImageDescription");
-
-    image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-
-    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-    startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE );
-  }
-
-  private void requestStoragePermission() {
-    ActivityCompat.requestPermissions(this, storagePermission, STORAGE_REQUEST_CODE);
-  }
-
-  private boolean checkStoragePermission() {
-    boolean result = ContextCompat.checkSelfPermission(
-            this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-    return result;
-  }
-  private void requestCameraPermission() {
-    ActivityCompat.requestPermissions(this, cameraPermission, CAMERA_REQUEST_CODE);
-  }
-
-  private boolean checkCameraPermission() {
-    boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
-    boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-    return result && result1;
   }
 
   private void sendImageMessage() throws IOException {
@@ -242,15 +226,13 @@ private RelativeLayout toolbar_layout;
     pd.show();
 
     //file name and path in firebase storage
-    String filenamePath = "ChatImages/"+""+System.currentTimeMillis();
+    String filenamePath = "ChatImages/" + "" + System.currentTimeMillis();
 
     StorageReference storageReference = FirebaseStorage.getInstance().getReference(filenamePath);
 
 
-
     int bitSize = 4000000;
     int quality = 70;
-
 
 
     //get image from imageview
@@ -260,19 +242,16 @@ private RelativeLayout toolbar_layout;
     Bitmap bitmap2;
     int n = 1;
     do {
-      bitmap2 = new ImageUtils().getResizedBitmap(bitmap1,bitmap1.getWidth()/n,bitmap1.getHeight()/n);
+      bitmap2 = new ImageUtils().getResizedBitmap(bitmap1, bitmap1.getWidth() / n, bitmap1.getHeight() / n);
       if (n % 2 != 0) {
         n++;
       } else {
-        n+=2;
+        n += 2;
       }
     } while (BitmapCompat.getAllocationByteCount(bitmap2) > bitSize);
     //image compress
     bitmap2.compress(Bitmap.CompressFormat.JPEG, quality, baos);
     data = baos.toByteArray(); //convert image to bytes
-
-
-
 
 
     //upload image
@@ -283,20 +262,20 @@ private RelativeLayout toolbar_layout;
                 //image uploaded, get url
 
                 Task<Uri> p_uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                while (!p_uriTask.isSuccessful());
+                while (!p_uriTask.isSuccessful()) ;
                 Uri p_downloadUri = p_uriTask.getResult();
 
                 if (p_uriTask.isSuccessful()) {
                   //image url received, save in db
                   //timestamp
-                  String timestamp = ""+System.currentTimeMillis();
+                  String timestamp = "" + System.currentTimeMillis();
 
                   //setup message data
                   HashMap<String, Object> hashMap = new HashMap<>();
-                  hashMap.put("sender", ""+firebaseAuth.getUid());
-                  hashMap.put("message", ""+ p_downloadUri);
-                  hashMap.put("timestamp", ""+timestamp);
-                  hashMap.put("type", ""+"image"); //text/image/file
+                  hashMap.put("sender", "" + firebaseAuth.getUid());
+                  hashMap.put("message", "" + p_downloadUri);
+                  hashMap.put("timestamp", "" + timestamp);
+                  hashMap.put("type", "" + "image"); //text/image/file
 
                   //add in db
                   DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
@@ -307,7 +286,6 @@ private RelativeLayout toolbar_layout;
                             public void onSuccess(Void aVoid) {
                               //message sent
                               //clear messageEt
-                              messageEt.setText("");
                               pd.dismiss();
                             }
                           })
@@ -316,7 +294,7 @@ private RelativeLayout toolbar_layout;
                             public void onFailure(@NonNull Exception e) {
                               //message sending failed
                               pd.dismiss();
-                              Toast.makeText(GroupChatActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                              Toast.makeText(GroupChatActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
                           });
                 }
@@ -326,7 +304,7 @@ private RelativeLayout toolbar_layout;
               @Override
               public void onFailure(@NonNull Exception e) {
                 //failed uploading image
-                Toast.makeText(GroupChatActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupChatActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 pd.dismiss();
               }
             });
@@ -339,8 +317,8 @@ private RelativeLayout toolbar_layout;
             .addValueEventListener(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds: snapshot.getChildren()){
-                  myGroupRole = ""+ds.child("role").getValue();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                  myGroupRole = "" + ds.child("role").getValue();
                   //refresh menu items
                   invalidateOptionsMenu();
                 }
@@ -363,14 +341,18 @@ private RelativeLayout toolbar_layout;
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
                 groupChatList.clear();
-                for (DataSnapshot ds: snapshot.getChildren()){
+                for (DataSnapshot ds : snapshot.getChildren()) {
                   ModelGroupChat model = ds.getValue(ModelGroupChat.class);
                   groupChatList.add(model);
                 }
                 //adapter
-                adapterGroupChat = new AdapterGroupChat(GroupChatActivity.this, groupChatList);
+                adapterGroupChat.setChatList(groupChatList);
+                adapterGroupChat.notifyItemInserted(groupChatList.size() - 1);
+
                 //set to recyclerview
-                chatRv.setAdapter(adapterGroupChat);
+                recyclerViewMessages.setAdapter(adapterGroupChat);
+                recyclerViewMessages.smoothScrollToPosition(recyclerViewMessages.getAdapter().getItemCount());
+
               }
 
               @Override
@@ -382,14 +364,14 @@ private RelativeLayout toolbar_layout;
 
   private void sendMesage(String message) {
     //timestamp
-    String timestamp = ""+System.currentTimeMillis();
+    String timestamp = "" + System.currentTimeMillis();
 
     //setup message data
     HashMap<String, Object> hashMap = new HashMap<>();
-    hashMap.put("sender", ""+firebaseAuth.getUid());
-    hashMap.put("message", ""+message);
-    hashMap.put("timestamp", ""+timestamp);
-    hashMap.put("type", ""+"text"); //text/image/file
+    hashMap.put("sender", "" + firebaseAuth.getUid());
+    hashMap.put("message", "" + message);
+    hashMap.put("timestamp", "" + timestamp);
+    hashMap.put("type", "" + "text"); //text/image/file
 
     //add in db
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
@@ -400,14 +382,13 @@ private RelativeLayout toolbar_layout;
               public void onSuccess(Void aVoid) {
                 //message sent
                 //clear messageEt
-                messageEt.setText("");
               }
             })
             .addOnFailureListener(new OnFailureListener() {
               @Override
               public void onFailure(@NonNull Exception e) {
                 //message sending failed
-                Toast.makeText(GroupChatActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(GroupChatActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
               }
             });
   }
@@ -418,15 +399,15 @@ private RelativeLayout toolbar_layout;
             .addValueEventListener(new ValueEventListener() {
               @Override
               public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot ds: snapshot.getChildren()) {
-                  String groupTitle= ""+ds.child("groupTitle").getValue();
-                  String groupDescription= ""+ds.child("groupDescription").getValue();
-                  String groupIcon= ""+ds.child("groupIcon").getValue();
-                  String timestamp= ""+ds.child("timestamp").getValue();
-                  String createdBy= ""+ds.child("createdBy").getValue();
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                  String groupTitle = "" + ds.child("groupTitle").getValue();
+                  String groupDescription = "" + ds.child("groupDescription").getValue();
+                  String groupIcon = "" + ds.child("groupIcon").getValue();
+                  String timestamp = "" + ds.child("timestamp").getValue();
+                  String createdBy = "" + ds.child("createdBy").getValue();
 
                   groupTitleTv.setText(groupTitle);
-                    Glide.with(getApplication().getApplicationContext()).load(groupIcon).placeholder(R.drawable.ic_group_white).into(groupIconIv);
+                  Glide.with(getApplication().getApplicationContext()).load(groupIcon).placeholder(R.drawable.ic_group_white).into(groupIconIv);
 
 
                 }
@@ -451,8 +432,7 @@ private RelativeLayout toolbar_layout;
     if (myGroupRole.equals("creator") || myGroupRole.equals("admin")) {
       //im admin/creator, show add person option
       menu.findItem(R.id.action_add_participant).setVisible(true);
-    }
-    else {
+    } else {
       menu.findItem(R.id.action_add_participant).setVisible(false);
     }
     return super.onCreateOptionsMenu(menu);
@@ -465,8 +445,7 @@ private RelativeLayout toolbar_layout;
       Intent intent = new Intent(this, GroupParticipantAddActivity.class);
       intent.putExtra("groupId", groupId);
       startActivity(intent);
-    }
-    else if (id == R.id.action_groupinfo) {
+    } else if (id == R.id.action_groupinfo) {
       Intent intent = new Intent(this, GroupInfoActivity.class);
       intent.putExtra("groupId", groupId);
       startActivity(intent);
@@ -490,40 +469,200 @@ private RelativeLayout toolbar_layout;
           e.printStackTrace();
         }
 
+      } else if (requestCode == PICK_AUD_REQUEST && data != null && data.getData() != null) {
+        //Toast.makeText(this, "Got data", Toast.LENGTH_SHORT).show();
+        audioPath = data.getData();
+
+        uploadAudio();
       }
     }
   }
 
 
+  @Override
+  public void onClick(View view) {
+
+
+  }
 
   @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+  public void onClick(AttachmentOption attachmentOption) {
+    switch (attachmentOption.getId()) {
+      case AttachmentOption.GALLERY_ID:
+        showImagePickDialog();
+        break;
+      case AttachmentOption.AUDIO_ID:
+        chooseAud();
+        break;
+    }
+  }
 
+  private void chooseAud() {
+    Intent intent = new Intent();
+    intent.setType("audio/*");
+    intent.setAction(Intent.ACTION_GET_CONTENT);
+    startActivityForResult(Intent.createChooser(intent, "Select Aud"), PICK_AUD_REQUEST);
+  }
+
+  private void showImagePickDialog() {
+    CropImage.activity()
+            .start(this);
+
+  }
+
+  @Override
+  public void onRecordingStarted() {
+    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED) {
+      ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},
+              10);
+    } else {
+      //start recording audio
+      recordAudio();
+    }
+
+  }
+
+  private void recordAudio() {
+    //create file to record audio
+    audioFileName = UUID.randomUUID().toString() + ".3gp";
+    audioFilePath = GroupChatActivity.this.getExternalFilesDir(null).getAbsolutePath() + "/" + audioFileName;
+    //create media recorder
+    recorder = new MediaRecorder();
+    //set audio source
+    recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+    //set output format
+    recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+    //set audio encoder
+    recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+    //set output file
+    recorder.setOutputFile(audioFilePath);
+    //try to start recording
+    try {
+      recorder.prepare();
+      recorder.start();
+
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.out.println("Error" + e.getMessage());
+    }
+
+
+  }
+
+  @Override
+  public void onRecordingLocked() {
+  }
+
+
+  @Override
+  public void onRecordingCompleted() {
+    completedRecording();
+
+  }
+
+  private void completedRecording() {
+    if (recorder != null) {
+      //stop recording audio
+      try {
+        recorder.stop();
+        recorder.release();
+        recorder = null;
+        //upload audio to firebase
+        uploadAudio();
+      } catch (RuntimeException stopException) {
+        // handle cleanup here
+      }
+
+    }
+
+  }
+
+  private void uploadAudio() {
+    //create storage reference
+    StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    String timestamp = String.valueOf(System.currentTimeMillis());
+    Uri audioFile = null;
+    if (audioFilePath != null) {
+      //create file reference
+      audioFile = Uri.fromFile(new File(audioFilePath));
+    } else if (audioPath != null) {
+      audioFile = audioPath;
+    }
+    //create file reference
+    final StorageReference fileReference = storageReference.child("GroupAudios/" + timestamp + ".3gp");
+    //upload file
+    assert audioFile != null;
+    fileReference.putFile(audioFile).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+      @Override
+      public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+        //get url of audio
+        fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+          @Override
+          public void onSuccess(Uri uri) {
+
+            //timestamp
+            String timestamp = "" + System.currentTimeMillis();
+            String url = uri.toString();
+
+            //setup message data
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("sender", "" + firebaseAuth.getUid());
+            hashMap.put("message", "" + url);
+            hashMap.put("timestamp", "" + timestamp);
+            hashMap.put("type", "audio"); //text/image/file
+
+            //add in db
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Groups");
+            ref.child(groupId).child("Messages").child(timestamp)
+                    .setValue(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                      @Override
+                      public void onSuccess(Void aVoid) {
+                        //message sent
+                        //clear messageEt
+                      }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                      @Override
+                      public void onFailure(@NonNull Exception e) {
+                        //message sending failed
+                        Toast.makeText(GroupChatActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                      }
+                    });
+
+
+            audioFilePath = null;
+            audioPath = null;
+          }
+        });
+      }
+    }).addOnFailureListener(new OnFailureListener() {
+      @Override
+      public void onFailure(@NonNull Exception e) {
+        Toast.makeText(GroupChatActivity.this, "Failed to upload audio", Toast.LENGTH_SHORT).show();
+      }
+    });
+  }
+
+
+
+    @Override
+  public void onRecordingCanceled() {
+  }
+
+  @Override
+  public void onPointerCaptureChanged(boolean hasCapture) {
+    super.onPointerCaptureChanged(hasCapture);
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    switch (requestCode) {
-      case CAMERA_REQUEST_CODE:
-        if (grantResults.length > 0) {
-          boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-          boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-          if (cameraAccepted && writeStorageAccepted) {
-            pickCamera();
-          }
-          else {
-            Toast.makeText(this, R.string.camerastoragereq, Toast.LENGTH_SHORT).show();
-          }
-        }
-        break;
-      case STORAGE_REQUEST_CODE:
-        if (grantResults.length>0){
-          boolean writeStorageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-          if (writeStorageAccepted) {
-            pickGallery();
-          }
-          else {
-            Toast.makeText(this, R.string.storagereq, Toast.LENGTH_SHORT).show();
-          }
-        }
-        break;
+    if (requestCode == WRITE_EXTERNAL_STORAGE_REQUEST_CODE) {
+      if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+        loadGroupMessages();
+      }
     }
   }
 }

@@ -45,7 +45,6 @@ public class AddToGroupActivity extends AppCompatActivity {
             String groupId= extras.getString("groupId");
             String hisUid = extras.getString("hisUid");
             loadGroupChatsList(hisUid);
-            System.out.println("suka"+groupId+hisUid);
             if (groupId != null && hisUid != null) {
                 addParticipant(groupId, hisUid);
             }

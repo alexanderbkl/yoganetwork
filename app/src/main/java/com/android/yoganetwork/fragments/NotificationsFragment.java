@@ -62,6 +62,11 @@ public class NotificationsFragment extends Fragment {
 
         notificationsRv = view.findViewById(R.id.notificationsRv);
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setStackFromEnd(false);
+        layoutManager.setReverseLayout(false);
+        notificationsRv.setLayoutManager(layoutManager);
+
         firebaseAuth = FirebaseAuth.getInstance();
 
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -74,6 +79,7 @@ public class NotificationsFragment extends Fragment {
                         break;
                     case 1:
                         profileLikes = true;
+                        //show newest post first, for this load from last
                         getAllNotifications();
                         break;
                 }
@@ -105,17 +111,19 @@ public class NotificationsFragment extends Fragment {
             notifications = "profileLikes";
             tabs.selectTab(tabs.getTabAt(1));
             extra = "";
+
         }
         else if (!profileLikes) {
              notifications = "Notifications";
         } else {
              notifications = "profileLikes";
+
         }
 
         notificationsList = new ArrayList<>();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.child(Objects.requireNonNull(firebaseAuth.getUid())).child(notifications)
-                .addValueEventListener(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         notificationsList.clear();

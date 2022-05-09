@@ -22,7 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.android.yoganetwork.ChatActivity;
+import com.android.yoganetwork.ChattingActivity;
 import com.android.yoganetwork.R;
 import com.android.yoganetwork.ThereProfileActivity;
 import com.android.yoganetwork.models.ModelUsers;
@@ -46,7 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static android.provider.Settings.System.getString;
 import static com.android.yoganetwork.constants.Database.userLocation;
 
 public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
@@ -266,7 +265,7 @@ builder.create().show();
                             }
                         }
                         //not blocked, start activity
-                        Intent intent = new Intent(context, ChatActivity.class);
+                        Intent intent = new Intent(context, ChattingActivity.class);
                         intent.putExtra("hisUid", hisUid);
                         context.startActivity(intent);
                     }

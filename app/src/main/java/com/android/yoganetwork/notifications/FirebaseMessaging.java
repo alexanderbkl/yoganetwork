@@ -15,27 +15,29 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
-import com.android.yoganetwork.ChatActivity;
-import com.android.yoganetwork.DashboardActivity;
-import com.android.yoganetwork.PostDetailActivity;
-import com.android.yoganetwork.R;
+import com.android.yoganetwork.*;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
 
 public class FirebaseMessaging extends FirebaseMessagingService {
     private static final String ADMIN_CHANNEL_ID = "admin_channel";
     private String notificationType;
+
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -190,7 +192,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             pIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);
 
         } else if (notificationType.equals("ChatNotification")) {
-            Intent intent = new Intent(this, ChatActivity.class);
+            Intent intent = new Intent(this, ChattingActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("hisUid", user);
             intent.putExtras(bundle);
@@ -238,7 +240,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
             pIntent = PendingIntent.getActivity(this, i, intent, PendingIntent.FLAG_ONE_SHOT);
 
         } else if (notificationType.equals("ChatNotification")) {
-            Intent intent = new Intent(this, ChatActivity.class);
+            Intent intent = new Intent(this, ChattingActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("hisUid", user);
             intent.putExtras(bundle);
@@ -265,24 +267,19 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
-        //update user token
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user!=null) {
+       //update user token
             //signed in, update token
-            updateToken(s);
-        }
+            Log.e("newToken", s);
+            getSharedPreferences("_", MODE_PRIVATE).edit().putString("fb", s).apply();
     }
 
-    private void updateToken(String tokenRefresh) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token = new Token(tokenRefresh);
-        ref.child(user.getUid()).setValue(token);
-    }
 
     public static String getToken(Context context) {
-        return context.getSharedPreferences("_", MODE_PRIVATE).getString("fb", "empty");
+            return context.getSharedPreferences("_", MODE_PRIVATE).getString("fb", "empty");
+
+
     }
+
 
 }
 

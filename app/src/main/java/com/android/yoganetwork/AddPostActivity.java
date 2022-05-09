@@ -41,9 +41,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.android.yoganetwork.crop.CropImage;
 import com.android.yoganetwork.utils.ImageUtils;
-import com.android.yoganetwork.youtubeExtractor.VideoMeta;
-import com.android.yoganetwork.youtubeExtractor.YouTubeExtractor;
-import com.android.yoganetwork.youtubeExtractor.YtFile;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.exoplayer2.MediaItem;
@@ -1338,11 +1335,7 @@ public class AddPostActivity extends AppCompatActivity {
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 System.out.println(error);
-            }
-        }
-
-        if (resultCode == RESULT_OK) {
-            if (requestCode == VIDEO_PICK_GALLERY_CODE){
+            } else if (requestCode == VIDEO_PICK_GALLERY_CODE){
                 videoUri = data.getData();
                 //show picked video in videoview
                 setVideoToVideoView();

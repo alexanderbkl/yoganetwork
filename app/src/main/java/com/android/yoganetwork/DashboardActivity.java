@@ -875,7 +875,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
             fragment4 = new ChatListFragment();
             FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
-            ft1.add(R.id.content, fragment4, "");
+            ft1.replace(R.id.content, fragment4, "");
             ft1.addToBackStack(null).commit();
 
             if (fragment1 != null) {

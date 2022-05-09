@@ -94,7 +94,6 @@ public class PostsFragment extends Fragment {
 
         //set layout to recycler_view
         recycler_view.setLayoutManager(layoutManager);
-        recycler_view.setNestedScrollingEnabled(false);
 
         SharedPreferences prefs = getActivity().getSharedPreferences("DeviceToken", MODE_PRIVATE);
         pAudio = prefs.getString("pAudio", null); // get it here
@@ -110,7 +109,6 @@ public class PostsFragment extends Fragment {
         //path of all posts
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
         //get all data from this ref
-        final long currentDate = System.currentTimeMillis();
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -145,9 +143,14 @@ public class PostsFragment extends Fragment {
 
 
                     adapterPosts.setHasStableIds(true);
+
                     adapterPosts.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.ALLOW);
                     //set adapter to recycler_view
                     recycler_view.setHasFixedSize(true);
+                    recycler_view.setItemAnimator(null);
+
+                    //set max recycled views
+
                     recycler_view.setAdapter(adapterPosts);
                 }
 

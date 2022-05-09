@@ -204,7 +204,7 @@ public class ThereProfileActivity extends AppCompatActivity {
                             }
                         }
                         //not blocked, start activity
-                        Intent intent = new Intent(ThereProfileActivity.this, ChatActivity.class);
+                        Intent intent = new Intent(ThereProfileActivity.this, ChattingActivity.class);
                         intent.putExtra("hisUid", uid);
                         ThereProfileActivity.this.startActivity(intent);
                     }

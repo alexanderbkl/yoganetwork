@@ -3,6 +3,7 @@
     <string name="app_title" translatable="false">
         <u>Yoga Network</u>
     </string>
+    <bool name="is_right_to_left">false</bool>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Fragmento en blanco</string>
     <string name="todo" translatable="false">TODO</string>
@@ -292,12 +293,16 @@
     <string name="pick_image_intent_chooser_title">Select source</string>
 
     <string name="crop_image_activity_no_permissions">Cancelling, required permissions are not granted</string>
-
+    <string name="type_a_message">Type a message</string>
+    <string name="slide_to_cancel">"Slide to cancel"</string>
 
     <array name="users_array">
         <item>@string/gotoprofile</item>
         <item>@string/enviarmsg</item>
     </array>
-
-
+    <style name="TextAttachmentOptions">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 </resources>
