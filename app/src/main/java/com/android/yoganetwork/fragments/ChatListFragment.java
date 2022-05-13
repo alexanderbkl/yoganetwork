@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.yuyakaido.android.cardstackview.CardStackView;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigInteger;
@@ -46,7 +47,7 @@ public class ChatListFragment extends Fragment {
 
     //firebase authentication
     FirebaseAuth firebaseAuth;
-    RecyclerView recyclerView;
+    CardStackView recyclerView;
     List<ModelChatlist> chatlistList;
     List<ModelUsers> userList;
     DatabaseReference reference;
