@@ -22,13 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.yoganetwork.constants.Constant;
-import com.android.yoganetwork.fragments.ChatListFragment;
-import com.android.yoganetwork.fragments.GroupChatsFragment;
-import com.android.yoganetwork.fragments.PostsFragment;
-import com.android.yoganetwork.fragments.MapFragment;
-import com.android.yoganetwork.fragments.NotificationsFragment;
-import com.android.yoganetwork.fragments.ProfileFragment;
-import com.android.yoganetwork.fragments.UsersFragment;
+import com.android.yoganetwork.fragments.*;
 import com.android.yoganetwork.models.ModelNotification;
 import com.android.yoganetwork.notifications.FirebaseMessaging;
 import com.android.yoganetwork.notifications.Token;
@@ -81,7 +75,7 @@ public class DashboardActivity extends AppCompatActivity implements
     private PostsFragment fragment1;
 
     private ProfileFragment fragment2;
-    private UsersFragment fragment3;
+    private UsersCardStackFragment fragment3;
     private ChatListFragment fragment4;
     private NotificationsFragment fragment5;
     private GroupChatsFragment fragment6;
@@ -90,7 +84,7 @@ public class DashboardActivity extends AppCompatActivity implements
     public DashboardActivity() {
     }
 
-    public DashboardActivity(PostsFragment fragment1, ProfileFragment fragment2, UsersFragment fragment3, ChatListFragment fragment4, NotificationsFragment fragment5, GroupChatsFragment fragment6, MapFragment fragment7) {
+    public DashboardActivity(PostsFragment fragment1, ProfileFragment fragment2, UsersCardStackFragment fragment3, ChatListFragment fragment4, NotificationsFragment fragment5, GroupChatsFragment fragment6, MapFragment fragment7) {
         this.fragment1 = fragment1;
         this.fragment2 = fragment2;
         this.fragment3 = fragment3;
@@ -524,7 +518,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 }
                 if (fragment3 == null) {
                     ft.commit();
-                    fragment3 = new UsersFragment();
+                    fragment3 = new UsersCardStackFragment();
                     FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
                     ft1
                             .add(R.id.content, fragment3, "");
@@ -834,7 +828,7 @@ public class DashboardActivity extends AppCompatActivity implements
             toolbar.setTitle("Usuarios"); //change actionbar title
 
 
-            fragment3 = new UsersFragment();
+            fragment3 = new UsersCardStackFragment();
             FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
             ft1.replace(R.id.content, fragment3, "");
             ft1.addToBackStack(null).commit();

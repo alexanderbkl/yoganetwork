@@ -47,7 +47,7 @@ public class ChatListFragment extends Fragment {
 
     //firebase authentication
     FirebaseAuth firebaseAuth;
-    CardStackView recyclerView;
+    RecyclerView recyclerView;
     List<ModelChatlist> chatlistList;
     List<ModelUsers> userList;
     DatabaseReference reference;

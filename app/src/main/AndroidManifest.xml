@@ -29,7 +29,9 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
-
+        <activity
+                android:name=".CardStackActivity"
+                android:exported="true"/>
         <activity
                 android:name=".DashboardActivity"
                 android:exported="true"

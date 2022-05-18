@@ -8,12 +8,17 @@
         <entry key="..\:/Users/Amit/.gradle/caches/transforms-3/06d22490a2164c3998e19c7339945b04/transformed/jetified-android-image-cropper-2.8.0/res/menu/crop_image_menu.xml" value="0.38125" />
         <entry key="..\:/Users/Amit/.gradle/caches/transforms-3/b129dc3d75f2ec58f1d6f473f2d23fac/transformed/jetified-WhatsappMessengerView-2.1.0/res/layout/record_view.xml" value="0.75" />
         <entry key="..\:/Users/Amit/.gradle/caches/transforms-3/ec5550462e904340abbeb8979ef17e55/transformed/jetified-exoplayer-ui-2.15.0/res/layout/exo_player_view.xml" value="0.26979166666666665" />
+        <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/drawable/like_green_24dp.xml" value="0.1" />
+        <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/drawable/like_white_120dp.xml" value="0.3138888888888889" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/drawable/shadow.xml" value="0.1" />
+        <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_card_stack.xml" value="0.15" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_chatting.xml" value="0.1890625" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_group_chat.xml" value="0.29322916666666665" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_post_detail.xml" value="0.14260385005065856" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/fragment_chat_list.xml" value="0.15" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/fragment_users.xml" value="0.14767932489451477" />
+        <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/fragment_users_card_stack.xml" value="0.33" />
+        <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/item_spot.xml" value="0.1" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/layout_chatting.xml" value="0.17831813576494426" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/layout_groupchat.xml" value="0.14260385005065856" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/record_view.xml" value="0.209375" />
@@ -22,6 +27,7 @@
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/row_groupchat_left.xml" value="0.25" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/row_groupchat_right.xml" value="0.33" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/row_users.xml" value="0.1" />
+        <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/menu/navigation_main_activity.xml" value="0.1" />
         <entry key="..\:/Users/Amit/Desktop/yoganetwork/app/src/main/res/drawable-xxxhdpi/circle_offline.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Amit/Desktop/yoganetwork/app/src/main/res/drawable/circle_online.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/Amit/Desktop/yoganetwork/app/src/main/res/drawable/circle_seen.xml" value="0.203125" />

@@ -3,6 +3,7 @@ package com.android.yoganetwork.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.MenuItemCompat;
@@ -23,10 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.yoganetwork.GroupCreateActivity;
-import com.android.yoganetwork.MainActivity;
-import com.android.yoganetwork.R;
-import com.android.yoganetwork.SettingsActivity;
+import com.android.yoganetwork.*;
 import com.android.yoganetwork.adapters.AdapterUsers;
 import com.android.yoganetwork.models.ModelUsers;
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,6 +42,7 @@ import java.util.List;
 public class UsersFragment extends Fragment {
 RecyclerView recyclerView;
 AdapterUsers adapterUsers;
+Button cardStackBtn;
 List<ModelUsers> userList;
     //firebase authentication
     FirebaseAuth firebaseAuth;
@@ -64,7 +63,13 @@ List<ModelUsers> userList;
      recyclerView = view.findViewById(R.id.users_recyclerView);
      //set it's properties
         recyclerView.setHasFixedSize(true);
-
+        cardStackBtn = view.findViewById(R.id.cardStackBtn);
+        cardStackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), CardStackActivity.class));
+            }
+                                        });
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(mLayoutManager);
         //init user list

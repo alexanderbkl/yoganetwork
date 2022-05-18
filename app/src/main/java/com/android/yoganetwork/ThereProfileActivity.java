@@ -65,7 +65,6 @@ public class ThereProfileActivity extends AppCompatActivity {
 
     RecyclerView postsRecyclerView;
 
-    ImageHelper imageHelper;
     List<ModelPost> postList;
     FloatingActionButton fab;
     AdapterPost adapterPosts;
@@ -78,7 +77,6 @@ public class ThereProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_there_profile);
-        imageHelper = new ImageHelper();
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Perfil");
