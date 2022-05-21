@@ -1,6 +1,5 @@
 package com.android.yoganetwork
 
-import android.app.PendingIntent.getActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,8 +14,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
-import com.android.yoganetwork.adapters.AdapterUsers
 import com.android.yoganetwork.adapters.CardStackAdapter
 import com.android.yoganetwork.cardstack.Spot
 import com.android.yoganetwork.cardstack.SpotDiffCallback
@@ -292,7 +289,7 @@ class CardStackActivity : AppCompatActivity(), CardStackListener {
         //get all data from path
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                spots.clear()
+                //spots.clear()
                 for (dataSnapshot in snapshot.children) {
 
                     //get all users except

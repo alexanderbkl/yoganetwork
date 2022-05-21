@@ -10,7 +10,6 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import com.android.yoganetwork.R
@@ -18,7 +17,6 @@ import com.android.yoganetwork.adapters.CardStackAdapter
 import com.android.yoganetwork.cardstack.Spot
 import com.android.yoganetwork.cardstack.SpotDiffCallback
 import com.android.yoganetwork.models.ModelUsers
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -32,6 +30,8 @@ import java.util.ArrayList
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+private val spots = ArrayList<Spot>()
+
 
 
 /**
@@ -45,7 +45,6 @@ class UsersCardStackFragment : Fragment(), CardStackListener {
 
     private fun createUsers(): List<Spot> {
 
-        val spots = ArrayList<Spot>()
 
         //get current user
         val fUser = FirebaseAuth.getInstance().currentUser
@@ -72,15 +71,36 @@ class UsersCardStackFragment : Fragment(), CardStackListener {
                 spots.sortBy { it.onlineStatus }
                 spots.reverse();
                 Log.d("suka2", spots.toString())
+                spots.add(Spot(
+                    pseudonym = "Yasaka Shrine",
+                    description = "Self proliferation.",
+                    image = "https://source.unsplash.com/Xq1ntWruZQI/600x800",
+                    practic = "Spirituality",
+                    type = "yogui",
+                    uid = "289735987f",
+                    onlineStatus = "123525"
+                ))
 
-
+                spots.remove(Spot(
+                    pseudonym = "Yasaka Shrine",
+                    description = "Self proliferation.",
+                    image = "https://source.unsplash.com/Xq1ntWruZQI/600x800",
+                    practic = "Spirituality",
+                    type = "yogui",
+                    uid = "289735987f",
+                    onlineStatus = "123525"
+                ))
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
+        Log.d("suka3", spots.toString())
+      /*
 
+       */
+        return spots
 
-        //print sorted spots
+       /* //print sorted spots
         spots.add(Spot(
             pseudonym = "Yasaka Shrine",
             description = "Kyoto",
@@ -89,9 +109,8 @@ class UsersCardStackFragment : Fragment(), CardStackListener {
             type = "yogui",
             uid = "289735987f",
             onlineStatus = "123525"
-        ))
+        ))*/
 
-        return spots
     }
 
 
