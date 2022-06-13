@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -79,6 +80,7 @@ public class PostsFragment extends Fragment {
             //init
             firebaseAuth = FirebaseAuth.getInstance();
             //recycler_view and its properties
+
 
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());

@@ -3,80 +3,85 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/drawer_layout"
+        android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        >
 
 
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-        <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipChildren="false">
-
+<LinearLayout
+        android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical" android:baselineAligned="false">
 
             <com.yuyakaido.android.cardstackview.CardStackView
                     android:id="@+id/card_stack_view"
                     android:layout_width="match_parent"
-                    android:layout_height="500dp"
-                    android:padding="4dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.75"
                     android:clipToPadding="false">
             </com.yuyakaido.android.cardstackview.CardStackView>
-        </RelativeLayout>
-        <RelativeLayout
-                android:id="@+id/button_container"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_marginBottom="80dp"
-                android:layout_height="80dp"
-                android:layout_alignParentBottom="true">
+    <RelativeLayout
+            android:id="@+id/button_container"
+            android:orientation="horizontal"
+            android:layout_weight="0.25"
+            android:layout_gravity="center"
+            android:layout_marginBottom="50dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/skip_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/rewind_button"
-                    android:layout_toStartOf="@+id/rewind_button"
-                    android:src="@drawable/skip_red_24dp"
-                    app:backgroundTint="@android:color/white"
-                    app:fabSize="auto"
-                    app:rippleColor="#22ED7563"/>
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/skip_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@+id/miniIcons"
+                android:src="@drawable/skip_red_24dp"
+                app:backgroundTint="@android:color/white"
+                app:fabSize="auto"
+                app:rippleColor="#22ED7563"/>
+        <LinearLayout
+                android:id="@+id/miniIcons"
+                android:layout_width="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_height="wrap_content">
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/rewind_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="32dp"
                     android:layout_marginStart="32dp"
-                    android:layout_marginRight="32dp"
-                    android:layout_marginEnd="32dp"
-                    android:layout_centerInParent="true"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginTop="10dp"
                     android:src="@drawable/rewind_blue_24dp"
                     app:backgroundTint="@android:color/white"
                     app:fabSize="mini"
                     app:rippleColor="#225BC9FA"/>
-
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/like_button"
+            <ImageButton
+                    android:id="@+id/button_users_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/rewind_button"
-                    android:layout_toEndOf="@+id/rewind_button"
-                    android:src="@drawable/like_green_24dp"
-                    app:backgroundTint="@android:color/white"
-                    app:fabSize="auto"
-                    app:rippleColor="#226FE2B3"/>
+                    android:outlineProvider="none"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginTop="10dp"
+                    app:fabSize="mini"
+                    app:rippleColor="#225BC9FA"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_baseline_supervised_user_circle_24"
+                    android:text="Users list"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20sp"/>
+        </LinearLayout>
 
-        </RelativeLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/like_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/miniIcons"
+                android:src="@drawable/like_green_24dp"
+                app:backgroundTint="@android:color/white"
+                app:fabSize="auto"
+                app:rippleColor="#226FE2B3" android:contentDescription="@string/like"/>
 
-    </LinearLayout>
 
-
-
+    </RelativeLayout>
+</LinearLayout>
 </FrameLayout>

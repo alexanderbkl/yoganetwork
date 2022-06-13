@@ -36,12 +36,22 @@
             android:text="@string/notificaciones_de_posts_nuevos"/>
 
         <Button
-            android:id="@+id/changeMyLang"
-            android:layout_below="@+id/postSwitch"
-            android:layout_centerInParent="true"
-            android:text="@string/change_language"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+                android:id="@+id/changeMyLang"
+                android:padding="5dp"
+                android:layout_below="@+id/postSwitch"
+                android:text="@string/change_language"
+                android:layout_width="wrap_content"
+                android:background="#DBF3F2"
+                android:layout_height="wrap_content" android:layout_centerInParent="true"/>
+        <Button
+                android:id="@+id/deleteAcc"
+                android:padding="5dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@+id/changeMyLang"
+                android:text="Delete account"
+                android:layout_width="wrap_content"
+                android:background="#DBF3F2"
+                android:layout_height="wrap_content" android:layout_centerInParent="true"/>
 
 
 </RelativeLayout>

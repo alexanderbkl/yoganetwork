@@ -177,7 +177,7 @@ public class DashboardActivity extends AppCompatActivity implements
                     switch (item.getItemId()){
                         case R.id.nav_home:
                             //save fragment position
-                            if (!fragPos.equals("0")) {
+                            if (fragPos != null && !fragPos.equals("0")) {
                                 //home fragment transaction
                                 toolbar.setTitle("Inicio"); //change actionbar title
                                 FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
@@ -198,7 +198,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
                             return true;
                         case R.id.nav_profile:
-                            if (!fragPos.equals("1")) {
+                            if (fragPos != null && !fragPos.equals("1")) {
                                 //profile fragment transaction
                                 //save fragment position
                                 toolbar.setTitle(R.string.profile); //change actionbar title
@@ -219,7 +219,7 @@ public class DashboardActivity extends AppCompatActivity implements
                             return true;
 
                         case R.id.nav_users:
-                            if (!fragPos.equals("2")) {
+                            if (fragPos != null && !fragPos.equals("2")) {
                                 //users fragment transaction
                                 toolbar.setTitle(R.string.users); //change actionbar title
                                 FragmentTransaction ft3 = getSupportFragmentManager().beginTransaction();
@@ -239,7 +239,7 @@ public class DashboardActivity extends AppCompatActivity implements
                             }
                             return true;
                         case R.id.nav_chat:
-                            if (!fragPos.equals("3")) {
+                            if (fragPos != null && !fragPos.equals("3")) {
                                 //users fragment transaction
 
                                 toolbar.setTitle("Chat"); //change actionbar title
@@ -285,7 +285,7 @@ public class DashboardActivity extends AppCompatActivity implements
                 int id = item.getItemId();
                 if (id == 0) {
 
-                    if (!fragPos.equals("4")) {
+                    if (fragPos != null && !fragPos.equals("4")) {
                         //notification clicked
 
                         //notifications fragment transaction
@@ -310,7 +310,7 @@ public class DashboardActivity extends AppCompatActivity implements
 
                 }
                 else if (id == 1) {
-                    if (!fragPos.equals("5")) {
+                    if (fragPos != null && !fragPos.equals("5")) {
                         //group chats clicked
                         //group chats fragment transaction
                         toolbar.setTitle(R.string.grupos); //change actionbar title
@@ -325,7 +325,7 @@ public class DashboardActivity extends AppCompatActivity implements
                         addFragments();
                     }
                 }  else if (id == 2) {
-                    if (!fragPos.equals("6")) {
+                    if (fragPos!=null && !fragPos.equals("6")) {
                         //group chats clicked
                         //group chats fragment transaction
                         toolbar.setTitle("Maps"); //change actionbar title

@@ -275,7 +275,7 @@ class CardStackActivity : AppCompatActivity(), CardStackListener {
         spots.add(Spot(
             pseudonym = "Yasaka Shrine",
             description = "Kyoto",
-            image = "https://source.unsplash.com/Xq1ntWruZQI/600x800",
+            imageFull = "https://source.unsplash.com/Xq1ntWruZQI/600x800",
             practic = "de la buena",
             type = "yogui",
             uid = "289735987f",

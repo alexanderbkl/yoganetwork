@@ -30,6 +30,9 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
         <activity
+                android:name=".UsersActivity"
+                android:exported="true"/>
+        <activity
                 android:name=".CardStackActivity"
                 android:exported="true"/>
         <activity

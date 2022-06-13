@@ -370,7 +370,6 @@ builder.create().show();
                         String hisPic = userList.get(i).getImage();
                         //send notification
                         sendNotification(
-                                ""+ServerValue.TIMESTAMP,
                                 ""+hisName+" te ha dado like!",
                                 hisUid,
                                 hisPic
@@ -492,7 +491,7 @@ builder.create().show();
                 });
     }
 
-    private void sendNotification(String pId, String name, String hisUid, String hisPic) {
+    private void sendNotification(String name, String hisUid, String hisPic) {
         DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
         Query query = allTokens.orderByKey().equalTo(hisUid);
         query.addValueEventListener(new ValueEventListener() {
@@ -508,13 +507,13 @@ builder.create().show();
                             "LikeNotification",
                             ""+hisPic
                     );
-
                     assert token != null;
                     Sender sender = new Sender(data, token.getToken());
 
                     //fcm json object request
                     try {
                         JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
+                        Toast.makeText(context, "Notificationt"+senderJsonObj.toString(), Toast.LENGTH_SHORT).show();
                         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
                                 new Response.Listener<JSONObject>() {
                                     @Override
@@ -522,6 +521,8 @@ builder.create().show();
                                         //response of the request
                                         Log.d("JSON_RESPONSE", "onResponse: "+response.toString());
                                     }
+
+
                                 }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
@@ -539,8 +540,11 @@ builder.create().show();
                                 return headers;
                             }
                         };
+                        JsonObjectRequest jsonObjectRequest1 = new com.android.yoganetwork.utils.JsonObjectRequest().jsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj);
+
+
                         //add this request to queue
-                        requestQueue.add(jsonObjectRequest);
+                        requestQueue.add(jsonObjectRequest1);
                     }
                     catch (JSONException e) {
                         e.printStackTrace();

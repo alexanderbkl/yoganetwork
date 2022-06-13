@@ -188,9 +188,9 @@ public class PostRegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 uploadProfileData();
-                Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
+                /*Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
                 intent.putExtra("fragmentPos","1");
-                startActivity(intent);
+                startActivity(intent);*/
                 PostRegistrationActivity.this.finish();
             }
         });
@@ -328,6 +328,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
         }
         //path and name of image to be stored in firebase storage
         String filePathAndName = storagePath+ ""+ profileOrCoverPhoto +"_"+ user.getUid()+".jpeg";
+        String filePathAndNameFull = storagePath+ ""+ profileOrCoverPhoto +"_"+ user.getUid()+"Full.jpeg";
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         //get bitmap of uri
         Bitmap bitmap1 = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
@@ -467,11 +468,96 @@ public class PostRegistrationActivity extends AppCompatActivity {
                         Toast.makeText(PostRegistrationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+
+
+        bitmap1.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+
+        StorageReference storageReference3rd = storageReference.child(filePathAndNameFull);
+        storageReference3rd.putBytes(data)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        //image uploaded to storage, now get its url and store in users database
+                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                        while (!uriTask.isSuccessful());
+                        final Uri downloadUri = uriTask.getResult();
+
+                        //check if image is uploading or not and url received
+                        if (uriTask.isSuccessful()){
+                            //image uploaded
+                            //add/update url in users database
+                            HashMap<String, Object> results = new HashMap<>();
+                            /*first parameter is profileorcover photo thas has value "image" or "cover" which are keys in users database where url of the image
+                             * be saved in of them
+                             * Second parameter contains the url of the image stored in firebase storage, this url will be saved as value against key "image" or "cover"*/
+
+
+                            results.put("imageFull", downloadUri.toString());
+
+                            databaseReference.child(user.getUid()).updateChildren(results)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //URL IN DATA BASE of user is add succesfully
+                                            //dismiss progress bar
+                                            pd.dismiss();
+                                            Toast.makeText(PostRegistrationActivity.this, "Hecho!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            //error adding url in database of user
+                                            //dismiss progress bar
+                                            pd.dismiss();
+                                            Toast.makeText(PostRegistrationActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+
+                            //if user edit his name, also change it from hist posts
+                            if (profileOrCoverPhoto.equals("image")){
+
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+                                Query query = ref.orderByChild("uid").equalTo(user.getUid());
+                                query.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for (DataSnapshot ds: dataSnapshot.getChildren()){
+                                            String child = ds.getKey();
+                                            dataSnapshot.getRef().child(child).child("uDpFull").setValue(downloadUri.toString());
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                            }
+                        }
+                        else{
+                            //error
+                            pd.dismiss();
+                            Toast.makeText(PostRegistrationActivity.this, "An error has occurred.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //there were some error, get and show error message, dismiss progress dialog
+                        pd.dismiss();
+                        Toast.makeText(PostRegistrationActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
     }
     @Override
     public boolean onSupportNavigateUp() {
         Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
-        intent.putExtra("fragment",2);
+        intent.putExtra("fragPos","2");
         startActivity(intent);
         PostRegistrationActivity.this.finish();
         return true;

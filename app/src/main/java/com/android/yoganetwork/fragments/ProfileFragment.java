@@ -241,7 +241,6 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getActivity(), PostRegistrationActivity.class));
-                getActivity().finish();
             }
         });
 

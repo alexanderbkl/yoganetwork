@@ -1,5 +1,6 @@
 package com.android.yoganetwork;
 
+import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
@@ -20,9 +21,13 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.*;
 import com.google.firebase.messaging.FirebaseMessaging;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
+import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -52,6 +57,34 @@ public class SettingsActivity extends AppCompatActivity {
         postSwitch = findViewById(R.id.postSwitch);
 
         Button changeLang = findViewById(R.id.changeMyLang);
+        String lang = Locale.getDefault().getLanguage();
+
+        switch (lang) {
+            case "es":
+                changeLang.setText("CAMBIAR IDIOMA\n(Español)");
+                break;
+            case "en":
+                changeLang.setText("CHANGE LANGUAGE\n(English)");
+                break;
+            case "fr":
+                changeLang.setText("CHANGER LANGUE\n(Français)");
+                break;
+            case "de":
+                changeLang.setText("SPRACHE ÄNDERN\n(Deutsch)");
+                break;
+            case "ar":
+                changeLang.setText("غير اللغة\n(العربية)");
+                break;
+            case "hi":
+                changeLang.setText("भाषा बदलें\n(हिन्दी)");
+                break;
+            case "ru":
+                changeLang.setText("Изменить язык\n(Русский)");
+                break;
+            default:
+                changeLang.setText("CHANGE LANGUAGE");
+                break;
+        }
         changeLang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,6 +92,17 @@ public class SettingsActivity extends AppCompatActivity {
                 showChangeLanguageDialog();
             }
         });
+
+        Button deleteAcc = findViewById(R.id.deleteAcc);
+        deleteAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //show AlertDialog to display delete account
+                showDeleteAccountDialog();
+            }
+        });
+
+
 
         loadLocale();
 
@@ -92,6 +136,84 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void showDeleteAccountDialog() {
+        //show delete message confirm dialog
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+        builder.setTitle(R.string.eliminar);
+        builder.setMessage("Estás seguro de que quieres eliminar tu cuenta?");
+        //delete button
+        builder.setPositiveButton(R.string.eliminar, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                deleteAcc();
+            }
+        });
+        //cancel delete button
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //dismiss dialog
+                dialog.dismiss();
+            }
+        });
+        //create and show dialog
+        builder.create().show();
+    }
+
+    private void deleteAcc() {
+        String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        //delete every post of this user from Posts
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Posts");
+        //get detail of post using id of post
+        Query query = reference.orderByChild("uid").equalTo(uid);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    //delete post
+                    ds.getRef().removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        //delete user from Users
+        DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference("Users");
+        reference1.child(uid).removeValue();
+        //delete user from FirebaseAuth
+        FirebaseAuth.getInstance().getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    //delete user from shared preferences
+                    sp = getSharedPreferences("User_SP", MODE_PRIVATE);
+                    editor = sp.edit();
+                    editor.clear();
+                    editor.apply();
+                    FirebaseAuth.getInstance().signOut();
+                    //delete user from FirebaseMessaging
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(uid).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(SettingsActivity.this, "Cuenta eliminada", Toast.LENGTH_SHORT).show();
+                            //go to login activity
+                            startActivity(new Intent(SettingsActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                    });
+                } else {
+                    Toast.makeText(SettingsActivity.this, "Error al eliminar la cuenta", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
     private void showChangeLanguageDialog() {

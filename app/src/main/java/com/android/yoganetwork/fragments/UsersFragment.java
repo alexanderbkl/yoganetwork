@@ -40,12 +40,11 @@ import java.util.List;
 
 
 public class UsersFragment extends Fragment {
-RecyclerView recyclerView;
-AdapterUsers adapterUsers;
-Button cardStackBtn;
-List<ModelUsers> userList;
+    private RecyclerView recyclerView;
+    private AdapterUsers adapterUsers;
+    private List<ModelUsers> userList;
     //firebase authentication
-    FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth;
     public UsersFragment() {
         // Required empty public constructor
     }
@@ -63,7 +62,7 @@ List<ModelUsers> userList;
      recyclerView = view.findViewById(R.id.users_recyclerView);
      //set it's properties
         recyclerView.setHasFixedSize(true);
-        cardStackBtn = view.findViewById(R.id.cardStackBtn);
+        Button cardStackBtn = view.findViewById(R.id.cardStackBtn);
         cardStackBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
