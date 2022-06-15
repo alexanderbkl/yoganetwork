@@ -358,7 +358,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
         final long currentDate = System.currentTimeMillis();
 
         likesRef.child(pId).child(myUid).getKey();
-
         //add post id and uid in likes node
         DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
         likesRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -367,14 +366,17 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                 snapshot.child(pId).child(myUid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                        int pLikes = Integer.parseInt(postList.get(i).getpLikes());
 
-
-                        int pLikes;
                         if (snapshot.exists()) {
-                            pLikes = Integer.parseInt(postList.get(i).getpLikes())-1;
+                            pLikes -= 1;
+                            postList.get(i).setpLikes(String.valueOf(pLikes));
                             //already liked, so remove like
                             postsRef.child(pId).child("pLikes").setValue(""+pLikes);
                             likesRef.child(pId).child(myUid).removeValue();
+                            myHolder.likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_like_black, 0, 0, 0);
+                            myHolder.likeBtn.setText("LIKE");
+                            myHolder.pLikesTv.setText(pLikes + " Likes");
                             FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
@@ -385,6 +387,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                                         FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").setValue("1");
                                     }
 
+
                                 }
 
                                 @Override
@@ -394,9 +397,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                             });
                         }
                         else {
-                            pLikes = Integer.parseInt(postList.get(i).getpLikes())+1;
+                            pLikes +=1;
+                            postList.get(i).setpLikes(String.valueOf(pLikes));
                             //not liked, like it
                             postsRef.child(pId).child("pLikes").setValue(""+pLikes);
+                            myHolder.likeBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_liked, 0, 0, 0);
+                            myHolder.likeBtn.setText("Liked");
+                            myHolder.pLikesTv.setText(pLikes + " Likes");
                             likesRef.child(pId).child(myUid).setValue("Liked").addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -411,7 +418,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                                             } else {
                                                 FirebaseDatabase.getInstance().getReference().child("Users").child(uid).child("userLikes").setValue("1");
                                             }
-
                                         }
 
                                         @Override

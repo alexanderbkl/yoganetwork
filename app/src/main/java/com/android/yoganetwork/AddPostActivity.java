@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.core.graphics.BitmapCompat;
+import com.ablanco.zoomy.TapListener;
 import com.ablanco.zoomy.Zoomy;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
@@ -242,15 +243,7 @@ public class AddPostActivity extends AppCompatActivity {
         getSupportActionBar().setSubtitle(practic);
 
 
-        //get image from camera/gallery on click
-        imageIv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                showMediaPickDialog();
-
-            }
-        });
         if(!youtubeUrl.equals("")){
             thumbnail = extractYoutubeThumbnail(youtubeUrl);
             Glide.with(AddPostActivity.this).load(thumbnail).into(imageIv);
@@ -282,12 +275,20 @@ public class AddPostActivity extends AppCompatActivity {
 
             }
         });
+        //get image from camera/gallery on click
         Zoomy.Builder builder = new Zoomy.Builder(AddPostActivity.this)
+                .tapListener(new TapListener() {
+                    @Override
+                    public void onTap(View v) {
+                        showMediaPickDialog();
+                    }
+                })
                 .target(imageIv);
         builder.register();
     }
 
     private void showMediaPickDialog() {
+        Toast.makeText(this, "Selecciona una opción", Toast.LENGTH_SHORT).show();
         //options to show in dialog
         String[] options = {"Añadir imagen", "Añadir vídeo",
                 "Añadir audio", "Añadir enlace youtube"};

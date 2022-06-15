@@ -341,7 +341,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
             bitSize = 100000;
             quality = 70;
         } else {
-            bitSize = 100000;
+            bitSize = 1000000;
             quality = 70;
         }
 
@@ -469,8 +469,9 @@ public class PostRegistrationActivity extends AppCompatActivity {
                     }
                 });
 
+        Bitmap bitmap3 = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
 
-        bitmap1.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+        bitmap3.compress(Bitmap.CompressFormat.JPEG, 80, baos);
 
         StorageReference storageReference3rd = storageReference.child(filePathAndNameFull);
         storageReference3rd.putBytes(data)
@@ -556,9 +557,9 @@ public class PostRegistrationActivity extends AppCompatActivity {
     }
     @Override
     public boolean onSupportNavigateUp() {
-        Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
+        /*Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
         intent.putExtra("fragPos","2");
-        startActivity(intent);
+        startActivity(intent);*/
         PostRegistrationActivity.this.finish();
         return true;
     }

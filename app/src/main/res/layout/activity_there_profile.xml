@@ -95,17 +95,31 @@
                                     android:text="@string/nombre1"
                                     android:textColor="@color/white"
                                     android:textSize="25sp"/>
+
+                            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                                    android:id="@+id/likeFab"
+                                    android:src="@drawable/ic_heart_red"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:translationY="-5dp"
+                                    android:scaleX="0.5"
+                                    android:scaleY="0.5"
+                                    android:background="#2CCACACA"
+                                    android:layout_alignParentEnd="true"
+                                    android:contentDescription="@string/send_message"/>
                             <com.google.android.material.floatingactionbutton.FloatingActionButton
                                     android:id="@+id/fab"
                                     android:src="@drawable/ic_message_white"
                                     android:layout_width="wrap_content"
+                                    android:layout_toStartOf="@+id/likeFab"
                                     android:layout_height="wrap_content"
                                     android:scaleX="0.5"
                                     android:scaleY="0.5"
+                                    android:translationX="10dp"
                                     android:translationY="-5dp"
-                                    android:background="#AECFD5"
-                                    android:layout_alignParentEnd="true"
+                                    android:background="#2CCACACA"
                                     android:contentDescription="@string/send_message"/>
+
 
                             <LinearLayout
                                     android:id="@+id/topLayout"

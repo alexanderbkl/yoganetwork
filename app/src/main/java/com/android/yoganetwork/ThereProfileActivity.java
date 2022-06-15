@@ -29,10 +29,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.android.yoganetwork.adapters.AdapterPost;
+import com.android.yoganetwork.adapters.AdapterUsers;
 import com.android.yoganetwork.models.ModelPost;
+import com.android.yoganetwork.notifications.Data;
+import com.android.yoganetwork.notifications.Sender;
+import com.android.yoganetwork.notifications.Token;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,7 +54,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.lang.ref.WeakReference;
@@ -50,7 +66,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 import static android.text.TextUtils.isEmpty;
@@ -58,20 +76,21 @@ import static android.text.TextUtils.isEmpty;
 public class ThereProfileActivity extends AppCompatActivity {
 
 
-    FirebaseAuth firebaseAuth;
+    private FirebaseAuth firebaseAuth;
     //view from xml
-    ImageView avatarIv, coverIv;
-    TextView nameTv, realNameTv, typeTv, practicTv, dietTv, descriptionTv;
+    private ImageView avatarIv, coverIv;
+    private TextView nameTv, realNameTv, typeTv, practicTv, dietTv, descriptionTv;
 
-    RecyclerView postsRecyclerView;
+    private RecyclerView postsRecyclerView;
 
-    List<ModelPost> postList;
-    FloatingActionButton fab;
-    AdapterPost adapterPosts;
-    String uid;
-    AsyncTask<?, ?, ?> runningTask;
-    Toolbar toolbar;
-    String myUid;
+    private List<ModelPost> postList;
+    private FloatingActionButton fab, likeFab;
+    private AdapterPost adapterPosts;
+    private String uid;
+    private Toolbar toolbar;
+    private String myUid;
+    private boolean isLiked = false;
+    private RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +108,7 @@ public class ThereProfileActivity extends AppCompatActivity {
         nameTv = findViewById(R.id.nameTv);
         realNameTv = findViewById(R.id.realNameTv);
         fab = findViewById(R.id.fab);
+        likeFab = findViewById(R.id.likeFab);
         typeTv = findViewById(R.id.typeTv);
         practicTv = findViewById(R.id.practicTv);
         dietTv = findViewById(R.id.dietTv);
@@ -96,7 +116,7 @@ public class ThereProfileActivity extends AppCompatActivity {
         descriptionTv = findViewById(R.id.descriptionTv);
 
         firebaseAuth = FirebaseAuth.getInstance();
-
+        requestQueue = Volley.newRequestQueue(ThereProfileActivity.this);
         //get uid of clicked user to retrieve his posts
         Intent intent = getIntent();
         uid = intent.getStringExtra("uid");
@@ -173,6 +193,7 @@ public class ThereProfileActivity extends AppCompatActivity {
         postList = new ArrayList<>();
 
         checkUserStatus();
+        checkIsLiked(uid);
         loadHistPosts();
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +202,229 @@ public class ThereProfileActivity extends AppCompatActivity {
                 imBlockedORNot(uid);
             }
         });
+
+        likeFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imBlockedORNot(uid);
+                if (isLiked) {
+                    isLiked = false;
+                }
+                else {
+                    isLiked = true;
+                    likeFab.setVisibility(View.INVISIBLE);
+                    likeUser(uid);
+
+                }
+            }
+        });
+    }
+
+    private void likeUser(String hisUid) {
+        //like the user, by adding uid to current user's "LikedUsers" node
+        //put values in hashmap to put in db
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("uid", hisUid);
+
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(myUid).child("LikedUsers").child(hisUid).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //get my pseudonym and picture url
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                        ref.child(myUid).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                String pseudonym = "" + snapshot.child("pseudonym").getValue();
+                                String image = "" + snapshot.child("image").getValue();
+                                //liked successfully
+                                //send notification
+                                sendNotification(
+                                        ""+pseudonym+" te ha dado like!",
+                                        uid,
+                                        image
+                                );
+                            }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                            }
+                        });
+
+
+
+
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //failed to block
+                        Toast.makeText(ThereProfileActivity.this, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+
+
+
+        //like the user, by adding uid to current user's "LikedUsers" node
+
+
+
+        //add post id and uid in likes node
+        DatabaseReference profileLikesRef = FirebaseDatabase.getInstance().getReference("Users").child(hisUid).child("profileLikes").child(myUid);
+        profileLikesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                snapshot.getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+
+
+                        if (snapshot.exists()) {
+                            //already liked, so remove like
+                            profileLikesRef.child(myUid).removeValue();
+                        }
+                        else {
+
+                            addToHisNotifications(hisUid, myUid);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void addToHisNotifications(String hisUid, String myUid) {
+        String timestamp = ""+System.currentTimeMillis();
+
+        HashMap<Object, String> hashMap = new HashMap<>();
+        hashMap.put("pId", "like");
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("pUid", hisUid);
+        hashMap.put("notification", "Liked your profile");
+        hashMap.put("sUid", myUid);
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(hisUid).child("profileLikes").child(myUid).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //added successfully
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        //failed
+                    }
+                });
+
+    }
+
+    private void sendNotification(String name, String hisUid, String hisPic) {
+        DatabaseReference allTokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = allTokens.orderByKey().equalTo(hisUid);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds: snapshot.getChildren()) {
+                    Token token = ds.getValue(Token.class);
+                    Data data = new Data(
+                            ""+myUid,
+                            ""+name,
+                            "Someone liked you",
+                            ""+hisUid,
+                            "LikeNotification",
+                            ""+hisPic
+                    );
+                    assert token != null;
+                    Sender sender = new Sender(data, token.getToken());
+
+                    //fcm json object request
+                    try {
+                        JSONObject senderJsonObj = new JSONObject(new Gson().toJson(sender));
+                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj,
+                                new Response.Listener<JSONObject>() {
+                                    @Override
+                                    public void onResponse(JSONObject response) {
+                                        //response of the request
+                                        Log.d("JSON_RESPONSE", "onResponse: "+response.toString());
+                                    }
+
+
+                                }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("JSON_RESPONSE", "onResponse: "+error.toString());
+
+                            }
+                        }) {
+                            @Override
+                            public Map<String, String> getHeaders() throws AuthFailureError {
+                                //put params
+                                Map<String, String> headers = new HashMap<>();
+                                headers.put("Content-Type", "application/json");
+                                headers.put("Authorization", "key=AAAAQamk8xY:APA91bHY2PqvH237jhVIXZEI0OlvUQACRVffSLfv_pU7gmO1EZL2wcV2J52AFpC3QL5H16DSsAUHwJ2T7nXiVAYgPGuMmyPXRs8efYuZlOWvIttxIl49GsrMw54939LA8gBFsXGp41S7");
+
+                                return headers;
+                            }
+                        };
+                        JsonObjectRequest jsonObjectRequest1 = new com.android.yoganetwork.utils.JsonObjectRequest().jsonObjectRequest("https://fcm.googleapis.com/fcm/send", senderJsonObj);
+
+
+                        //add this request to queue
+                        requestQueue.add(jsonObjectRequest1);
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
+    private void checkIsLiked(String hisUid) {
+        //check each user, if blocked or not
+        //if uid of the user exists in "BlockedUsers then that user is blocked, otherwise not
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+        ref.child(myUid).child("LikedUsers").orderByChild("uid").equalTo(hisUid)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds: snapshot.getChildren()) {
+                            if (ds.exists()) {
+                                isLiked = true;
+                                likeFab.setVisibility(View.INVISIBLE);
+                            } else {
+                                isLiked = false;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
     }
 
     private void imBlockedORNot(String uid) {
