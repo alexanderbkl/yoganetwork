@@ -191,7 +191,7 @@ public class SettingsActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
+
                     //delete user from shared preferences
                     sp = getSharedPreferences("User_SP", MODE_PRIVATE);
                     editor = sp.edit();
@@ -208,9 +208,7 @@ public class SettingsActivity extends AppCompatActivity {
                             finish();
                         }
                     });
-                } else {
-                    Toast.makeText(SettingsActivity.this, "Error al eliminar la cuenta", Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
 
