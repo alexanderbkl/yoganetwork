@@ -215,5 +215,39 @@
     <string name="notif">С этого момента вы будете получать уведомления о сообщениях</string>
     <string name="errormsg">Невозможно отправить сообщение этому пользователю</string>
     <string name="comments">" комментарий"</string>
+    <string name="actualizar_perfil">Обновить</string>
+    <string name="introduce">Введите всё</string>
+    <string name="user_policy_title">пользовательская политика</string>
+    <string name="user_policy_message">Это уведомление о конфиденциальности для YogaNet («Компания», «мы», «нас» или
+        «наш») описывает, как и почему мы можем собирать, хранить, использовать и/или делиться («обрабатывать») вашу
+        информацию, когда вы используете наших услуг («Услуги»), например, когда вы: загружаете и используете наше
+        мобильное приложение (YogaNet) или любое другое наше приложение, которое ссылается на это уведомление о
+        конфиденциальности; взаимодействуете с нами другими соответствующими способами, включая любые продажи, маркетинг
+        или события Вопросы или опасения? Ознакомление с этим уведомлением о конфиденциальности поможет вам понять свои
+        права и варианты выбора в отношении конфиденциальности. Если вы не согласны с нашей политикой и практикой,
+        пожалуйста, не пользуйтесь нашими Услугами. Если у вас все еще есть какие-либо вопросы или проблемы, свяжитесь с
+        нами по адресу amit.kumar5011900@gmail.com.
+    </string>
+    <string name="accept">Применить</string>
+    <string name="decline">Отменить</string>
+    <string name="user_policy">"Я принимаю "</string>
+    <string name="user_policy_highlight">Условия и Положения</string>
+    <string name="addcontent">"Добавить контент "</string>
+    <string name="opening_image">изображение открывается</string>
+    <string name="opening_video">видео открывается</string>
+    <string name="add_image">Изображение</string>
+    <string name="add_video">Видео</string>
+    <string name="add_audio">Аудио</string>
+    <string name="add_youtube">YouTube ссылка</string>
+    <string name="open_file_explorer">Открываюися файлы</string>
+    <string name="opening_youtube">Открывается YouTube</string>
+    <string name="mapas">Карта</string>
+    <string name="success">Произошло удачно!</string>
+    <string name="pick_from">Выбрать</string>
+    <string name="ver_perfil">Зайти в профиль?</string>
+    <string name="yes">Да</string>
+    <string name="profile_info">Информация профиля</string>
+    <string name="accept_policy">Нужно принять Пользовательскую Политика</string>
+    <string name="blockuser">Заблокировать</string>
 
 </resources>

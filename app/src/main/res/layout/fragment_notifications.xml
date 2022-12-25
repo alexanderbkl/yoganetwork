@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
              android:orientation="vertical"
-    tools:context=".fragments.NotificationsFragment">
+    tools:context="com.amit.yoganet.fragments.NotificationsFragment">
 
        <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"

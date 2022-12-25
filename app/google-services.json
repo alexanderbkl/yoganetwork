@@ -8,6 +8,43 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:282019033878:android:bc4491ea567d32e1045637",
+        "android_client_info": {
+          "package_name": "com.amit.yoganet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "282019033878-rp82abekc7hpf381p5dflggobjv0501d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.amit.yoganet",
+            "certificate_hash": "f51848020065c967f6e01711f6e29502d35d8559"
+          }
+        },
+        {
+          "client_id": "282019033878-phdn43i25bej8n1586qtsgr3n5vqfhpo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcgrLbOz9k5gMk-IIR9BSRf3cPzcMw8eo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "282019033878-phdn43i25bej8n1586qtsgr3n5vqfhpo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:282019033878:android:5446b21bcf081ffe045637",
         "android_client_info": {
           "package_name": "com.android.yoganetwork"
@@ -15,20 +52,16 @@
       },
       "oauth_client": [
         {
-          "client_id": "282019033878-6u13j1njitkhd05nmb5l7de9e526f6id.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.android.yoganetwork",
-            "certificate_hash": "f51848020065c967f6e01711f6e29502d35d8559"
-          }
-        },
-        {
           "client_id": "282019033878-t3lbm8pggolm1vcr262qsrkke22tquio.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.android.yoganetwork",
             "certificate_hash": "ccc88a8e19bef5a9fbe9e7d4576918b61bcf1820"
           }
+        },
+        {
+          "client_id": "282019033878-phdn43i25bej8n1586qtsgr3n5vqfhpo.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [

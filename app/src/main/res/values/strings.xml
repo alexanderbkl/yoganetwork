@@ -1,8 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false">Yoga Network</string>
-    <string name="app_title" translatable="false">
-        <u>Yoga Network</u>
-    </string>
+    <string name="app_name" translatable="false">YogaNet</string>
+    <string name="app_title" translatable="false">YogaNet</string>
     <bool name="is_right_to_left">false</bool>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Fragmento en blanco</string>
@@ -317,6 +315,85 @@
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">14sp</item>
     </style>
+    <string name="actualizar_perfil">Update profile</string>
+    <string name="introduce">Please, fill everything</string>
+    <string name="user_policy_title">User Policy</string>
+    <string name="user_policy_message">This policy applies to all users of the Android social network app (the "App"). By using the App, you agree to be bound by this policy. If you do not agree with any part of this policy, do not use the App.
+        \n
+        1. User Conduct
 
+        \n
+        You agree to use the App only for lawful purposes and in a manner that does not infringe the rights of or restrict or inhibit the use and enjoyment of the App by any third party.
 
+        \n
+        2. User Content
+
+        \n
+        You are solely responsible for any content that you post, upload, or otherwise make available on the App (your "Content"). You represent and warrant that your Content does not violate any laws or the rights of any third party, and that you have all necessary rights and licenses to your Content.
+
+        \n
+        3. Prohibited Content
+
+        \n
+        You may not post, upload, or otherwise make available any Content that:
+
+        - Is illegal, harmful, threatening, abusive, harassing, defamatory, vulgar, obscene, pornographic, or otherwise offensive
+        - Infringes on the intellectual property rights of any third party
+        - Contains personal information about another person without their consent
+        - Contains any viruses or other malicious code
+
+        We reserve the right to remove any prohibited Content from the App at any time, without notice.
+
+        \n
+        4. Privacy
+
+        \n
+        This privacy notice for YogaNet ("Company," "we," "us," or "our"), describes how and why we might collect, store, use, and/or share ("process") your information when you use our services ("Services"), such as when you: Download and use our mobile application (YogaNet), or any other application of ours that links to this privacy notice Engage with us in other related ways, including any sales, marketing, or events Questions or concerns? Reading this privacy notice will help you understand your privacy rights and choices. If you do not agree with our policies and practices, please do not use our Services.
+
+        \n
+        5. Disclaimer of Warranties
+
+        \n
+        The App and all Content is provided "as is" and "as available" without warranty of any kind, either express or implied. We do not guarantee the accuracy, completeness, or reliability of the App or any Content.
+
+        \n
+        6. Limitation of Liability
+
+        \n
+        We will not be liable for any damages, loss, or injury arising out of or in connection with your use of the App or any Content.
+
+        \n
+        7. Changes to This Policy
+
+        \n
+        We reserve the right to change this policy at any time. Any changes will be effective immediately upon posting on the App.
+
+        \n
+        8. Contact Us
+
+        \n
+        If you still have any questions or concerns, please contact us at amit.kumar5011900@gmail.com.
+
+    </string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="user_policy">I accept the </string>
+    <string name="addcontent">Add content</string>
+    <string name="user_policy_highlight">Terms and Conditions</string>
+    <string name="opening_image">Opening image</string>
+    <string name="opening_video">Opening video</string>
+    <string name="add_image">Add image</string>
+    <string name="add_video">Video</string>
+    <string name="add_audio">Audio</string>
+    <string name="add_youtube">YouTube link</string>
+    <string name="open_file_explorer">Openng file explorer</string>
+    <string name="opening_youtube">Opening YouTube</string>
+    <string name="mapas">Maps</string>
+    <string name="success">Success</string>
+    <string name="pick_from">Pick from</string>
+    <string name="ver_perfil">Go to user profile</string>
+    <string name="yes">Yes</string>
+    <string name="profile_info">Profile info</string>
+    <string name="accept_policy">Accept User Policy first</string>
+    <string name="blockuser">Block</string>
 </resources>

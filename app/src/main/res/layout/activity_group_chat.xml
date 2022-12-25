@@ -6,7 +6,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              android:background="#F1EDED"
-             tools:context=".GroupChatActivity">
+             tools:context="com.amit.yoganet.GroupChatActivity">
 
 
 </FrameLayout>

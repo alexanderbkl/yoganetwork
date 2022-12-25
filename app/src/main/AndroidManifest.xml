@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.android.yoganetwork">
+          package="com.amit.yoganet">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -30,13 +30,13 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
         <activity
-                android:name=".UsersActivity"
+                android:name="com.amit.yoganet.UsersActivity"
                 android:exported="true"/>
         <activity
-                android:name=".CardStackActivity"
+                android:name="com.amit.yoganet.CardStackActivity"
                 android:exported="true"/>
         <activity
-                android:name=".DashboardActivity"
+                android:name="com.amit.yoganet.DashboardActivity"
                 android:exported="true"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor">
@@ -47,14 +47,14 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".YouTubePlayerActivity"
+                android:name="com.amit.yoganet.YouTubePlayerActivity"
                 android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
                 android:exported="false"
                 android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
 
         <provider
                 android:name="androidx.core.content.FileProvider"
-                android:authorities="com.android.yoganetwork.provider"
+                android:authorities="com.amit.yoganet.provider"
                 android:exported="false"
                 android:grantUriPermissions="true">
             <meta-data
@@ -63,17 +63,17 @@
         </provider>
 
         <activity
-                android:name=".VideoPlayerActivity"
+                android:name="com.amit.yoganet.VideoPlayerActivity"
                 android:configChanges="orientation|screenSize|screenLayout"
                 android:exported="false"
                 android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
         <activity
-                android:name=".AddToGroupActivity"
+                android:name="com.amit.yoganet.AddToGroupActivity"
                 android:exported="false"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
         <activity
-                android:name=".CommentLikedByActivity"
+                android:name="com.amit.yoganet.CommentLikedByActivity"
                 android:exported="false"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
@@ -90,52 +90,52 @@
                 android:value="@string/google_maps_key"/>
 
         <activity
-                android:name=".PostRegistrationActivity"
+                android:name="com.amit.yoganet.PostRegistrationActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"
                 android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-                android:name=".GroupChatImageActivity"
+                android:name="com.amit.yoganet.GroupChatImageActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
         <activity
-                android:name=".GroupEditActivity"
+                android:name="com.amit.yoganet.GroupEditActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
         <activity
-                android:name=".GroupInfoActivity"
+                android:name="com.amit.yoganet.GroupInfoActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
         <activity
-                android:name=".GroupParticipantAddActivity"
+                android:name="com.amit.yoganet.GroupParticipantAddActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
         <activity
-                android:name=".GroupChatActivity"
+                android:name="com.amit.yoganet.GroupChatActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"
                 android:theme="@style/AppThemeNo"/>
         <activity
-                android:name=".crop.CropImageActivity"
+                android:name="com.amit.yoganet.crop.CropImageActivity"
                 android:screenOrientation="nosensor"
                 android:theme="@style/Base.Theme.AppCompat"/> <!-- optional (needed if default theme has no action bar) -->
         <activity
-                android:name=".GroupCreateActivity"
+                android:name="com.amit.yoganet.GroupCreateActivity"
                 android:hardwareAccelerated="true"/>
         <activity
-                android:name=".PostLikedByActivity"
+                android:name="com.amit.yoganet.PostLikedByActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
         <activity
-                android:name=".SettingsActivity"
+                android:name="com.amit.yoganet.SettingsActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
         <activity
-                android:name=".PostDetailActivity"
+                android:name="com.amit.yoganet.PostDetailActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
         <activity
-                android:name=".ThereProfileActivity"
+                android:name="com.amit.yoganet.ThereProfileActivity"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"/>
         <!--
@@ -143,7 +143,7 @@ Intent filters inform the system what intents an application component is willin
         To receive text/image type of intents we will add intent filter to activity, that will handle that data
         -->
         <activity
-                android:name=".AddPostActivity"
+                android:name="com.amit.yoganet.AddPostActivity"
                 android:exported="true"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor">
@@ -165,23 +165,23 @@ Intent filters inform the system what intents an application component is willin
             </intent-filter>
         </activity>
         <activity
-                android:name=".ChattingActivity"
+                android:name="com.amit.yoganet.ChattingActivity"
                 android:exported="true"
                 android:hardwareAccelerated="true"
                 android:screenOrientation="nosensor"
                 android:theme="@style/AppThemeNo"/>
         <activity
-                android:name=".LoginActivity"
+                android:name="com.amit.yoganet.LoginActivity"
                 android:hardwareAccelerated="true"/>
         <activity
-                android:name=".RegisterActivity"
+                android:name="com.amit.yoganet.RegisterActivity"
                 android:hardwareAccelerated="true"/>
         <activity
-                android:name=".MainActivity"
+                android:name="com.amit.yoganet.MainActivity"
                 android:hardwareAccelerated="true"/>
 
         <service
-                android:name=".notifications.FirebaseMessaging"
+                android:name="com.amit.yoganet.notifications.FirebaseMessaging"
                 android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

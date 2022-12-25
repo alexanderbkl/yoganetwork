@@ -1,4 +1,4 @@
-package com.android.yoganetwork;
+package com.amit.yoganet;
 
 import org.junit.Test;
 

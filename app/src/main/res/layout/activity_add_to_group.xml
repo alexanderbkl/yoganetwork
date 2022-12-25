@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddToGroupActivity">
+    tools:context="com.amit.yoganet.AddToGroupActivity">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/groupsRv"
         android:layout_width="match_parent"

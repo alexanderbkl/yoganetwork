@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:282019033878:android:9e2841330e0531f0045637",
         "android_client_info": {
-          "package_name": "com.android.yoganetworks"
+          "package_name": "com.amit.yoganets"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "282019033878-c9bf9qaoactlbbuunpit8tvrr9dsqd2e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.android.yoganetworks",
+            "package_name": "com.amit.yoganets",
             "certificate_hash": "67c9a064de018d98058fa47f756f3e666a0bd728"
           }
         },
@@ -26,7 +26,7 @@
           "client_id": "282019033878-uot7ac6dotfe6a48cqs4sietgvbqicf0.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.android.yoganetworks",
+            "package_name": "com.amit.yoganets",
             "certificate_hash": "9578c74a9323422e8762e5a852493149b4e62191"
           }
         },

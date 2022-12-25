@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
-    tools:context=".RegisterActivity">
+    tools:context="com.amit.yoganet.RegisterActivity">
 <!--TextView: Label Register-->
     <TextView
         android:layout_width="match_parent"
@@ -53,20 +53,39 @@
         android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:text="@string/user_policy"
+            android:textSize="20sp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/teal_200"
+            android:id="@+id/userPolicy"
+            android:layout_below="@+id/passwordTIL"/>
+    <!--Create a highlighted text "UserPolicy" after the text "I agree to the"-->
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:text="@string/user_policy_highlight"
+            android:textSize="20sp"
+            android:textColor="@color/teal_700"
+            android:id="@+id/userPolicyText"
+            android:layout_alignBottom="@+id/userPolicy"
+            android:layout_toRightOf="@+id/userPolicy"/>
+
     <!--Button: Register User-->
     <!--GoogleSignInBtn: Sign in with google account-->
     <!--TextView: Click go to LoginActivity-->
 
     <Button
-        android:id="@+id/registerBtn"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/passwordTIL"
-        android:layout_marginTop="4dp"
-        android:layout_centerInParent="true"
-        android:drawableStart="@drawable/ic_reg"
-        android:text="@string/registrarse" />
+            android:id="@+id/registerBtn"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/userPolicy"
+            android:layout_marginTop="4dp"
+            android:drawableStart="@drawable/ic_reg"
+            android:text="@string/registrarse" android:layout_centerInParent="true"/>
 
     <ImageButton
         android:id="@+id/googleLoginBtn"

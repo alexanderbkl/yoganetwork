@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:background="#FFFFFF"
-        tools:context=".PostRegistrationActivity">
+        tools:context="com.amit.yoganet.PostRegistrationActivity">
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -303,7 +303,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/layout_des"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        android:text="Actualizar perfil"
+                        android:text="@string/actualizar_perfil"
                         android:textColor="#FFFFFF"
                         android:textSize="15sp"
                         android:background="@color/design_default_color_primary"

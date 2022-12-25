@@ -215,6 +215,39 @@
     <string name="notif">A partir de ahora recibirás notificaciones de posts</string>
     <string name="errormsg">No se puede enviar el mensaje a este usuario</string>
     <string name="comments">" comentarios"</string>
+    <string name="actualizar_perfil">Actualizar perfil</string>
+    <string name="introduce">Por favor, introduir todos los campos</string>
+    <string name="user_policy_title">Política de Usuario</string>
+    <string name="user_policy_message">"Este aviso de privacidad de YogaNet (\"Compañía\", \"nosotros\" o \"nuestro\")
+        describe cómo y por qué podemos recopilar, almacenar, usar y/o compartir (\"procesar\") su información cuando
+        usa nuestros servicios (\"Servicios\"), como cuando usted: Descarga y usa nuestra aplicación móvil (YogaNet), o
+        cualquier otra aplicación nuestra que se vincule a este aviso de privacidad. Participa con nosotros de otras
+        maneras relacionadas, incluidas las ventas, el marketing o eventos ¿Preguntas o inquietudes? Leer este aviso de
+        privacidad lo ayudará a comprender sus derechos y opciones de privacidad. Si no está de acuerdo con nuestras
+        políticas y prácticas, no utilice nuestros Servicios. Si aún tiene alguna pregunta o inquietud, comuníquese con
+        nosotros a amit.kumar5011900@gmail.com. "
+    </string>
+    <string name="accept">Aceptar</string>
+    <string name="decline">Declinar</string>
+    <string name="user_policy">"Acepto los "</string>
+    <string name="user_policy_highlight">Términos y Condiciones</string>
+    <string name="addcontent">Añadir contenido</string>
+    <string name="opening_image">Abriendo imagen</string>
+    <string name="opening_video">Abriendo vídeo</string>
+    <string name="add_image">Añadir imagen</string>
+    <string name="add_video">Vídeo</string>
+    <string name="add_audio">Audio</string>
+    <string name="add_youtube">Enlace YouTube</string>
+    <string name="open_file_explorer">Abriendo explorador de archivos</string>
+    <string name="opening_youtube">Abriendo YouTube</string>
+    <string name="mapas">Mapa</string>
+    <string name="success">Hecho</string>
+    <string name="pick_from">Elegir</string>
+    <string name="ver_perfil">¿Ir al perfil del usuario?</string>
+    <string name="yes">Sí</string>
+    <string name="profile_info">Información del perfil</string>
+    <string name="accept_policy">Hay que aceptar la Política de Usuarios</string>
+    <string name="blockuser">Bloquear</string>
 
 
 </resources>

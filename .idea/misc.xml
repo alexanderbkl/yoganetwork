@@ -23,11 +23,13 @@
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_dashboard.xml" value="0.1" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_group_chat.xml" value="0.29322916666666665" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_post_detail.xml" value="0.14260385005065856" />
+        <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_post_registration.xml" value="0.1716485507246377" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_settings.xml" value="0.33" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_there_profile.xml" value="0.21" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/activity_users.xml" value="0.19746835443037974" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/fragment_chat_list.xml" value="0.15" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/fragment_posts.xml" value="0.20833333333333334" />
+        <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/fragment_profile.xml" value="0.20572916666666666" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/fragment_users.xml" value="0.1" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/fragment_users_card_stack.xml" value="0.4190871369294606" />
         <entry key="..\:/Users/Amit/Desktop/YogaNetwork/app/src/main/res/layout/item_spot.xml" value="0.1" />
@@ -130,5 +132,5 @@
     </option>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="jbr-11" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17_PREVIEW" project-jdk-name="jbr-11" project-jdk-type="JavaSDK" />
 </project>
