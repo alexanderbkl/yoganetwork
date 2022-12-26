@@ -215,7 +215,7 @@ catch (Exception e) {
 builder.create().show();
         });
         //click to block unblock user
-        myHolder.blockIv.setOnClickListener(new View.OnClickListener() {
+     /*   myHolder.blockIv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             if (userList.get(i).isBlocked()) {
@@ -225,7 +225,7 @@ builder.create().show();
                 blockUser(hisUid);
             }
             }
-        });
+        });*/
 
         myHolder.likeIv.setOnClickListener(new View.OnClickListener() {
             @Override

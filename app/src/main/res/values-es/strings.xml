@@ -248,6 +248,8 @@
     <string name="profile_info">Información del perfil</string>
     <string name="accept_policy">Hay que aceptar la Política de Usuarios</string>
     <string name="blockuser">Bloquear</string>
+    <string name="report_reason">Razón</string>
+    <string name="reportuser">Reportar</string>
 
 
 </resources>

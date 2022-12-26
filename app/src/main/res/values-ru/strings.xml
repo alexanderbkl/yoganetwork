@@ -249,5 +249,7 @@
     <string name="profile_info">Информация профиля</string>
     <string name="accept_policy">Нужно принять Пользовательскую Политика</string>
     <string name="blockuser">Заблокировать</string>
+    <string name="report_reason">Причина</string>
+    <string name="reportuser">Сообщить об пользователе</string>
 
 </resources>

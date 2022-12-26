@@ -2,6 +2,7 @@ package com.amit.yoganet.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.ColorSpace;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -44,6 +46,7 @@ public class PostsFragment extends Fragment {
     private ShimmerFrameLayout shimmerFrameLayout;
     private String myUid, pAudio;
     private boolean isBlocked = false;
+
 
 
     public PostsFragment() {
@@ -67,13 +70,13 @@ public class PostsFragment extends Fragment {
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             //show  newest post first, for this load from last
+        recycler_view = view.findViewById(R.id.recycler_view);
 
 
             //init post list
             postList = new ArrayList<>();
 
             loadPosts();
-        recycler_view = view.findViewById(R.id.recycler_view);
 
 
         //set layout to recycler_view
@@ -114,42 +117,69 @@ public class PostsFragment extends Fragment {
                     //add the post to the list
                     postList.add(modelPost);
 
-                    //sort the list by hot score
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        postList.sort((o1, o2) -> (int) (Double.parseDouble(o2.getHotScore()) - Double.parseDouble(o1.getHotScore())));
-                        shimmerFrameLayout.setVisibility(View.GONE);
-                    }
-
-
-                    // Iterate through the postList and remove any blocked posts
-                    Iterator<ModelPost> iterator = postList.iterator();
-                    while (iterator.hasNext()) {
-                        ModelPost post = iterator.next();
-                        if (checkIsBlocked(post.getUid())) {
-                            Toast.makeText(getActivity(), "isblocked", Toast.LENGTH_SHORT).show();
-                            iterator.remove();
-                        } else {
-                            Toast.makeText(getActivity(), "not blocked", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    //adapter
-                    adapterPosts = new AdapterPost(getActivity(), postList, recycler_view);
-
-
-
-                    adapterPosts.setHasStableIds(true);
-
-                    adapterPosts.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.ALLOW);
-                    //set adapter to recycler_view
-                    recycler_view.setHasFixedSize(true);
-                    recycler_view.setItemAnimator(null);
-
-                    //set max recycled views
-
-                    recycler_view.setAdapter(adapterPosts);
                 }
+
+
+
+                //the iterator.remove() gives IllegalStateException, how to fix it?
+                //to fix it, use the iterator.remove() in the main thread
+
+                //sort the list by hot score
+
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    postList.sort((o1, o2) -> (int) (Double.parseDouble(o2.getHotScore()) - Double.parseDouble(o1.getHotScore())));
+                    shimmerFrameLayout.setVisibility(View.GONE);
+                }
+
+
+
+                //get all blocked useris of current user
+
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+                ref.child(myUid).child("BlockedUsers").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot ds: snapshot.getChildren()) {
+                            String blockedUid = ""+ds.getKey();
+                            //now check if the post is of the blocked user
+                            for (Iterator<ModelPost> iterator = postList.iterator(); iterator.hasNext(); ) {
+                                ModelPost modelPost = iterator.next();
+                                if (modelPost.getUid().equals(blockedUid)) {
+                                    iterator.remove();
+                                }
+                            }
+                        }
+
+                        //adapter
+                        adapterPosts = new AdapterPost(getActivity(), postList, recycler_view);
+
+
+
+                        adapterPosts.setHasStableIds(true);
+
+                        adapterPosts.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.ALLOW);
+                        //set adapter to recycler_view
+                        recycler_view.setHasFixedSize(true);
+                        recycler_view.setItemAnimator(null);
+
+                        //set max recycled views
+
+                        recycler_view.setAdapter(adapterPosts);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+
+
+
+
+
+
 
 
             }
@@ -160,29 +190,14 @@ public class PostsFragment extends Fragment {
             }
         });
 
+
+
     }
 
-    private boolean checkIsBlocked(String hisUid) {
-        //check each user, if blocked or not
-        //if uid of the user exists in "BlockedUsers then that user is blocked, otherwise not
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.child(myUid).child("BlockedUsers").orderByChild("uid").equalTo(hisUid)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot ds: snapshot.getChildren()) {
-                            if (ds.exists()) {
-                                isBlocked = true;
-                            }
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
 
-                    }
-                });
-        return isBlocked;
+    interface Callback {
+        void onResult(boolean result);
     }
 
     /*   private long hot(long postDate, long likes, long currentDate) {

@@ -396,4 +396,6 @@
     <string name="profile_info">Profile info</string>
     <string name="accept_policy">Accept User Policy first</string>
     <string name="blockuser">Block</string>
+    <string name="report_reason">Enter the reason of the report</string>
+    <string name="reportuser">Report user</string>
 </resources>

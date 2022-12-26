@@ -380,6 +380,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                              * Second parameter contains the url of the image stored in firebase storage, this url will be saved as value against key "image" or "cover"*/
 
 
+                            databaseReference = firebaseDatabase.getReference("Users");
 
                             databaseReference.child(user.getUid()).addValueEventListener(new ValueEventListener() {
                                 @Override
@@ -503,8 +504,9 @@ public class PostRegistrationActivity extends AppCompatActivity {
                             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    snapshot.child("imageFull").getRef().setValue(downloadUri.toString());
-
+                                    if (profileOrCoverPhoto.equals("image")) {
+                                        snapshot.child("imageFull").getRef().setValue(downloadUri.toString());
+                                    }
                                     pd.dismiss();
                                     Toast.makeText(PostRegistrationActivity.this, "Hecho!", Toast.LENGTH_SHORT).show();
 

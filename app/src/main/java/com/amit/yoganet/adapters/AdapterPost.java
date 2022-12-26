@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Outline;
@@ -12,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
+import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.*;
@@ -20,6 +22,7 @@ import android.view.animation.BounceInterpolator;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.RecyclerView;
 import com.ablanco.zoomy.Zoomy;
@@ -41,6 +44,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -599,6 +603,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
         //block user
         if (!uid.equals(myUid)) {
             popupMenu.getMenu().add(Menu.NONE, 3, 0, context.getString(R.string.blockuser));
+            popupMenu.getMenu().add(Menu.NONE, 4, 0, context.getString(R.string.reportuser));
         }
 
 
@@ -629,12 +634,98 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                 } else {
                     blockUser(uid);
                 }
+            } else if (id == 4) {
+                //create floating dialog with input field to report user
+                showReportDialog(uid, pId);
             }
 
             return false;
         });
         //show menu
         popupMenu.show();
+    }
+
+    private void showReportDialog(String uid, String pId) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(context.getString(R.string.reportuser));
+        builder.setMessage("Enter report reason:");
+
+        // Set other properties of the dialog (optional)
+
+
+        // Create a layout for the custom view
+        LinearLayout layout = new LinearLayout(context);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+    // Create a text field for the prompt
+        final EditText reoprtField = new EditText(context);
+        reoprtField.setHint("Enter reason");
+        layout.addView(reoprtField);
+
+    // Set the custom view as the content of the dialog
+        builder.setView(layout);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String reportText = reoprtField.getText().toString().trim();
+                if (TextUtils.isEmpty(reportText)) {
+                    Toast.makeText(context, context.getString(R.string.report_reason), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //report user
+                reportUser(uid, reportText, pId);
+                //done
+                dialog.dismiss();
+
+            }
+        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+            }
+        });
+
+
+        // Create the dialog
+        AlertDialog dialog = builder.create();
+        // Show the dialog
+        dialog.show();
+
+
+
+    }
+
+    private void reportUser(String uid, String reportText, String pId) {
+//get timestamp
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm aa");
+        String timestamp = dateFormat.format(calendar.getTime());
+
+        //setup data to put in report user node
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("uid", uid);
+        hashMap.put("timestamp", timestamp);
+        hashMap.put("reportText", reportText);
+        hashMap.put("pId", pId);
+        hashMap.put("reporterUid", myUid);
+
+        //put data in report user node
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ReportedUsers");
+        ref.child(uid).setValue(hashMap)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(context, context.getString(R.string.success), Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(context, context.getString(R.string.fallida)+e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void unBlockUser(String hisUid) {
