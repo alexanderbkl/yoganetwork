@@ -247,9 +247,11 @@
     <string name="yes">Sí</string>
     <string name="profile_info">Información del perfil</string>
     <string name="accept_policy">Hay que aceptar la Política de Usuarios</string>
-    <string name="blockuser">Bloquear</string>
+    <string name="blockuser">Bloquear usuario</string>
     <string name="report_reason">Razón</string>
-    <string name="reportuser">Reportar</string>
+    <string name="reportuser">Reportar usuario</string>
+    <string name="reportpostmsg">Razón:</string>
+    <string name="reportpost">Reportar publicación:</string>
 
 
 </resources>

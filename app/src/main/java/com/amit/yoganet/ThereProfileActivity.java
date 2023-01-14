@@ -21,6 +21,7 @@ import com.amit.yoganet.models.ModelPost;
 import com.amit.yoganet.notifications.Data;
 import com.amit.yoganet.notifications.Sender;
 import com.amit.yoganet.notifications.Token;
+import com.amit.yoganet.utils.ReportUtils;
 import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -61,10 +62,12 @@ public class ThereProfileActivity extends AppCompatActivity {
     private String myUid;
     private boolean isLiked = false;
     private RequestQueue requestQueue;
+    private ReportUtils reportUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_there_profile);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -95,6 +98,8 @@ public class ThereProfileActivity extends AppCompatActivity {
         if (myUid == null) {
             myUid = firebaseAuth.getUid();
         }
+
+        reportUtils = new ReportUtils();
 
         Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("uid").equalTo(uid);
         query.addValueEventListener(new ValueEventListener() {
@@ -538,6 +543,11 @@ public class ThereProfileActivity extends AppCompatActivity {
         menu.findItem(R.id.action_add_post).setVisible(false); //hide add post from this activity
         menu.findItem(R.id.action_create_group).setVisible(false); //hide create group from this activity
         menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_reportuser).setVisible(true);
+
+
+        menu.findItem(R.id.action_blockuser).setVisible(true);
+
         MenuItem item = menu.findItem(R.id.action_search);
         //v7 searchview ot search user specific posts
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
@@ -566,6 +576,7 @@ public class ThereProfileActivity extends AppCompatActivity {
             }
         });
 
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -584,6 +595,19 @@ public class ThereProfileActivity extends AppCompatActivity {
             startActivity(i);
 
 
+        }
+
+        if (id == R.id.action_reportuser) {
+            reportUtils.showUserReportDialog(ThereProfileActivity.this, uid, myUid);
+        }
+
+        if (id == R.id.action_blockuser) {
+
+            if (reportUtils.checkIsBlocked(ThereProfileActivity.this, uid, myUid)) {
+                reportUtils.unBlockUser(ThereProfileActivity.this, uid, myUid);
+            } else {
+                reportUtils.blockUser(ThereProfileActivity.this, uid, myUid);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

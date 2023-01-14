@@ -248,8 +248,10 @@
     <string name="yes">Да</string>
     <string name="profile_info">Информация профиля</string>
     <string name="accept_policy">Нужно принять Пользовательскую Политика</string>
-    <string name="blockuser">Заблокировать</string>
+    <string name="blockuser">Заблокировать пользователя</string>
     <string name="report_reason">Причина</string>
     <string name="reportuser">Сообщить об пользователе</string>
+    <string name="reportpostmsg">Причина:</string>
+    <string name="reportpost">Пожаловатся об посте</string>
 
 </resources>

@@ -6,6 +6,12 @@
         android:title="@string/cerrar_sesi_n"/>
     <item android:id="@+id/action_settings"
         android:title="@string/ajustes"/>
+    <item android:id="@+id/action_reportuser"
+          android:visible="false"
+        android:title="@string/reportuser"/>
+    <item android:id="@+id/action_blockuser"
+          android:visible="false"
+          android:title="@string/blockuser"/>
 
     <item android:id="@+id/action_search"
         android:title="@string/buscar"

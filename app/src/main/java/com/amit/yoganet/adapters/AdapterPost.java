@@ -29,6 +29,7 @@ import com.ablanco.zoomy.Zoomy;
 import com.amit.yoganet.R;
 import com.amit.yoganet.*;
 import com.amit.yoganet.models.ModelPost;
+import com.amit.yoganet.utils.ReportUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.exoplayer2.MediaItem;
@@ -60,6 +61,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
     String myUid;
     private boolean mProcessLike=false, isBlocked = false;
     RecyclerView recycler_view;
+    ReportUtils reportUtils;
 
     private SimpleExoPlayer simpleExoPlayer;
     private MediaItem mediaItem;
@@ -84,6 +86,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
     public MyHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         //inflate layout row_post.xml
         View view = LayoutInflater.from(context).inflate(com.amit.yoganet.R.layout.row_posts, viewGroup, false);
+        reportUtils = new ReportUtils();
 
 
         return new MyHolder(view);
@@ -629,14 +632,15 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                 context.startActivity(intent);
             } else if (id==3) {
                 //block user
-                if (checkIsBlocked(uid)) {
-                    unBlockUser(uid);
+                if (reportUtils.checkIsBlocked(context, uid, myUid)) {
+                    reportUtils.unBlockUser(context, uid, myUid);
                 } else {
-                    blockUser(uid);
+
+                    reportUtils.blockUser(context, uid, myUid);
                 }
             } else if (id == 4) {
                 //create floating dialog with input field to report user
-                showReportDialog(uid, pId);
+                reportUtils.showPostReportDialog(context, uid, pId, myUid);
             }
 
             return false;
@@ -645,152 +649,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
         popupMenu.show();
     }
 
-    private void showReportDialog(String uid, String pId) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(context.getString(R.string.reportuser));
-        builder.setMessage("Enter report reason:");
-
-        // Set other properties of the dialog (optional)
-
-
-        // Create a layout for the custom view
-        LinearLayout layout = new LinearLayout(context);
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-    // Create a text field for the prompt
-        final EditText reoprtField = new EditText(context);
-        reoprtField.setHint("Enter reason");
-        layout.addView(reoprtField);
-
-    // Set the custom view as the content of the dialog
-        builder.setView(layout);
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String reportText = reoprtField.getText().toString().trim();
-                if (TextUtils.isEmpty(reportText)) {
-                    Toast.makeText(context, context.getString(R.string.report_reason), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                //report user
-                reportUser(uid, reportText, pId);
-                //done
-                dialog.dismiss();
-
-            }
-        }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-
-            }
-        });
-
-
-        // Create the dialog
-        AlertDialog dialog = builder.create();
-        // Show the dialog
-        dialog.show();
 
 
 
-    }
-
-    private void reportUser(String uid, String reportText, String pId) {
-//get timestamp
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm aa");
-        String timestamp = dateFormat.format(calendar.getTime());
-
-        //setup data to put in report user node
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("uid", uid);
-        hashMap.put("timestamp", timestamp);
-        hashMap.put("reportText", reportText);
-        hashMap.put("pId", pId);
-        hashMap.put("reporterUid", myUid);
-
-        //put data in report user node
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ReportedUsers");
-        ref.child(uid).setValue(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(context, context.getString(R.string.success), Toast.LENGTH_SHORT).show();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(context, context.getString(R.string.fallida)+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void unBlockUser(String hisUid) {
-
-        //unblock the user, by removing uid from current user's "BlockedUsers" node
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.child(myUid).child("BlockedUsers").orderByChild("uid").equalTo(hisUid)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for (DataSnapshot ds: snapshot.getChildren()) {
-                            if (ds.exists()) {
-                                //remove blocked user data from current user's BlockedUsers list
-                                ds.getRef().removeValue()
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                //unblocked successfully
-                                                Toast.makeText(context, context.getString(R.string.desbloqueado), Toast.LENGTH_SHORT).show();
-                                            }
-                                        })
-                                        .addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                //failed to unblock
-                                                Toast.makeText(context, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                                            }
-                                        });
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-    }
-
-    private void blockUser(String hisUid) {
-
-        //block the user, by adding uid to current user's "BlockedUsers" node
-
-        //put values in hashmap to put in db
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("uid", hisUid);
 
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
-        ref.child(myUid).child("BlockedUsers").child(hisUid).setValue(hashMap)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        //blocked successfully
-                        Toast.makeText(context, context.getString(R.string.bloqueado), Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        //failed to block
-                        Toast.makeText(context, "Error: "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
+
+
 
     private boolean checkIsBlocked(String hisUid) {
         //check each user, if blocked or not

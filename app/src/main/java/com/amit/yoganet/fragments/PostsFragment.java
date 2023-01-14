@@ -66,7 +66,19 @@ public class PostsFragment extends Fragment {
             firebaseAuth = FirebaseAuth.getInstance();
             //recycler_view and its properties
 
-        myUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            myUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        } else {
+            myUid = "0";
+
+            //go to main activity
+            startActivity(new Intent(getActivity(), MainActivity.class));
+            if (getActivity() != null) {
+                getActivity().finish();
+
+            }
+
+        }
         shimmerFrameLayout = view.findViewById(R.id.shimmer_view_container);
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
             //show  newest post first, for this load from last
