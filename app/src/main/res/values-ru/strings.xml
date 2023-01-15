@@ -253,5 +253,12 @@
     <string name="reportuser">Сообщить об пользователе</string>
     <string name="reportpostmsg">Причина:</string>
     <string name="reportpost">Пожаловатся об посте</string>
+    <string name="spiritual_name">Духовное имя</string>
+    <string name="name">Имя</string>
+    <string name="spiritual_path">Духовное направление</string>
+    <string name="practice">Вид практики</string>
+    <string name="diet">Диета</string>
+    <string name="description">Расскажи о себе 😊</string>
+    <string name="done">Готово!</string>
 
 </resources>

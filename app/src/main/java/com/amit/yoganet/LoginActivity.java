@@ -142,27 +142,32 @@ private FirebaseAuth mAuth;
         //show progress dialog
         pd.setMessage(getString(R.string.enviandoemail));
         pd.show();
-        mAuth.sendPasswordResetEmail(email)
+        if (mAuth != null) {
+            mAuth.sendPasswordResetEmail(email)
 
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                pd.dismiss();
-                if (task.isSuccessful()) {
-                    Toast.makeText(LoginActivity.this, R.string.emailenviado, Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Toast.makeText(LoginActivity.this, R.string.fallo, Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                pd.dismiss();
-                //get and show proper error message
-                Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            pd.dismiss();
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, R.string.emailenviado, Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                Toast.makeText(LoginActivity.this, R.string.fallo, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            pd.dismiss();
+                            //get and show proper error message
+                            Toast.makeText(LoginActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            Toast.makeText(this, "Null auth", Toast.LENGTH_SHORT).show();
+        }
+
             }
     private void loginUser(String email, String password) {
         //show progress dialog

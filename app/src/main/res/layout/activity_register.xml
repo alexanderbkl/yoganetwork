@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:text="@string/user_policy"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:layout_marginBottom="10dp"
             android:textColor="@color/teal_200"
             android:id="@+id/userPolicy"
@@ -65,13 +65,13 @@
     <!--Create a highlighted text "UserPolicy" after the text "I agree to the"-->
     <TextView
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_height="23dp"
             android:text="@string/user_policy_highlight"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:textColor="@color/teal_700"
             android:id="@+id/userPolicyText"
             android:layout_alignBottom="@+id/userPolicy"
-            android:layout_toRightOf="@+id/userPolicy"/>
+            android:layout_toEndOf="@+id/userPolicy"/>
 
     <!--Button: Register User-->
     <!--GoogleSignInBtn: Sign in with google account-->
@@ -85,7 +85,8 @@
             android:layout_below="@id/userPolicy"
             android:layout_marginTop="4dp"
             android:drawableStart="@drawable/ic_reg"
-            android:text="@string/registrarse" android:layout_centerInParent="true"/>
+            android:text="@string/registrarse"
+            android:layout_centerInParent="true"/>
 
     <ImageButton
         android:id="@+id/googleLoginBtn"

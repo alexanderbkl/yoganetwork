@@ -400,4 +400,11 @@
     <string name="reportuser">Report user</string>
     <string name="reportpostmsg">Enter report reason:</string>
     <string name="reportpost">Report post</string>
+    <string name="spiritual_name">Spiritual name</string>
+    <string name="name">Name</string>
+    <string name="spiritual_path">Spiritual path</string>
+    <string name="practice">Kind of practice</string>
+    <string name="diet">Type of diet</string>
+    <string name="description">Tell about yourself 😊</string>
+    <string name="done">Done!</string>
 </resources>
