@@ -258,7 +258,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
 
 
                     pd.dismiss();
-                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done)+"1", Toast.LENGTH_SHORT).show();
                     PostRegistrationActivity.this.finish();
                     Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
                     intent.putExtra("fragPos","1");
@@ -391,7 +391,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                                         snapshot.child("cover").getRef().setValue(downloadUri.toString());
                                     }
                                     pd.dismiss();
-                                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done)+"2", Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -508,7 +508,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                                         snapshot.child("imageFull").getRef().setValue(downloadUri.toString());
                                     }
                                     pd.dismiss();
-                                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done)+"3", Toast.LENGTH_SHORT).show();
 
                                 }
 

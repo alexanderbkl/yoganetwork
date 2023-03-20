@@ -251,12 +251,13 @@
     <string name="report_reason">Razón</string>
     <string name="reportuser">Reportar usuario</string>
     <string name="reportpostmsg">Razón:</string>
-    <string name="reportpost">Reportar publicación:</string>
+    <string name="reportpost">Reportar publicación</string>
     <string name="spiritual_name">Nombre espiritual</string>
     <string name="name">Nombre</string>
     <string name="spiritual_path">Camino espiritual</string>
     <string name="practice">Tipo de práctica</string>
     <string name="diet">Tipo de dieta</string>
+    <string name="blockcontent">Bloquear contenido</string>
     <string name="description">Explica algo de ti 😊</string>
     <string name="done">Hecho!</string>
 

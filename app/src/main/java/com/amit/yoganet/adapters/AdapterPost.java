@@ -605,8 +605,8 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
         popupMenu.getMenu().add(Menu.NONE, 2, 0, context.getString(R.string.details));
         //block user
         if (!uid.equals(myUid)) {
-            popupMenu.getMenu().add(Menu.NONE, 3, 0, context.getString(R.string.blockuser));
-            popupMenu.getMenu().add(Menu.NONE, 4, 0, context.getString(R.string.reportuser));
+            popupMenu.getMenu().add(Menu.NONE, 3, 0, context.getString(R.string.blockcontent));
+            popupMenu.getMenu().add(Menu.NONE, 4, 0, context.getString(R.string.reportpost));
         }
 
 
