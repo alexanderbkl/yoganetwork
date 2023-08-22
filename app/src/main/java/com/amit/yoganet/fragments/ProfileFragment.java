@@ -1,5 +1,6 @@
 package com.amit.yoganet.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.DialogInterface;
@@ -60,7 +61,7 @@ public class ProfileFragment extends Fragment {
 
     //view from xml
     ImageView avatarIv, coverIv;
-    TextView nameTv, realNameTv, typeTv, practicTv, dietTv, descriptionTv;
+    TextView nameTv, pseudonymTv, typeTv, practicTv, dietTv, descriptionTv, placeTv, purposeTv;
     FloatingActionButton fab;
     ClipData.Item action_groupinfo;
     //progress dialog
@@ -120,7 +121,11 @@ public class ProfileFragment extends Fragment {
         avatarIv = view.findViewById(R.id.avatarIv);
         coverIv = view.findViewById(R.id.coverIv);
         nameTv = view.findViewById(R.id.nameTv);
-        realNameTv = view.findViewById(R.id.realNameTv);
+
+        pseudonymTv = view.findViewById(R.id.pseudonymTv);
+        placeTv = view.findViewById(R.id.placeTv);
+        purposeTv = view.findViewById(R.id.purposeTv);
+
         typeTv = view.findViewById(R.id.typeTv);
         practicTv = view.findViewById(R.id.practicTv);
         dietTv = view.findViewById(R.id.dietTv);
@@ -141,6 +146,7 @@ public class ProfileFragment extends Fragment {
 
         Query query = databaseReference.orderByChild("uid").equalTo(user.getUid());
         query.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //check until required data get
@@ -153,11 +159,24 @@ public class ProfileFragment extends Fragment {
                     if (!pseudonymL.equals("")) {
                         pseudonym = pseudonymL.substring(0, 1).toUpperCase() + pseudonymL.substring(1);
                     }
-                    String realnameL = ""+ds.child("realname").getValue();
-                    String realname = realnameL;
-                    if (!realnameL.equals("")) {
-                        realname = realnameL.substring(0, 1).toUpperCase() + realnameL.substring(1);
+                    String countryL = ""+ds.child("country").getValue();
+                    String country = countryL;
+                    if (!countryL.equals("")) {
+                        country = countryL.substring(0, 1).toUpperCase() + countryL.substring(1);
                     }
+                    String cityL = ""+ds.child("city").getValue();
+
+                    String city = cityL;
+                    if (!cityL.equals("")) {
+                        city = cityL.substring(0, 1).toUpperCase() + cityL.substring(1);
+                    }
+
+                    String purposeL = ""+ds.child("purpose").getValue();
+                    String purpose = purposeL;
+                    if (!purposeL.equals("")) {
+                        purpose = purposeL.substring(0, 1).toUpperCase() + purposeL.substring(1);
+                    }
+
                     String typeL = ""+ ds.child("type").getValue();
                     String type = typeL;
                     if (!typeL.equals("")) {
@@ -183,7 +202,12 @@ public class ProfileFragment extends Fragment {
 
                     //set data
                     nameTv.setText(pseudonym);
-                    realNameTv.setText(realname);
+
+                    String countryAndCity = country + ", " + city;
+                    placeTv.setText(countryAndCity);
+                    purposeTv.setText(purpose);
+
+
                     typeTv.setText(type);
                     practicTv.setText(practic);
                     dietTv.setText(diet);

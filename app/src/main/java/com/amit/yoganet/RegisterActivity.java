@@ -148,18 +148,19 @@ public class RegisterActivity extends AppCompatActivity {
                             //get user email and uid from auth
                             String email = user.getEmail();
                             String uid = user.getUid();
-
                             //Data will be saved in "users" node.
                             HashMap<Object, String> hashMap = new HashMap<>();
                             hashMap.put("email", email);
                             hashMap.put("uid", uid);
                             hashMap.put("pseudonym", "");
-                            hashMap.put("image", "");
-                            hashMap.put("realname", "");
+                            hashMap.put("image", String.valueOf(user.getPhotoUrl()));
                             hashMap.put("onlineStatus", "Online");
                             hashMap.put("typingTo", "noOne");
                             hashMap.put("type", "");
                             hashMap.put("practic", "");
+                            hashMap.put("purpose", "");
+                            hashMap.put("country", "");
+                            hashMap.put("city", "");
                             hashMap.put("diet", "");
                             hashMap.put("cover", "");
                             hashMap.put("description","");

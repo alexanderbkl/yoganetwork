@@ -3,7 +3,7 @@ package com.amit.yoganet.models;
 public class ModelUsers {
 
     //use same name as in firebase database
-    String pseudonym, realname, practic, type, diet, image, cover, uid, onlineStatus, notifications, email, description, profileLikes;
+    String pseudonym, purpose, country, city, practic, type, diet, image, cover, uid, onlineStatus, notifications, email, description, profileLikes;
     boolean isBlocked = false;
     boolean isLiked = false;
 
@@ -11,9 +11,11 @@ public class ModelUsers {
 
     }
 
-    public ModelUsers(String pseudonym, String realname, String practic, String type, String diet, String image, String cover, String uid, String onlineStatus, String notifications, String email, String description, String profileLikes, boolean isBlocked, boolean isLiked) {
+    public ModelUsers(String pseudonym, String purpose, String country, String city, String practic, String type, String diet, String image, String cover, String uid, String onlineStatus, String notifications, String email, String description, String profileLikes, boolean isBlocked, boolean isLiked) {
         this.pseudonym = pseudonym;
-        this.realname = realname;
+        this.country = country;
+        this.purpose = purpose;
+        this.city = city;
         this.practic = practic;
         this.type = type;
         this.diet = diet;
@@ -37,8 +39,29 @@ public class ModelUsers {
         this.pseudonym = pseudonym;
     }
 
-    public String getRealname() {
-        return realname;
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
 

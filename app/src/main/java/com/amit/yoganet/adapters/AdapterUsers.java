@@ -96,6 +96,23 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
         if (!userNameL.equals("")) {
             userName = userNameL.substring(0,1).toUpperCase() + userNameL.substring(1);
         }
+        String purposeL = userList.get(i).getPurpose();
+        String purpose = purposeL;
+        if (!purposeL.equals("")) {
+            purpose = userNameL.substring(0,1).toUpperCase() + purposeL.substring(1);
+        }
+        String cityL = userList.get(i).getCity();
+        String city = cityL;
+        if (!cityL.equals("")) {
+            city = cityL.substring(0,1).toUpperCase() + cityL.substring(1);
+        }
+        String countryL = userList.get(i).getCountry();
+        String country = countryL;
+        if (!countryL.equals("")) {
+            country = countryL.substring(0,1).toUpperCase() + countryL.substring(1);
+        }
+
+
        String userPracticL = userList.get(i).getPractic();
        String userPractic = userPracticL;
        if (!userPracticL.equals("")) {
@@ -109,6 +126,9 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
        String userDescription = userList.get(i).getDescription();
     //set data
         myHolder.mNameTv.setText(userName);
+        myHolder.mPurposeTv.setText(purpose);
+        String userLocation = city + ", " + country;
+        myHolder.mPlaceTv.setText(userLocation);
         myHolder.mPracticTv.setText(userPractic);
         myHolder.mTypeTv.setText(userType);
         myHolder.mDescriptionTv.setText(userDescription);
@@ -644,7 +664,7 @@ builder.create().show();
     class MyHolder extends RecyclerView.ViewHolder {
 
         ImageView mAvatarIv, blockIv, likeIv;
-        TextView mNameTv, mPracticTv, mTypeTv, mDescriptionTv, mDistanceTv;
+        TextView mNameTv, mPracticTv, mPurposeTv, mPlaceTv, mTypeTv, mDescriptionTv, mDistanceTv;
 
         public MyHolder(@NonNull View itemView) {
             super(itemView);
@@ -656,6 +676,8 @@ builder.create().show();
             mNameTv = itemView.findViewById(R.id.nameTv);
             mPracticTv = itemView.findViewById(R.id.practicTv);
             mTypeTv = itemView.findViewById(R.id.typeTv);
+            mPurposeTv = itemView.findViewById(R.id.purposeTv);
+            mPlaceTv = itemView.findViewById(R.id.placeTv);
             mDescriptionTv = itemView.findViewById(R.id.descriptionTv);
             mDistanceTv = itemView.findViewById(R.id.distanceTv);
 

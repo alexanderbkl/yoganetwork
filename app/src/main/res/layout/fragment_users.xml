@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
-             tools:context="com.amit.yoganet.fragments.UsersFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    tools:context="com.amit.yoganet.fragments.UsersFragment">
 
-    <Button android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:id="@+id/cardStackBtn"/>
+    <Button
+        android:id="@+id/cardStackBtn"
+        android:layout_width="30dp"
+        android:layout_height="30dp" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/users_recyclerView"
+        android:background="@android:color/transparent"
+
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

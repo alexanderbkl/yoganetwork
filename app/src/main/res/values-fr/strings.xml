@@ -220,6 +220,7 @@
         <item>@string/gotoprofile</item>
         <item>@string/enviarmsg</item>
     </array>
+    <string name="diet">Diete</string>
 
 
 </resources>

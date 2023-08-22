@@ -50,7 +50,7 @@ public class ThereProfileActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     //view from xml
     private ImageView avatarIv, coverIv;
-    private TextView nameTv, realNameTv, typeTv, practicTv, dietTv, descriptionTv;
+    private TextView nameTv, placeTv, purposeTv, typeTv, practicTv, dietTv, descriptionTv;
 
     private RecyclerView postsRecyclerView;
 
@@ -80,7 +80,10 @@ public class ThereProfileActivity extends AppCompatActivity {
         avatarIv = findViewById(R.id.avatarIv);
         coverIv = findViewById(R.id.coverIv);
         nameTv = findViewById(R.id.nameTv);
-        realNameTv = findViewById(R.id.realNameTv);
+
+
+
+
         fab = findViewById(R.id.fab);
         likeFab = findViewById(R.id.likeFab);
         typeTv = findViewById(R.id.typeTv);
@@ -113,11 +116,26 @@ public class ThereProfileActivity extends AppCompatActivity {
                     if (!pseudonymL.equals("")) {
                         pseudonym = pseudonymL.substring(0, 1).toUpperCase() + pseudonymL.substring(1);
                     }
-                    String realnameL = ""+ds.child("realname").getValue();
-                    String realname = realnameL;
-                    if (!realnameL.equals("")) {
-                        realname = realnameL.substring(0, 1).toUpperCase() + realnameL.substring(1);
+
+                    String countryL = ""+ds.child("country").getValue();
+                    String country = countryL;
+                    if (!countryL.equals("")) {
+                        country = countryL.substring(0, 1).toUpperCase() + countryL.substring(1);
                     }
+
+                    String cityL = ""+ds.child("city").getValue();
+                    String city = cityL;
+                    if (!cityL.equals("")) {
+                        city = cityL.substring(0, 1).toUpperCase() + cityL.substring(1);
+                    }
+
+                    String purposeL = ""+ds.child("purpose").getValue();
+                    String purpose = purposeL;
+                    if (!purposeL.equals("")) {
+                        purpose = purposeL.substring(0, 1).toUpperCase() + purposeL.substring(1);
+                    }
+
+
                     String typeL = ""+ ds.child("type").getValue();
                     String type = typeL;
                     if (!typeL.equals("")) {
@@ -142,7 +160,11 @@ public class ThereProfileActivity extends AppCompatActivity {
 
                     //set data
                     nameTv.setText(pseudonym);
-                    realNameTv.setText(realname);
+                    purposeTv.setText(purpose);
+
+                    String place = city + ", " + country;
+                    placeTv.setText(place);
+
                     typeTv.setText(type);
                     practicTv.setText(practic);
                     dietTv.setText(diet);

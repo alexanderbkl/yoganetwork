@@ -116,9 +116,9 @@ public class ChattingActivity extends AppCompatActivity implements AudioRecordVi
         toolbar.setTitle("");
         userStatusTv = findViewById(com.amit.yoganet.R.id.userStatusTv);
         nameTv = findViewById(com.amit.yoganet.R.id.nameTv);
-        profileIv = findViewById(com.amit.yoganet.R.id.profileIv);
-        blockIv = findViewById(com.amit.yoganet.R.id.blockIv);
-        likeIv = findViewById(com.amit.yoganet.R.id.likeIv);
+        profileIv = findViewById(R.id.profileIv);
+        blockIv = findViewById(R.id.blockIv);
+        likeIv = findViewById(R.id.likeIv);
 
         firebaseAuth = FirebaseAuth.getInstance();
 

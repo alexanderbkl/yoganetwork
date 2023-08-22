@@ -5,20 +5,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="2dp"
-                                   android:background="#448C8C8C"
                                    android:orientation="vertical"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="@color/white"
+    android:background="@android:color/transparent"
+
+    app:cardBackgroundColor="@android:color/transparent"
     app:contentPadding="3dp">
 
 <RelativeLayout
-
+    android:background="@android:color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="match_parent">
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+
+        android:layout_height="match_parent"
             android:orientation="vertical">
         <LinearLayout
                 android:id="@+id/contentLayout"
@@ -74,6 +77,19 @@
                         android:layout_marginEnd="8dp"
                         android:text="@string/pr_ctica"
                         android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/purposeTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Purpose in life"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/placeTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="BCN, Spain"
+                    android:textColor="@color/black"/>
                 <TextView
                         android:layout_gravity="end"
                         android:id="@+id/distanceTv"

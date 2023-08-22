@@ -408,4 +408,7 @@
     <string name="diet">Type of diet</string>
     <string name="description">Tell about yourself 😊</string>
     <string name="done">Done!</string>
+    <string name="purpose">Purpose (friends, couple, fellow thinkers)</string>
+    <string name="country">Country</string>
+    <string name="city">City</string>
 </resources>

@@ -113,42 +113,52 @@ class UsersActivity : AppCompatActivity() {
                     val modelUsers = dataSnapshot.getValue(ModelUsers::class.java)
                     /*Conditions to fulfil search:
                      * 1) User not current user
-                     * 2) The user pseudonym or realname contains text entered in SearchView (case insensitive) */
+                     * 2) The user pseudonym contains text entered in SearchView (case insensitive) */
 
 
                     //get all search users except currently signed in user
                     if (dataSnapshot.getValue(ModelUsers::class.java)!!.uid != fUser!!.uid) {
                         if (modelUsers!!.pseudonym.lowercase(Locale.getDefault())
                                 .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.realname.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault()))
+                            modelUsers.purpose.lowercase(Locale.getDefault())
+                                .contains(query.lowercase(Locale.getDefault())) ||
+                                modelUsers.country.lowercase(Locale.getDefault())
+                                        .contains(query.lowercase(Locale.getDefault()))
                         ) {
                             userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
                         }
-                        if (modelUsers.realname.lowercase(Locale.getDefault())
+                        if (modelUsers.purpose.lowercase(Locale.getDefault())
                                 .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.realname.lowercase(Locale.getDefault())
+                            modelUsers.purpose.lowercase(Locale.getDefault())
+                                .contains(query.lowercase(Locale.getDefault()))||
+                            modelUsers.country.lowercase(Locale.getDefault())
                                 .contains(query.lowercase(Locale.getDefault()))
                         ) {
                             userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
                         }
                         if (modelUsers.practic.lowercase(Locale.getDefault())
                                 .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.realname.lowercase(Locale.getDefault())
+                            modelUsers.purpose.lowercase(Locale.getDefault())
+                                .contains(query.lowercase(Locale.getDefault())) ||
+                            modelUsers.country.lowercase(Locale.getDefault())
                                 .contains(query.lowercase(Locale.getDefault()))
                         ) {
                             userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
                         }
                         if (modelUsers.type.lowercase(Locale.getDefault())
                                 .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.realname.lowercase(Locale.getDefault())
+                            modelUsers.purpose.lowercase(Locale.getDefault())
+                                .contains(query.lowercase(Locale.getDefault())) ||
+                            modelUsers.country.lowercase(Locale.getDefault())
                                 .contains(query.lowercase(Locale.getDefault()))
                         ) {
                             userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
                         }
                         if (modelUsers.diet.lowercase(Locale.getDefault())
                                 .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.realname.lowercase(Locale.getDefault())
+                            modelUsers.purpose.lowercase(Locale.getDefault())
+                                .contains(query.lowercase(Locale.getDefault())) ||
+                            modelUsers.country.lowercase(Locale.getDefault())
                                 .contains(query.lowercase(Locale.getDefault()))
                         ) {
                             userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
@@ -156,7 +166,9 @@ class UsersActivity : AppCompatActivity() {
                         if (modelUsers.description != null) {
                             if (modelUsers.description.lowercase(Locale.getDefault())
                                     .contains(query.lowercase(Locale.getDefault())) ||
-                                modelUsers.realname.lowercase(Locale.getDefault())
+                                modelUsers.purpose.lowercase(Locale.getDefault())
+                                    .contains(query.lowercase(Locale.getDefault())) ||
+                                modelUsers.country.lowercase(Locale.getDefault())
                                     .contains(query.lowercase(Locale.getDefault()))
                             ) {
                                 userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)

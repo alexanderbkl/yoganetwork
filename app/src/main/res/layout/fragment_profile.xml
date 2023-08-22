@@ -1,217 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1EDED"
+    android:background="@android:color/transparent"
+
     tools:context="com.amit.yoganet.fragments.ProfileFragment">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:background="@color/white"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/appbar"
-                android:outlineProvider="none"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:outlineProvider="none"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar_main"
-                    android:textAlignment="center"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#00171212"
-                    app:layout_scrollFlags="scroll|enterAlways|snap"
-                    android:contentInsetLeft="0dp"
-                    android:contentInsetStart="0dp"
-                    app:contentInsetLeft="0dp"
-                    app:contentInsetStart="0dp"
-                    android:outlineProvider="none"
-                    android:contentInsetRight="0dp"
-                    android:contentInsetEnd="0dp"
-                    app:contentInsetRight="0dp"
-                    app:contentInsetEnd="0dp">
+                android:id="@+id/toolbar_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#00171212"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetEnd="0dp"
+                android:contentInsetRight="0dp"
+                android:outlineProvider="none"
+                android:textAlignment="center"
+                app:contentInsetEnd="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetStart="0dp"
+                app:layout_scrollFlags="scroll|enterAlways|snap">
 
                 <RelativeLayout
-                        android:outlineProvider="none"
-                        android:layout_width="match_parent"
-                        android:background="@android:color/transparent"
-                        android:layout_height="wrap_content" tools:ignore="UselessParent">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:outlineProvider="none"
+                    tools:ignore="UselessParent">
                     <!--Cover Photo-->
 
 
                     <ImageView
-                            android:id="@+id/coverIv"
-                            android:layout_width="match_parent"
-                            android:layout_height="150dp"
-                            android:background="#9E9E9E"
-                            android:contentDescription="@string/todo"
-                            android:scaleType="fitXY"/>
-                    <com.google.android.material.floatingactionbutton.FloatingActionButton
-                            android:id="@+id/fab"
-                            android:scaleX="0.5"
-                            android:scaleY="0.5"
-                            android:layout_alignParentEnd="true"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/ic_edit_white"
-                            android:contentDescription="edit profile"/>
-                    <LinearLayout
-                            android:id="@+id/linearLayout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="135dp"
-                            android:layout_above="@+id/descriptionTv"
-                            android:gravity="bottom"
-                            android:orientation="horizontal">
+                        android:id="@+id/coverIv"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:background="#9E9E9E"
+                        android:contentDescription="@string/todo"
+                        android:scaleType="fitXY" />
 
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/fab"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:contentDescription="edit profile"
+                        android:scaleX="0.5"
+                        android:scaleY="0.5"
+                        android:src="@drawable/ic_edit_white" />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_above="@+id/descriptionTv"
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
 
 
                         <RelativeLayout
-                                android:id="@+id/relativeLayout"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                android:layout_weight="1"
-                                android:background="@drawable/layout_profile_data_border">
+                            android:id="@+id/relativeLayout"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/layout_profile_data_border"
+                            android:orientation="vertical">
 
                             <ImageView
-                                    android:id="@+id/avatarIv"
-                                    android:background="@drawable/layout_border"
-                                    android:src="@drawable/ic_default_img_white"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
-                                    android:contentDescription="@string/todo"/>
-
-                                <TextView
-                                        android:id="@+id/nameTv"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="10dp"
-                                        android:layout_toEndOf="@+id/avatarIv"
-
-                                        android:layout_marginTop="5dp"
-                                        android:text="@string/nombre1"
-                                        android:textColor="@color/white"
-                                        android:textSize="25sp"/>
-                            <LinearLayout
-                                    android:id="@+id/topLayout"
-                                    android:layout_toEndOf="@+id/avatarIv"
-                                    android:orientation="horizontal"
-                                    android:weightSum="2"
-                                    android:layout_below="@+id/nameTv"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
+                                android:id="@+id/avatarIv"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:background="@drawable/layout_border"
+                                android:contentDescription="@string/todo"
+                                android:src="@drawable/ic_default_img_white" />
 
                             <TextView
-                                    android:id="@+id/realNameTv"
-                                    android:layout_weight="1"
-                                    android:layout_width="0dp"
-                                    android:textSize="18sp"
+                                android:id="@+id/pseudonymTv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="10dp"
+                                android:layout_marginTop="5dp"
+
+                                android:layout_toEndOf="@+id/avatarIv"
+                                android:text="@string/nombre1"
+                                android:textColor="@color/white"
+                                android:textSize="25sp" />
+
+                            <LinearLayout
+                                android:id="@+id/topLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/pseudonymTv"
+                                android:layout_toEndOf="@+id/avatarIv"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/typeTv"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:text="Yoga type"
+                                    android:textAlignment="textEnd"
                                     android:textColor="@color/white"
-                                    android:text="Real name"/>
-                                <TextView
-                                        android:id="@+id/typeTv"
-                                        android:layout_width="0dp"
-                                        android:layout_weight="1"
-                                        android:layout_height="wrap_content"
-                                        android:textSize="18sp"
-                                        android:textAlignment="textEnd"
-                                        android:layout_marginEnd="10dp"
-                                        android:textColor="@color/white"
-                                        android:text="Yoga type"/>
-                            </LinearLayout>
-                            <LinearLayout
-                                    android:layout_toEndOf="@+id/avatarIv"
-                                    android:orientation="horizontal"
-                                    android:weightSum="2"
-                                    android:id="@+id/bottomLayout"
-                                    android:layout_below="@+id/topLayout"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content">
+                                    android:textSize="18sp" />
 
-                            <TextView
+                                <TextView
                                     android:id="@+id/practicTv"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="1"
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="10dp"
-                                    android:textSize="18sp"
+                                    android:layout_marginEnd="10dp"
                                     android:paddingBottom="10dp"
+                                    android:text="@string/tipo_de_pr_ctica"
                                     android:textColor="@color/white"
-                                    android:text="@string/tipo_de_pr_ctica"/>
+                                    android:textSize="18sp" />
+
                                 <TextView
-                                        android:id="@+id/dietTv"
-                                        android:layout_width="0dp"
-                                        android:layout_weight="1"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginEnd="10dp"
-                                        android:paddingBottom="10dp"
-                                        android:textAlignment="textEnd"
-                                        android:textSize="18sp"
-                                        android:textColor="@color/white"
-                                        android:text="@string/dieta"/>
+                                    android:id="@+id/dietTv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:text="@string/diet"
+                                    android:textAlignment="textEnd"
+                                    android:textColor="@color/white"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/purposeTv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:text="Purpose in life"
+                                    android:textAlignment="textEnd"
+                                    android:textColor="@color/white"
+                                    android:textSize="18sp" />
+
+                                <TextView
+                                    android:id="@+id/placeTv"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:layout_marginEnd="10dp"
+                                    android:paddingBottom="10dp"
+                                    android:text="London, England"
+                                    android:textAlignment="textEnd"
+                                    android:textColor="@color/white"
+                                    android:textSize="18sp" />
                             </LinearLayout>
+
 
                         </RelativeLayout>
                         <!--Create a profile description text-->
 
                     </LinearLayout>
 
+
                     <TextView
-                            android:id="@+id/descriptionTv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:layout_below="@+id/coverIv"
-                            android:layout_marginEnd="10dp"
-                            android:justificationMode="inter_word"
-                            android:layout_marginTop="-2dp"
-                            android:text="Description"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            android:padding="5dp"
-                            android:background="@drawable/layout_profile_comment_border"/>
-
-
+                        android:id="@+id/descriptionTv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/coverIv"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="-2dp"
+                        android:layout_marginEnd="10dp"
+                        android:background="@drawable/layout_profile_comment_border"
+                        android:justificationMode="inter_word"
+                        android:padding="5dp"
+                        android:text="Description"
+                        android:textColor="@color/white"
+                        android:textSize="14sp" />
 
 
                 </RelativeLayout>
 
 
-
             </androidx.appcompat.widget.Toolbar>
 
-
-        </com.google.android.material.appbar.AppBarLayout>
-        <androidx.core.widget.NestedScrollView
+            <androidx.core.widget.NestedScrollView
                 android:id="@+id/nestedScroll"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_width="match_parent"
-                android:layout_marginTop="-50dp"
+                android:layout_height="match_parent"
+                android:layout_below="@id/descriptionTv"
+                android:background="@android:color/transparent"
                 android:descendantFocusability="blocksDescendants"
-                android:layout_height="wrap_content">
-            <!--RecyvlerView: User specific posts-->
-            <androidx.recyclerview.widget.RecyclerView
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+                <!--RecyvlerView: User specific posts-->
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
-                    android:fastScrollEnabled="true"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/coverLayout">
-            </androidx.recyclerview.widget.RecyclerView>
-        </androidx.core.widget.NestedScrollView>
+                    android:layout_height="match_parent"
+
+                    android:layout_below="@+id/coverLayout"
+                    android:background="@android:color/transparent"
+                    android:fastScrollEnabled="true"></androidx.recyclerview.widget.RecyclerView>
+            </androidx.core.widget.NestedScrollView>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
-
-<!--Floating Action Button-->
+    <!--Floating Action Button-->
 
 
 </FrameLayout>

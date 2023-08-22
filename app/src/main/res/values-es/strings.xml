@@ -260,6 +260,9 @@
     <string name="blockcontent">Bloquear contenido</string>
     <string name="description">Explica algo de ti 😊</string>
     <string name="done">Hecho!</string>
+    <string name="purpose">Propósito (amigos, pareja, compañeros pensadores)</string>
+    <string name="country">País</string>
+    <string name="city">Ciudad</string>
 
 
 </resources>

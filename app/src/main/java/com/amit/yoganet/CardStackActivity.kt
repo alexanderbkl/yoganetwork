@@ -307,13 +307,10 @@ class CardStackActivity : AppCompatActivity(), CardStackListener {
 
                 }
 
-                //print spots
-                Log.d("suka1", spots.toString())
 
                 //sort descending spots by onlineStatus
                 spots.sortBy { it.onlineStatus }
                 spots.reverse();
-                Log.d("suka2", spots.toString())
 
 
             }

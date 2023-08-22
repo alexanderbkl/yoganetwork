@@ -123,25 +123,16 @@ public class UsersFragment extends Fragment {
                     if (!dataSnapshot.getValue(ModelUsers.class).getUid().equals(fUser.getUid())) {
 
                         if (modelUsers.getPseudonym().toLowerCase().contains(query.toLowerCase()) ||
-                                modelUsers.getRealname().toLowerCase().contains(query.toLowerCase())) {
+                                modelUsers.getCountry().toLowerCase().contains(query.toLowerCase()) ||
+                                modelUsers.getCity().toLowerCase().contains(query.toLowerCase()) ||
+                                modelUsers.getPurpose().toLowerCase().contains(query.toLowerCase())||
+                                modelUsers.getPractic().toLowerCase().contains(query.toLowerCase())||
+                                modelUsers.getType().toLowerCase().contains(query.toLowerCase())||
+                                modelUsers.getPractic().toLowerCase().contains(query.toLowerCase())||
+                                modelUsers.getDiet().toLowerCase().contains(query.toLowerCase())) {
                             userList.add(dataSnapshot.getValue(ModelUsers.class));
                     }
-                        if (modelUsers.getRealname().toLowerCase().contains(query.toLowerCase()) ||
-                                modelUsers.getRealname().toLowerCase().contains(query.toLowerCase())) {
-                            userList.add(dataSnapshot.getValue(ModelUsers.class));
-                        }
-                        if (modelUsers.getPractic().toLowerCase().contains(query.toLowerCase()) ||
-                                modelUsers.getRealname().toLowerCase().contains(query.toLowerCase())) {
-                            userList.add(dataSnapshot.getValue(ModelUsers.class));
-                        }
-                        if (modelUsers.getType().toLowerCase().contains(query.toLowerCase()) ||
-                                modelUsers.getRealname().toLowerCase().contains(query.toLowerCase())) {
-                            userList.add(dataSnapshot.getValue(ModelUsers.class));
-                        }
-                        if (modelUsers.getDiet().toLowerCase().contains(query.toLowerCase()) ||
-                                modelUsers.getRealname().toLowerCase().contains(query.toLowerCase())) {
-                            userList.add(dataSnapshot.getValue(ModelUsers.class));
-                        }
+
                     }
                     adapterUsers = new AdapterUsers(getActivity(), userList);
                     //refreash adapter

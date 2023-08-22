@@ -42,7 +42,7 @@ import java.util.HashMap;
 public class PostRegistrationActivity extends AppCompatActivity {
 
    //views
-    EditText pseudonymEt, nameEt, typeEt, practicEt, dietEt, descriptionEt;
+    EditText pseudonymEt, cityEt, countryEt, purposeEt, typeEt, practicEt, dietEt, descriptionEt;
     AppCompatButton updateBtn;
     ImageView coverIv, addCoverBtn, avatarIv;
     //firebase
@@ -62,7 +62,9 @@ public class PostRegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_registration);
         pseudonymEt = findViewById(R.id.pseudonymEt);
-        nameEt = findViewById(R.id.nameEt);
+        cityEt = findViewById(R.id.cityEt);
+        countryEt = findViewById(R.id.countryEt);
+        purposeEt = findViewById(R.id.purposeEt);
         typeEt = findViewById(R.id.typeEt);
         practicEt = findViewById(R.id.practicEt);
         dietEt = findViewById(R.id.dietEt);
@@ -106,7 +108,9 @@ public class PostRegistrationActivity extends AppCompatActivity {
                 for (DataSnapshot ds: snapshot.getChildren()) {
                     //get data
                     String pseudonym = ""+ ds.child("pseudonym").getValue();
-                    String realname = ""+ds.child("realname").getValue();
+                    String purpose = ""+ ds.child("purpose").getValue();
+                    String city = ""+ ds.child("city").getValue();
+                    String country = ""+ ds.child("country").getValue();
                     String type = ""+ ds.child("type").getValue();
                     String practic = ""+ ds.child("practic").getValue();
                     String diet = ""+ ds.child("diet").getValue();
@@ -116,7 +120,9 @@ public class PostRegistrationActivity extends AppCompatActivity {
 
                     //set data
                     pseudonymEt.setText(pseudonym);
-                    nameEt.setText(realname);
+                    cityEt.setText(city);
+                    purposeEt.setText(purpose);
+                    countryEt.setText(country);
                     typeEt.setText(type);
                     practicEt.setText(practic);
                     dietEt.setText(diet);
@@ -212,7 +218,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
     }
 
     private void uploadProfileData() {
-        String description = String.valueOf(descriptionEt.getText().toString().trim());
+        String description = descriptionEt.getText().toString().trim();
         if (descriptionEt.getText().toString().contains("\n\n\n") || descriptionEt.getText().toString().contains("\n\n\n\n") || descriptionEt.getText().toString().contains("\n\n\n\n\n")) {
             description = descriptionEt.getText().toString().replace("\n\n\n\n\n", "\n");
             description = description.replace("\n\n\n\n", "\n");
@@ -221,19 +227,20 @@ public class PostRegistrationActivity extends AppCompatActivity {
 
 
 
-            final String[] entrada = new String[]{"nombre espiritual", "nombre", "camino espiritual", "tipo de práctica", "alimentación", "descripción"};
-            final String[] keys = new String[]{"pseudonym", "realname","practic", "type", "diet", "description"};
-            final String[] entries = new String[6];
+            final String[] keys = new String[]{"pseudonym","practic", "type", "diet", "purpose", "city", "country", "description"};
+            final String[] entries = new String[8];
                  entries[0] = pseudonymEt.getText().toString().trim();
-                 entries[1] = nameEt.getText().toString().trim();
-                 entries[2] = practicEt.getText().toString().trim();
-                 entries[3] = typeEt.getText().toString().trim();
-                 entries[4] = dietEt.getText().toString().trim();
-                 entries[5] = description;
+                 entries[1] = practicEt.getText().toString().trim();
+                 entries[2] = typeEt.getText().toString().trim();
+                 entries[3] = dietEt.getText().toString().trim();
+                 entries[4] = purposeEt.getText().toString().trim();
+                 entries[5] = cityEt.getText().toString().trim();
+                 entries[6] = countryEt.getText().toString().trim();
+                 entries[7] = description;
 
         HashMap<String, Object> result = new HashMap<>();
 
-        for (int i = 0; i<= 5; i++) {
+        for (int i = 0; i<= 7; i++) {
                 result.put(keys[i], entries[i]);
         }
 
@@ -249,16 +256,18 @@ public class PostRegistrationActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     snapshot.child("pseudonym").getRef().setValue(entries[0]);
-                    snapshot.child("realname").getRef().setValue(entries[1]);
-                    snapshot.child("practic").getRef().setValue(entries[2]);
-                    snapshot.child("type").getRef().setValue(entries[3]);
-                    snapshot.child("diet").getRef().setValue(entries[4]);
-                    snapshot.child("description").getRef().setValue(entries[5]);
+                    snapshot.child("practic").getRef().setValue(entries[1]);
+                    snapshot.child("type").getRef().setValue(entries[2]);
+                    snapshot.child("diet").getRef().setValue(entries[3]);
+                    snapshot.child("purpose").getRef().setValue(entries[4]);
+                    snapshot.child("city").getRef().setValue(entries[5]);
+                    snapshot.child("country").getRef().setValue(entries[6]);
+                    snapshot.child("description").getRef().setValue(entries[7]);
 
 
 
                     pd.dismiss();
-                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done)+"1", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done), Toast.LENGTH_SHORT).show();
                     PostRegistrationActivity.this.finish();
                     Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
                     intent.putExtra("fragPos","1");

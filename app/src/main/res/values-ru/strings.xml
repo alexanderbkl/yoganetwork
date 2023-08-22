@@ -261,5 +261,8 @@
     <string name="blockcontent">Заблокировать контент</string>
     <string name="description">Расскажи о себе 😊</string>
     <string name="done">Готово!</string>
+    <string name="purpose">Цель (друзья, пара, единомышленники)</string>
+    <string name="country">Страна</string>
+    <string name="city">Город</string>
 
 </resources>
