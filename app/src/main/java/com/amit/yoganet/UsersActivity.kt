@@ -199,7 +199,7 @@ class UsersActivity : AppCompatActivity() {
                     val user: ModelUsers? = snapshot.getValue(
                         ModelUsers::class.java)
                     if (user != null) {
-                        if (!user.getUid().equals(fUser!!.uid)) {
+                        if (user.uid != null &&!user.getUid().equals(fUser!!.uid)) {
                             userList!!.add(user)
                         }
                     }

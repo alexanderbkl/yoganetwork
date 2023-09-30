@@ -28,10 +28,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -90,7 +93,7 @@ public class PostsFragment extends Fragment {
 
             loadPosts();
 
-
+        layoutManager.setInitialPrefetchItemCount(20);
         //set layout to recycler_view
         recycler_view.setLayoutManager(layoutManager);
 
@@ -113,6 +116,8 @@ public class PostsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
+                Map<String, ModelPost> latestPostsMap = new HashMap<>();
+
                 for (DataSnapshot ds: snapshot.getChildren()) {
 
                     ModelPost modelPost = ds.getValue(ModelPost.class);
@@ -120,16 +125,16 @@ public class PostsFragment extends Fragment {
                     //get the post
                     //get the date of the post
                     assert modelPost != null;
-                    long postDate = Long.parseLong(modelPost.getpId());
-                    long likes = Long.parseLong(modelPost.getpLikes());
-                    //calculate the hot score
+                    String userId = modelPost.getUid();
 
-                  //  String hotScore = String.valueOf(hot(postDate,likes, currentDate));
-
-                    //add the post to the list
-                    postList.add(modelPost);
+                    if (!latestPostsMap.containsKey(userId) || Long.parseLong(modelPost.getpId()) > Long.parseLong(latestPostsMap.get(userId).getpId())) {
+                        latestPostsMap.put(userId, modelPost);
+                    }
 
                 }
+
+                postList = new ArrayList<>(latestPostsMap.values());
+
 
 
 
@@ -152,12 +157,20 @@ public class PostsFragment extends Fragment {
                 ref.child(myUid).child("BlockedUsers").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        Set<String> blockedUids = new HashSet<>();
                         for (DataSnapshot ds: snapshot.getChildren()) {
-                            String blockedUid = ""+ds.getKey();
-                            //now check if the post is of the blocked user
-                            for (Iterator<ModelPost> iterator = postList.iterator(); iterator.hasNext(); ) {
-                                ModelPost modelPost = iterator.next();
-                                if (modelPost.getUid().equals(blockedUid)) {
+                            blockedUids.add("" + ds.getKey());
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            postList = postList.stream()
+                                    .filter(post -> !blockedUids.contains(post.getUid()))
+                                    .collect(Collectors.toList());
+                        } else {
+                            Iterator<ModelPost> iterator = postList.iterator();
+                            while (iterator.hasNext()) {
+                                ModelPost post = iterator.next();
+                                if (blockedUids.contains(post.getUid())) {
                                     iterator.remove();
                                 }
                             }

@@ -1,11 +1,15 @@
 package com.amit.yoganet;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Patterns;
+import android.view.View;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,8 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
-
-
+import java.util.Locale;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -76,6 +79,45 @@ public class RegisterActivity extends AppCompatActivity {
             userPolicyDialog.show();
 
         });
+        Button changeLang = findViewById(com.amit.yoganet.R.id.changeMyLang);
+        loadLocale();
+
+        String lang = Locale.getDefault().getLanguage();
+
+        switch (lang) {
+            case "es":
+                changeLang.setText("CAMBIAR IDIOMA\n(Español)");
+                break;
+            case "en":
+                changeLang.setText("CHANGE LANGUAGE\n(English)");
+                break;
+            case "fr":
+                changeLang.setText("CHANGER LANGUE\n(Français)");
+                break;
+            case "de":
+                changeLang.setText("SPRACHE ÄNDERN\n(Deutsch)");
+                break;
+            case "ar":
+                changeLang.setText("غير اللغة\n(العربية)");
+                break;
+            case "hi":
+                changeLang.setText("भाषा बदलें\n(हिन्दी)");
+                break;
+            case "ru":
+                changeLang.setText("Изменить язык\n(Русский)");
+                break;
+            default:
+                changeLang.setText("CHANGE LANGUAGE");
+                break;
+        }
+        changeLang.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //show AlertDialog to display list of languages, one can be selected
+                showChangeLanguageDialog();
+            }
+        });
+
 
         //handle checkbox click
         userPolicy = findViewById(R.id.userPolicy);
@@ -192,9 +234,69 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    private void showChangeLanguageDialog() {
+        final String[] listItems = {"English", "Español", "Русский", "Français", "Deutsche", "عربى", "हिन्दी"};
+        androidx.appcompat.app.AlertDialog.Builder mBuilder = new androidx.appcompat.app.AlertDialog.Builder(RegisterActivity.this);
+        mBuilder.setTitle(com.amit.yoganet.R.string.lngchoose);
+        mBuilder.setSingleChoiceItems(listItems, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    setLocale("en");
+                    recreate();
+                }  if (which == 1) {
+                    setLocale("es");
+                    recreate();
+                }  if (which == 2) {
+                    setLocale("ru");
+                    recreate();
+                }  if (which == 3) {
+                    setLocale("fr");
+                    recreate();
+                }  if (which == 4) {
+                    setLocale("de");
+                    recreate();
+                }  if (which == 5) {
+                    setLocale("ar");
+                    recreate();
+                }  if (which == 6) {
+                    setLocale("hi");
+                    recreate();
+                }
+
+                //dismiss alert dialog when language selected
+                dialog.dismiss();
+
+            }
+        });
+
+        androidx.appcompat.app.AlertDialog mDialog = mBuilder.create();
+        //show alert dialog
+        mDialog.show();
+
+    }
+
+    private void setLocale(String lang) {
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        //save data to shared preferences
+        SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
+        editor.putString("My_Lang", lang);
+        editor.apply();
+
+    }
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed(); //go previous activity
         return super.onSupportNavigateUp();
+    }
+
+    public void loadLocale() {
+        SharedPreferences prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE);
+        String language = prefs.getString("My_Lang", "");
+        setLocale(language);
     }
 }

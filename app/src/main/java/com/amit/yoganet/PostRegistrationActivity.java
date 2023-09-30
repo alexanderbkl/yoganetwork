@@ -205,7 +205,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
     private void startCoverCropActivity() {
         CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(41,15)
+                .setAspectRatio(35,20)
                 .start(this);
     }
 
@@ -351,11 +351,11 @@ public class PostRegistrationActivity extends AppCompatActivity {
         int bitSize;
         int quality;
         if (profileOrCoverPhoto.equals("image")) {
-            bitSize = 100000;
-            quality = 70;
-        } else {
             bitSize = 1000000;
-            quality = 70;
+            quality = 90;
+        } else {
+            bitSize = 10000000;
+            quality = 90;
         }
 
         do {
@@ -391,7 +391,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
 
                             databaseReference = firebaseDatabase.getReference("Users");
 
-                            databaseReference.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+                            databaseReference.child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                                     if (profileOrCoverPhoto.equals("image")) {
@@ -400,7 +400,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                                         snapshot.child("cover").getRef().setValue(downloadUri.toString());
                                     }
                                     pd.dismiss();
-                                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done)+"2", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done), Toast.LENGTH_SHORT).show();
                                 }
 
                                 @Override
@@ -517,7 +517,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                                         snapshot.child("imageFull").getRef().setValue(downloadUri.toString());
                                     }
                                     pd.dismiss();
-                                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done)+"3", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(PostRegistrationActivity.this, getString(R.string.done), Toast.LENGTH_SHORT).show();
 
                                 }
 

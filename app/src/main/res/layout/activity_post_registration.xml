@@ -59,7 +59,7 @@
                     android:id="@+id/coverIv"
                     android:layout_width="match_parent"
                     android:layout_height="180dp"
-                    android:background="#FFEFE7"
+                    android:background="#AAEAA7"
                     android:contentDescription="@string/todo"
                     android:scaleType="fitXY" />
 

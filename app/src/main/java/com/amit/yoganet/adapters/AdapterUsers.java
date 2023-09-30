@@ -93,35 +93,47 @@ public class AdapterUsers extends RecyclerView.Adapter<AdapterUsers.MyHolder>
         String userImage = userList.get(i).getImage();
         String userNameL = userList.get(i).getPseudonym();
         String userName = userNameL;
-        if (!userNameL.equals("")) {
+        if (userNameL != null && !userNameL.equals("")) {
             userName = userNameL.substring(0,1).toUpperCase() + userNameL.substring(1);
+        } else {
+            userName = "Anonymous";
         }
         String purposeL = userList.get(i).getPurpose();
         String purpose = purposeL;
-        if (!purposeL.equals("")) {
+        if (purposeL != null && !purposeL.equals("")) {
             purpose = userNameL.substring(0,1).toUpperCase() + purposeL.substring(1);
+        } else {
+            purpose = "";
         }
         String cityL = userList.get(i).getCity();
         String city = cityL;
-        if (!cityL.equals("")) {
+        if (cityL != null && !cityL.equals("")) {
             city = cityL.substring(0,1).toUpperCase() + cityL.substring(1);
+        } else {
+            city = "";
         }
         String countryL = userList.get(i).getCountry();
         String country = countryL;
-        if (!countryL.equals("")) {
+        if (countryL != null && !countryL.equals("")) {
             country = countryL.substring(0,1).toUpperCase() + countryL.substring(1);
+        } else {
+            country = "";
         }
 
 
        String userPracticL = userList.get(i).getPractic();
        String userPractic = userPracticL;
-       if (!userPracticL.equals("")) {
+       if (userPracticL != null && !userPracticL.equals("")) {
            userPractic = userPracticL.substring(0,1).toUpperCase() + userPracticL.substring(1);
-       }
+       } else {
+           userPractic = "";
+         }
         String userTypeL = userList.get(i).getType();
        String userType = userTypeL;
-       if (!userTypeL.equals("")) {
+       if (userTypeL != null && !userTypeL.equals("")) {
            userType = userTypeL.substring(0,1).toUpperCase() + userTypeL.substring(1);
+       } else {
+           userType = "";
        }
        String userDescription = userList.get(i).getDescription();
     //set data

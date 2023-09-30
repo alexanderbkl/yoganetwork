@@ -875,7 +875,7 @@ public class AddPostActivity extends AppCompatActivity {
             }
 
 
-            int bitSize = 3000000;
+            int bitSize = 7000000;
             int quality = 90;
 
             //get image from imageview

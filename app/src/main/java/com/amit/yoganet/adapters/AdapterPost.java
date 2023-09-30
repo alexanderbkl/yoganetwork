@@ -91,9 +91,6 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
 
         return new MyHolder(view);
 
-
-
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -217,7 +214,7 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
                 long thumb = myHolder.getLayoutPosition()* 1000L;
                 RequestOptions options = new RequestOptions().frame(thumb);
 
-                Glide.with(context).load(videoUrl).apply(options).fitCenter().centerCrop().into(myHolder.pImageIv);
+                //Glide.with(context).load(videoUrl).apply(options).fitCenter().centerCrop().into(myHolder.pImageIv);
                 myHolder.playBtn.setVisibility(View.VISIBLE);
 
                 myHolder.playBtn.setOnClickListener(view -> {
@@ -349,7 +346,13 @@ public class AdapterPost extends RecyclerView.Adapter<AdapterPost.MyHolder> impl
 
 
     }
-
+    @Override
+    public void onViewRecycled(@NonNull MyHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.with(context).clear(holder.pImageIv);
+        Glide.with(context).clear(holder.uPictureIv);
+        Glide.with(context).clear(holder.imageView2);
+    }
     @SuppressLint("DefaultLocale")
     private String convertFormat(int duration) {
         return String.format("%02d:%02d",

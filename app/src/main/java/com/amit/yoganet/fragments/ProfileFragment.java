@@ -120,7 +120,6 @@ public class ProfileFragment extends Fragment {
         //init views
         avatarIv = view.findViewById(R.id.avatarIv);
         coverIv = view.findViewById(R.id.coverIv);
-        nameTv = view.findViewById(R.id.nameTv);
 
         pseudonymTv = view.findViewById(R.id.pseudonymTv);
         placeTv = view.findViewById(R.id.placeTv);
@@ -201,7 +200,7 @@ public class ProfileFragment extends Fragment {
                     String cover = ""+ ds.child("cover").getValue();
 
                     //set data
-                    nameTv.setText(pseudonym);
+                    pseudonymTv.setText(pseudonym);
 
                     String countryAndCity = country + ", " + city;
                     placeTv.setText(countryAndCity);

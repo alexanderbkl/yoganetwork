@@ -50,7 +50,7 @@ public class ThereProfileActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     //view from xml
     private ImageView avatarIv, coverIv;
-    private TextView nameTv, placeTv, purposeTv, typeTv, practicTv, dietTv, descriptionTv;
+    private TextView pseudonymTv, placeTv, purposeTv, typeTv, practicTv, dietTv, descriptionTv;
 
     private RecyclerView postsRecyclerView;
 
@@ -79,7 +79,7 @@ public class ThereProfileActivity extends AppCompatActivity {
         //init views
         avatarIv = findViewById(R.id.avatarIv);
         coverIv = findViewById(R.id.coverIv);
-        nameTv = findViewById(R.id.nameTv);
+        pseudonymTv = findViewById(R.id.pseudonymTv);
 
 
 
@@ -87,6 +87,9 @@ public class ThereProfileActivity extends AppCompatActivity {
         fab = findViewById(R.id.fab);
         likeFab = findViewById(R.id.likeFab);
         typeTv = findViewById(R.id.typeTv);
+        pseudonymTv = findViewById(R.id.pseudonymTv);
+        placeTv = findViewById(R.id.placeTv);
+        purposeTv = findViewById(R.id.purposeTv);
         practicTv = findViewById(R.id.practicTv);
         dietTv = findViewById(R.id.dietTv);
         postsRecyclerView = findViewById(R.id.recycler_view);
@@ -159,7 +162,7 @@ public class ThereProfileActivity extends AppCompatActivity {
 
 
                     //set data
-                    nameTv.setText(pseudonym);
+                    pseudonymTv.setText(pseudonym);
                     purposeTv.setText(purpose);
 
                     String place = city + ", " + country;
