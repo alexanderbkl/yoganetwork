@@ -406,9 +406,12 @@
     <string name="spiritual_path">Spiritual path</string>
     <string name="practice">Kind of practice</string>
     <string name="diet">Type of diet</string>
-    <string name="description">Tell about yourself 😊</string>
+    <string name="description" translatable="false">Tell about yourself 😊</string>
     <string name="done">Done!</string>
     <string name="purpose">Purpose (friends, couple, fellow thinkers)</string>
     <string name="country">Country</string>
     <string name="city">City</string>
+    <string name="user_policy_declined">You have to accept the rules first!</string>
+    <string name="user_rules_title">Greetings and rules</string>
+    <string name="user_rules_message">Welcome! \n\n Soul Friends is the first social network dedicated to individuals on a path of spiritual development through soul teachings. \n Here, you\'ll find like-minded individuals, friends, spiritual masters, various practices, and events. \n\n Rules: \n\n We have specific learning and interaction rules on the platform. \n 1. Show respect to each other. \n 2. Do not use inappropriate language. \n 3. Users who violate the rules will be permanently deleted and blocked!</string>
 </resources>

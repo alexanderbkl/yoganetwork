@@ -1,6 +1,8 @@
 package com.amit.yoganet;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -50,6 +52,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
     FirebaseUser user;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    private Boolean isRegistered = false;
     //storage
     StorageReference storageReference;
     //path where images of user profile and cover will be stored
@@ -101,11 +104,12 @@ public class PostRegistrationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Query query = databaseReference.orderByChild("uid").equalTo(user.getUid());
-        query.addValueEventListener(new ValueEventListener() {
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //check until required data get
                 for (DataSnapshot ds: snapshot.getChildren()) {
+
                     //get data
                     String pseudonym = ""+ ds.child("pseudonym").getValue();
                     String purpose = ""+ ds.child("purpose").getValue();
@@ -117,6 +121,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
                     image = ""+ ds.child("image").getValue();
                     String cover = ""+ ds.child("cover").getValue();
                     String description = ""+ ds.child("description").getValue();
+
 
                     //set data
                     pseudonymEt.setText(pseudonym);
@@ -140,6 +145,17 @@ public class PostRegistrationActivity extends AppCompatActivity {
                     }
                     catch (Exception e) {
                         //if there is any exception while getting image then set default
+                    }
+
+                    if (!TextUtils.isEmpty(pseudonym) && !TextUtils.isEmpty(purpose) && !TextUtils.isEmpty(city)) {
+                        // User is considered registered
+                        isRegistered = true;
+
+                        // Set data to the views
+                        // ... your existing code to set data to views ...
+
+                        // You might want to break out of the loop if you found the user
+                        break;
                     }
 
                 }
@@ -173,7 +189,29 @@ public class PostRegistrationActivity extends AppCompatActivity {
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uploadProfileData();
+                if (isRegistered) {
+                    AlertDialog.Builder userPolicyDialog = new AlertDialog.Builder(PostRegistrationActivity.this);
+                    userPolicyDialog.setTitle(R.string.user_rules_title);
+                    userPolicyDialog.setMessage(R.string.user_rules_message);
+                    userPolicyDialog.setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Handle acceptance of user policy
+                            uploadProfileData();
+                        }
+                    });
+                    userPolicyDialog.setNegativeButton(R.string.decline, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Handle decline of user policy
+                            Toast.makeText(PostRegistrationActivity.this, R.string.user_policy_declined, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    userPolicyDialog.show();
+                } else {
+                    uploadProfileData();
+                }
+
                 /*Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
                 intent.putExtra("fragmentPos","1");
                 startActivity(intent);*/
@@ -255,6 +293,18 @@ public class PostRegistrationActivity extends AppCompatActivity {
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    //check if pseudonym exists
+                    if (snapshot.child("pseudonym").exists()) {
+                        //Toast.makeText(PostRegistrationActivity.this, "El pseudónimo ya existe", Toast.LENGTH_SHORT).show();
+                        pd.dismiss();
+                        Toast.makeText(PostRegistrationActivity.this, getString(R.string.done), Toast.LENGTH_SHORT).show();
+                        PostRegistrationActivity.this.finish();
+                        Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
+                        intent.putExtra("fragPos","1");
+                        startActivity(intent);
+                        return;
+                    }
+
                     snapshot.child("pseudonym").getRef().setValue(entries[0]);
                     snapshot.child("practic").getRef().setValue(entries[1]);
                     snapshot.child("type").getRef().setValue(entries[2]);

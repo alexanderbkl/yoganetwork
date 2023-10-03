@@ -263,6 +263,9 @@
     <string name="purpose">Propósito (amigos, pareja, compañeros pensadores)</string>
     <string name="country">País</string>
     <string name="city">Ciudad</string>
+    <string name="user_policy_declined">¡Tienes que aceptar las reglas para registrarte!</string>
+    <string name="user_rules_title">Saludos y Reglas</string>
+    <string name="user_rules_message">¡Te damos la bienvenida! \n Soul Friends es la primera red social dedicada a personas que siguen un camino de desarrollo espiritual a través de enseñanzas del alma. \n\n Aquí encontrarás compañeros de ideas afines, amigos, maestros espirituales, diversas prácticas y eventos. \n\n Reglas: \n Tenemos reglas específicas de aprendizaje e interacción en la plataforma. \n 1. Mostrar respeto mútuo. \n 2. No usar lenguaje inapropiado. \n 3. ¡Por violar las reglas, el usuario será eliminado y bloqueado permanentemente! \n</string>
 
 
 </resources>
