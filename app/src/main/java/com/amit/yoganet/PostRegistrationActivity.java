@@ -189,7 +189,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (isRegistered) {
+                if (!isRegistered) {
                     AlertDialog.Builder userPolicyDialog = new AlertDialog.Builder(PostRegistrationActivity.this);
                     userPolicyDialog.setTitle(R.string.user_rules_title);
                     userPolicyDialog.setMessage(R.string.user_rules_message);
