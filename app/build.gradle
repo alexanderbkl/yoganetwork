@@ -22,8 +22,8 @@ android {
         applicationId "com.amit.yoganet"
         minSdkVersion 23
         targetSdkVersion 32
-        versionCode 16
-        versionName "1.5"
+        versionCode 18
+        versionName "1.6"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
