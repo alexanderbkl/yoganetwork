@@ -293,17 +293,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    //check if pseudonym exists
-                    if (snapshot.child("pseudonym").exists()) {
-                        //Toast.makeText(PostRegistrationActivity.this, "El pseudónimo ya existe", Toast.LENGTH_SHORT).show();
-                        pd.dismiss();
-                        Toast.makeText(PostRegistrationActivity.this, getString(R.string.done), Toast.LENGTH_SHORT).show();
-                        PostRegistrationActivity.this.finish();
-                        Intent intent = new Intent(PostRegistrationActivity.this,DashboardActivity.class);
-                        intent.putExtra("fragPos","1");
-                        startActivity(intent);
-                        return;
-                    }
+
 
                     snapshot.child("pseudonym").getRef().setValue(entries[0]);
                     snapshot.child("practic").getRef().setValue(entries[1]);

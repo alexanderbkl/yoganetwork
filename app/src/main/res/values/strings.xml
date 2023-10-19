@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false">YogaNet</string>
-    <string name="app_title" translatable="false">YogaNet</string>
+    <string name="app_name" translatable="false">SoulFriends</string>
+    <string name="app_title" translatable="false">SoulFriends</string>
     <bool name="is_right_to_left">false</bool>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Fragmento en blanco</string>
@@ -413,5 +413,5 @@
     <string name="city">City</string>
     <string name="user_policy_declined">You have to accept the rules first!</string>
     <string name="user_rules_title">Greetings and rules</string>
-    <string name="user_rules_message">Welcome! \n\n Soul Friends is the first social network dedicated to individuals on a path of spiritual development through soul teachings. \n Here, you\'ll find like-minded individuals, friends, spiritual masters, various practices, and events. \n\n Rules: \n\n We have specific learning and interaction rules on the platform. \n 1. Show respect to each other. \n 2. Do not use inappropriate language. \n 3. Users who violate the rules will be permanently deleted and blocked!</string>
+    <string name="user_rules_message">Welcome! \n\n Soul Friends is the first social network dedicated to individuals on a path of spiritual development. \n Here, you\'ll find like-minded individuals, friends, spiritual masters, various practices, and events. \n\n Rules: \n\n We have specific interaction rules on the platform. \n 1. Show respect to each other. \n 2. Do not use inappropriate language. \n 3. Users who violate the rules will be permanently deleted and blocked!</string>
 </resources>

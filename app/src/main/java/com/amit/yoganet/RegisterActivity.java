@@ -86,16 +86,16 @@ public class RegisterActivity extends AppCompatActivity {
 
         switch (lang) {
             case "es":
-                changeLang.setText("CAMBIAR IDIOMA\n(Español)");
+                changeLang.setText("CAMBIAR\nIDIOMA\n(Español)");
                 break;
             case "en":
-                changeLang.setText("CHANGE LANGUAGE\n(English)");
+                changeLang.setText("CHANGE\nLANGUAGE\n(English)");
                 break;
             case "fr":
-                changeLang.setText("CHANGER LANGUE\n(Français)");
+                changeLang.setText("CHANGER\nLANGUE\n(Français)");
                 break;
             case "de":
-                changeLang.setText("SPRACHE ÄNDERN\n(Deutsch)");
+                changeLang.setText("SPRACHE\nÄNDERN\n(Deutsch)");
                 break;
             case "ar":
                 changeLang.setText("غير اللغة\n(العربية)");
@@ -104,10 +104,10 @@ public class RegisterActivity extends AppCompatActivity {
                 changeLang.setText("भाषा बदलें\n(हिन्दी)");
                 break;
             case "ru":
-                changeLang.setText("Изменить язык\n(Русский)");
+                changeLang.setText("Изменить\nязык\n(Русский)");
                 break;
             default:
-                changeLang.setText("CHANGE LANGUAGE");
+                changeLang.setText("CHANGE\nLANGUAGE");
                 break;
         }
         changeLang.setOnClickListener(new View.OnClickListener() {

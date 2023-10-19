@@ -425,6 +425,9 @@ public class AdapterChat extends RecyclerView.Adapter<AdapterChat.MyHolder> {
 
     @Override
     public int getItemCount() {
+        if (chatList == null) {
+            return 0;
+        }
         return chatList.size();
     }
 
