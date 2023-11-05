@@ -106,7 +106,6 @@ public class ProfileFragment extends Fragment {
         layoutManager.setReverseLayout(true);
         //set this layout to recyclerview
         recycler_view.setLayoutManager(layoutManager);
-        recycler_view.setHasFixedSize(true);
         postList = new ArrayList<>();
         loadMyPosts();
 

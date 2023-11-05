@@ -115,71 +115,34 @@ class UsersActivity : AppCompatActivity() {
                      * 1) User not current user
                      * 2) The user pseudonym contains text entered in SearchView (case insensitive) */
 
+                    val newUser = dataSnapshot.getValue(ModelUsers::class.java)!!
 
                     //get all search users except currently signed in user
-                    if (dataSnapshot.getValue(ModelUsers::class.java)!!.uid != fUser!!.uid) {
-                        if (modelUsers!!.pseudonym.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.purpose.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault())) ||
-                                modelUsers.country.lowercase(Locale.getDefault())
-                                        .contains(query.lowercase(Locale.getDefault()))
-                        ) {
-                            userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
-                        }
-                        if (modelUsers.purpose.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.purpose.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault()))||
-                            modelUsers.country.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault()))
-                        ) {
-                            userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
-                        }
-                        if (modelUsers.practic.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.purpose.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.country.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault()))
-                        ) {
-                            userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
-                        }
-                        if (modelUsers.type.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.purpose.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.country.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault()))
-                        ) {
-                            userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
-                        }
-                        if (modelUsers.diet.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.purpose.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault())) ||
-                            modelUsers.country.lowercase(Locale.getDefault())
-                                .contains(query.lowercase(Locale.getDefault()))
-                        ) {
-                            userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
-                        }
-                        if (modelUsers.description != null) {
-                            if (modelUsers.description.lowercase(Locale.getDefault())
-                                    .contains(query.lowercase(Locale.getDefault())) ||
-                                modelUsers.purpose.lowercase(Locale.getDefault())
-                                    .contains(query.lowercase(Locale.getDefault())) ||
-                                modelUsers.country.lowercase(Locale.getDefault())
-                                    .contains(query.lowercase(Locale.getDefault()))
-                            ) {
-                                userList!!.add(dataSnapshot.getValue(ModelUsers::class.java)!!)
-                            }
-                        }
+                    if (newUser.uid != fUser!!.uid && userList!!.none { it.uid == newUser.uid }) {
+                        val userFields = listOf(
+                            modelUsers?.pseudonym,
+                            modelUsers?.purpose,
+                            modelUsers?.country,
+                            modelUsers?.practic,
+                            modelUsers?.type,
+                            modelUsers?.diet,
+                            modelUsers?.city,
+                            modelUsers?.description
+                        )
+
+                        if (userFields.any {
+                            it?.lowercase(Locale.getDefault())?.contains(query.lowercase(Locale.getDefault())) == true
+                            }) {
+                                userList!!.add(newUser)
+                                }
+
                     }
-                    adapterUsers = AdapterUsers(this@UsersActivity, userList!!)
-                    //refreash adapter
-                    //set adapter to recycler view
-                    users_recyclerView.setAdapter(adapterUsers)
+
                 }
+                adapterUsers = AdapterUsers(this@UsersActivity, userList!!)
+                //refreash adapter
+                //set adapter to recycler view
+                users_recyclerView.setAdapter(adapterUsers)
             }
 
             override fun onCancelled(error: DatabaseError) {}

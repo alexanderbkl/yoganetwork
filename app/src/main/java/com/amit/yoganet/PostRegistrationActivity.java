@@ -104,7 +104,7 @@ public class PostRegistrationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Query query = databaseReference.orderByChild("uid").equalTo(user.getUid());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 //check until required data get

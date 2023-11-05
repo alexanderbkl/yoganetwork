@@ -263,18 +263,24 @@ public class AddPostActivity extends AppCompatActivity {
         });
         //get image from camera/gallery on click
         Zoomy.Builder builder = new Zoomy.Builder(AddPostActivity.this)
-                .tapListener(new TapListener() {
-                    @Override
-                    public void onTap(View v) {
-                        showMediaPickDialog();
-                    }
+                .tapListener(v -> {
+                    showMediaPickDialog();
+                    Toast.makeText(AddPostActivity.this, getResources().getString(R.string.choose_an_option), Toast.LENGTH_SHORT).show();
+                })
+                .longPressListener(v -> {
+                    showMediaPickDialog();
+                    Toast.makeText(AddPostActivity.this, getResources().getString(R.string.choose_an_option), Toast.LENGTH_SHORT).show();
+                })
+                .doubleTapListener(v -> {
+                    showMediaPickDialog();
+                    Toast.makeText(AddPostActivity.this, getResources().getString(R.string.choose_an_option), Toast.LENGTH_SHORT).show();
                 })
                 .target(imageIv);
         builder.register();
     }
 
     private void showMediaPickDialog() {
-        Toast.makeText(this, "Selecciona una opción", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getResources().getString(R.string.choose_an_option), Toast.LENGTH_SHORT).show();
         //options to show in dialog
 
         String hola = getResources().getString(R.string.add_image);
@@ -1294,6 +1300,7 @@ public class AddPostActivity extends AppCompatActivity {
         menu.findItem(R.id.action_search).setVisible(false);
         menu.findItem(R.id.action_add_participant).setVisible(false);
         menu.findItem(R.id.action_groupinfo).setVisible(false);
+        menu.findItem(R.id.action_create_group).setVisible(false);
         return super.onCreateOptionsMenu(menu);
     }
 

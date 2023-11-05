@@ -1,87 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/drawer_layout"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        >
+        android:baselineAligned="false"
+        android:orientation="vertical">
 
+        <com.yuyakaido.android.cardstackview.CardStackView
+            android:id="@+id/card_stack_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.75"
+            android:clipToPadding="false"></com.yuyakaido.android.cardstackview.CardStackView>
 
-<LinearLayout
-        android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical" android:baselineAligned="false">
-
-            <com.yuyakaido.android.cardstackview.CardStackView
-                    android:id="@+id/card_stack_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.75"
-                    android:clipToPadding="false">
-            </com.yuyakaido.android.cardstackview.CardStackView>
-    <RelativeLayout
+        <RelativeLayout
             android:id="@+id/button_container"
-            android:orientation="horizontal"
-            android:layout_weight="0.25"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_gravity="center"
             android:layout_marginBottom="50dp"
-            android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_weight="0.25"
+            android:orientation="horizontal">
 
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/skip_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/miniIcons"
-                android:src="@drawable/skip_red_24dp"
+                android:src="@drawable/ic_close_dark_24p"
                 app:backgroundTint="@android:color/white"
                 app:fabSize="auto"
-                app:rippleColor="#22ED7563"/>
-        <LinearLayout
+                app:rippleColor="#22ED7563" />
+
+            <LinearLayout
                 android:id="@+id/miniIcons"
                 android:layout_width="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_height="wrap_content">
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/rewind_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="32dp"
-                    android:layout_marginEnd="24dp"
-                    android:layout_marginTop="10dp"
-                    android:src="@drawable/rewind_blue_24dp"
-                    app:backgroundTint="@android:color/white"
-                    app:fabSize="mini"
-                    app:rippleColor="#225BC9FA"/>
-            <ImageButton
-                    android:id="@+id/button_users_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:outlineProvider="none"
-                    android:layout_marginEnd="32dp"
-                    android:layout_marginTop="10dp"
-                    app:fabSize="mini"
-                    app:rippleColor="#225BC9FA"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/ic_baseline_supervised_user_circle_24"
-                    android:text="Users list"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="20sp"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center_horizontal">
+
+                    <com.google.android.material.floatingactionbutton.FloatingActionButton
+                        android:id="@+id/rewind_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="32dp"
+
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_centerHorizontal="true"
+                        android:src="@drawable/rewind_blue_24dp"
+                        app:backgroundTint="@android:color/white"
+                        app:fabSize="mini"
+                        app:rippleColor="#225BC9FA" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/back" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center_horizontal">
+
+                    <ImageButton
+                        android:id="@+id/button_users_list"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="32dp"
+                        android:background="@android:color/transparent"
+                        android:outlineProvider="none"
+                        android:src="@drawable/ic_baseline_supervised_user_circle_24"
+                        android:text="Users list"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="20sp"
+                        app:fabSize="mini"
+                        app:rippleColor="#225BC9FA" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/all_users" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/like_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/miniIcons"
-                android:src="@drawable/like_green_24dp"
+                android:contentDescription="@string/like"
+                android:src="@drawable/ic_heart_red"
                 app:backgroundTint="@android:color/white"
                 app:fabSize="auto"
-                app:rippleColor="#226FE2B3" android:contentDescription="@string/like"/>
+                app:rippleColor="#226FE2B3" />
 
 
-    </RelativeLayout>
-</LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
 </FrameLayout>

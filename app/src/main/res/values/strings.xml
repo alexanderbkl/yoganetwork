@@ -413,5 +413,8 @@
     <string name="city">City</string>
     <string name="user_policy_declined">You have to accept the rules first!</string>
     <string name="user_rules_title">Greetings and rules</string>
-    <string name="user_rules_message">Welcome! \n\n Soul Friends is the first social network dedicated to individuals on a path of spiritual development. \n Here, you\'ll find like-minded individuals, friends, spiritual masters, various practices, and events. \n\n Rules: \n\n We have specific interaction rules on the platform. \n 1. Show respect to each other. \n 2. Do not use inappropriate language. \n 3. Users who violate the rules will be permanently deleted and blocked!</string>
+    <string name="user_rules_message">Welcome! 😊 \n\n Soul Friends is the first social network dedicated to individuals on a path of spiritual development. \n Here you\'ll find like-minded individuals, friends, spiritual masters, various practices, and events. \n\n Rules: \n\n We have specific interaction rules on the platform. \n 1. Show respect to each other. \n 2. Do not use inappropriate language. \n 3. Users who violate the rules will be permanently deleted and blocked!</string>
+    <string name="back">Back</string>
+    <string name="all_users">All users</string>
+    <string name="choose_an_option">Choose an option</string>
 </resources>
