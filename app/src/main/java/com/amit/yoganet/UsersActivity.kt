@@ -11,31 +11,33 @@ import androidx.core.view.MenuItemCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amit.yoganet.adapters.AdapterUsers
+import com.amit.yoganet.databinding.ActivityUsersBinding
 import com.amit.yoganet.models.ModelUsers
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_users.*
 import java.util.*
 
 class UsersActivity : AppCompatActivity() {
     private var adapterUsers: AdapterUsers? = null
     private var userList: ArrayList<ModelUsers>? = null
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private lateinit var binding: ActivityUsersBinding
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_users)
 
-        setSupportActionBar(toolbar_main)
+        setSupportActionBar(binding.toolbarMain)
 
 
-        users_recyclerView.setHasFixedSize(true)
+        binding.usersRecyclerView.setHasFixedSize(true)
 
         val layoutManager: RecyclerView.LayoutManager = GridLayoutManager(this, 2)
 
-        users_recyclerView.layoutManager = layoutManager
+        binding.usersRecyclerView.layoutManager = layoutManager
 
         userList = ArrayList()
 
@@ -142,7 +144,7 @@ class UsersActivity : AppCompatActivity() {
                 adapterUsers = AdapterUsers(this@UsersActivity, userList!!)
                 //refreash adapter
                 //set adapter to recycler view
-                users_recyclerView.setAdapter(adapterUsers)
+                binding.usersRecyclerView.setAdapter(adapterUsers)
             }
 
             override fun onCancelled(error: DatabaseError) {}
@@ -168,7 +170,7 @@ class UsersActivity : AppCompatActivity() {
                     }
                 }
                 adapterUsers = AdapterUsers(this@UsersActivity, userList!!)
-                users_recyclerView.adapter = adapterUsers
+                binding.usersRecyclerView.adapter = adapterUsers
             }
 
             override fun onCancelled(p0: DatabaseError) {

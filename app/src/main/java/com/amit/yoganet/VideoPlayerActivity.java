@@ -35,11 +35,49 @@ public class VideoPlayerActivity extends AppCompatActivity {
         int UI_OPTIONS = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
         getWindow().getDecorView().setSystemUiVisibility(UI_OPTIONS);
         playerView = findViewById(R.id.player);
+
+        playerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                playerView.removeOnLayoutChangeListener(this);
+                lockBtn = findViewById(R.id.exo_lock);
+                fullScreenBtn = findViewById(R.id.fullScreenBtn);
+                sec_controlvid1 = findViewById(R.id.sec_controlvid1);
+                sec_controlvid2 = findViewById(R.id.sec_controlvid2);
+
+
+
+                fullScreenBtn.setOnClickListener(view -> {
+                    if(!isFullScreen) {
+                        fullScreenBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), com.google.android.exoplayer2.R.drawable.exo_icon_fullscreen_exit));
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                    }
+                    else {
+                        fullScreenBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), com.google.android.exoplayer2.R.drawable.exo_icon_fullscreen_enter));
+                        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    }
+                    isFullScreen = !isFullScreen;
+                });
+
+                lockBtn.setOnClickListener(view -> {
+                    if(!isLock)
+                    {
+                        lockBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_lock));
+                    }
+                    else {
+                        lockBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_lock_open));
+                    }
+                    isLock = !isLock;
+                    lockScreen(isLock);
+
+                });
+
+                // Now you can work with your lock button
+                // lockBtn.setOnClickListener(...);
+            }
+        });
+
         progressBar = findViewById(R.id.progress_bar);
-        fullScreenBtn = findViewById(R.id.fullScreenBtn);
-        lockBtn = findViewById(R.id.exo_lock);
-        sec_controlvid1 = findViewById(R.id.sec_controlvid1);
-        sec_controlvid2 = findViewById(R.id.sec_controlvid2);
 
 
             Bundle extras = getIntent().getExtras();
@@ -50,30 +88,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
             }
 
 
-        fullScreenBtn.setOnClickListener(view -> {
-            if(!isFullScreen) {
-                fullScreenBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.exo_icon_fullscreen_exit));
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-            }
-            else {
-                fullScreenBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.exo_icon_fullscreen_enter));
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            }
-            isFullScreen = !isFullScreen;
-        });
-
-        lockBtn.setOnClickListener(view -> {
-            if(!isLock)
-            {
-                lockBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_lock));
-            }
-            else {
-                lockBtn.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_lock_open));
-            }
-            isLock = !isLock;
-            lockScreen(isLock);
-
-        });
 
         simpleExoPlayer = new SimpleExoPlayer.Builder(this)
                 .setSeekBackIncrementMs(5000)

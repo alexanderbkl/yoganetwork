@@ -31,9 +31,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.gson.Gson
 import com.yuyakaido.android.cardstackview.*
-import kotlinx.android.synthetic.main.activity_dashboard.*
-import kotlinx.android.synthetic.main.fragment_users_card_stack.*
-import kotlinx.android.synthetic.main.fragment_users_card_stack.view.*
+import com.amit.yoganet.databinding.FragmentUsersCardStackBinding
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -49,6 +47,7 @@ import org.json.JSONObject
  */
 class UsersCardStackFragment : Fragment(), CardStackListener {
     private var spots = ArrayList<Spot>()
+    private lateinit var cardStackBinding: FragmentUsersCardStackBinding
 
 
     private val manager by lazy { CardStackLayoutManager(context, this) }
@@ -162,7 +161,7 @@ class UsersCardStackFragment : Fragment(), CardStackListener {
 
         fun setupButton() {
 
-            viewOfLayout.skip_button.setOnClickListener {
+            cardStackBinding.skipButton.setOnClickListener {
                 val setting = SwipeAnimationSetting.Builder()
                     .setDirection(Direction.Left)
                     .setDuration(Duration.Normal.duration)
@@ -172,7 +171,7 @@ class UsersCardStackFragment : Fragment(), CardStackListener {
                 cardStackView?.swipe()
             }
 
-            viewOfLayout.button_users_list.setOnClickListener {
+            cardStackBinding.buttonUsersList.setOnClickListener {
                 //start UsersActivity.kt
                 val intent = Intent(context, UsersActivity::class.java)
                 startActivity(intent)
@@ -311,7 +310,7 @@ class UsersCardStackFragment : Fragment(), CardStackListener {
         setupCardStackView()
 
         //get drawer_layout
-        val layout: FrameLayout? = viewOfLayout.drawer_layout
+        val layout: FrameLayout? = cardStackBinding.drawerLayout
         val layoutParams: FrameLayout.LayoutParams = layout?.layoutParams as FrameLayout.LayoutParams
         //get height of display
         val display: Display = activity?.windowManager?.defaultDisplay!!

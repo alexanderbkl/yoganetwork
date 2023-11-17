@@ -163,8 +163,8 @@ public class DashboardActivity extends AppCompatActivity implements
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     //handle item clicks
-                    switch (item.getItemId()){
-                        case R.id.nav_home:
+                    int itemId = item.getItemId();
+                   if (itemId == R.id.nav_home) {
                             //save fragment position
                             if (fragPos != null && !fragPos.equals("0")) {
                                 //home fragment transaction
@@ -183,10 +183,9 @@ public class DashboardActivity extends AppCompatActivity implements
                                 //home fragment transaction
                                 addFragments();
                             }
-
-
                             return true;
-                        case R.id.nav_profile:
+                        }
+                        else if (itemId == R.id.nav_profile) {
                             if (fragPos != null && !fragPos.equals("1")) {
                                 //profile fragment transaction
                                 //save fragment position
@@ -206,8 +205,8 @@ public class DashboardActivity extends AppCompatActivity implements
                                 addFragments();
                             }
                             return true;
-
-                        case R.id.nav_users:
+                        }
+                        else if (itemId == R.id.nav_users) {
                             if (fragPos != null && !fragPos.equals("2")) {
                                 //users fragment transaction
                                 toolbar.setTitle(R.string.users); //change actionbar title
@@ -227,7 +226,8 @@ public class DashboardActivity extends AppCompatActivity implements
 
                             }
                             return true;
-                        case R.id.nav_chat:
+                        }
+                        else if (itemId == R.id.nav_chat) {
                             if (fragPos != null && !fragPos.equals("3")) {
                                 //users fragment transaction
 
@@ -247,11 +247,12 @@ public class DashboardActivity extends AppCompatActivity implements
                                 addFragments();
                             }
                             return true;
-
-                        case R.id.nav_more:
+                        }
+                        else if (itemId == R.id.nav_more) {
                             prevAct = false;
                             showMoreOptions();
                             return true;
+                        
                     }
                     return false;
                 }

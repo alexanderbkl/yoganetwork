@@ -410,7 +410,7 @@ public class ProfileFragment extends Fragment {
         /*parameter "key" will contain value name and phone*/
         //custom dialog
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_Dialog_Alert);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), androidx.appcompat.R.style.Theme_AppCompat_Dialog_Alert);
         //set layout of dialog
         LinearLayout linearLayout = new LinearLayout(getActivity() );
         linearLayout.setOrientation(LinearLayout.VERTICAL);
